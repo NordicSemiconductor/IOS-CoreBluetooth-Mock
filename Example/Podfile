@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'CoreBluetoothMock_Example' do
+  pod 'CoreBluetoothMock', :path => '../'
+
+  target 'CoreBluetoothMock_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
