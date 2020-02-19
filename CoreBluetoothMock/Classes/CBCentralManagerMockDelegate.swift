@@ -76,6 +76,16 @@ public struct AdvertisingPeripheral {
 
 public protocol CBCentralManagerMockDelegate: class {
     
+    /// Method called when the central manager was requested to scan for
+    /// nearby Bluetooth LE peripherals. The returned peripherals do not
+    /// need to match the service UUID filter. If they don't, they won't
+    /// be returned in the scan results, but will get known to the manager
+    /// and therefore available using `retrievePeripherals(withIdentifiers:)`.
+    /// - Parameters:
+    ///   - central: The central manager used for scanning.
+    ///   - serviceUUIDs: Optional list of services that will be used for
+    ///                   filtering.
+    /// - Returns: List of nearby advertising peripheral.
     func centralManager(_ central: CBCentralManagerMock,
                         didStartScanningForPeripheralsWithServices serviceUUIDs: [CBUUID]?) -> [AdvertisingPeripheral]
     
