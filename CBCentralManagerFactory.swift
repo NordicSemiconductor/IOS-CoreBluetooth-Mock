@@ -33,14 +33,15 @@ import Foundation
 /// The factory that instantiates the CBCentralManagerType object.
 public class CBCentralManagerFactory {
     
-    /// Returnes new instance of CBCentralManager.
-    /// If MOCK constant is defined for the current target, the
-    /// mock instance will be returned.
-    /// - Parameter forceMock: A flag to force mocking also on physical device.
-    /// - Returns: The CBCentralManager or its mock counterpart.
+    /// Returns an implementaton of CBCentralManager.
+    /// On a simulator, or when the `forceMock` flag is enabled, the mock
+    /// implementation is returned, otherwise the native one.
+    /// - Parameters:
+    ///   - forceMock: A flag to force mocking also on physical device.
+    /// - Returns: The implementation of CBCentralManager.
     public static func instance(forceMock: Bool = false) -> CBCentralManagerType {
         #if targetEnvironment(simulator)
-            return CBCentralManagerMock.init()
+            return CBCentralManagerMock()
         #else
             return forceMock ?
                 CBCentralManagerMock() :
@@ -48,18 +49,18 @@ public class CBCentralManagerFactory {
         #endif
     }
     
-    /// Returnes new instance of CBCentralManager.
-    /// If MOCK constant is defined for the current target, the
-    /// mock instance will be returned.
+    /// Returns an implementaton of CBCentralManager.
+    /// On a simulator, or when the `forceMock` flag is enabled, the mock
+    /// implementation is returned, otherwise the native one.
     /// - Parameters:
     ///   - delegate: The delegate that will receive central role events.
     ///   - queue: The dispatch queue on which the events will be dispatched.
     ///            If <i>nil</i>, the main queue will be used.
-    ///   - forceMock: A flag to force mocking also on physical device.
-    /// - Returns: The CBCentralManager or its mock counterpart.
+    ///   - forceMock: A flag to force mocking also on a physical device.
+    /// - Returns: The implementation of CBCentralManager.
     public static func instance(delegate: CBCentralManagerDelegateType?,
-                         queue: DispatchQueue?,
-                         forceMock: Bool = false) -> CBCentralManagerType {
+                                queue: DispatchQueue?,
+                                forceMock: Bool = false) -> CBCentralManagerType {
         #if targetEnvironment(simulator)
             return CBCentralManagerMock(delegate: delegate, queue: queue)
         #else
@@ -69,20 +70,20 @@ public class CBCentralManagerFactory {
         #endif
     }
     
-    /// Returnes new instance of CBCentralManager.
-    /// If MOCK constant is defined for the current target, the
-    /// mock instance will be returned.
+    /// Returns an implementaton of CBCentralManager.
+    /// On a simulator, or when the `forceMock` flag is enabled, the mock
+    /// implementation is returned, otherwise the native one.
     /// - Parameters:
     ///   - delegate: The delegate that will receive central role events.
     ///   - queue: The dispatch queue on which the events will be dispatched.
     ///            If <i>nil</i>, the main queue will be used.
     ///   - options: An optional dictionary specifying options for the manager.
-    ///   - forceMock: A flag to force mocking also on physical device.
-    /// - Returns: The CBCentralManager or its mock counterpart.
+    ///   - forceMock: A flag to force mocking also on a physical device.
+    /// - Returns: The implementation of CBCentralManager.
     public static func instance(delegate: CBCentralManagerDelegateType?,
-                         queue: DispatchQueue?,
-                         options: [String : Any]?,
-                         forceMock: Bool = false) -> CBCentralManagerType {
+                                queue: DispatchQueue?,
+                                options: [String : Any]?,
+                                forceMock: Bool = false) -> CBCentralManagerType {
         #if targetEnvironment(simulator)
             return CBCentralManagerMock(delegate: delegate, queue: queue, options: options)
         #else

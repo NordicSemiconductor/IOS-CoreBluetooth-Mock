@@ -36,7 +36,33 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     public var delegate: CBCentralManagerDelegateType?
     
-    public fileprivate(set) var state: CBManagerStateType
+    private static var managers: [WeakRef] = []
+    
+    /// The global state of the Bluetooth adapter on the device.
+    internal static var managerState: CBManagerStateType = .poweredOff {
+        didSet {
+            // For all existing managers...
+            managers.forEach { weakRef in
+                if let manager = weakRef.manager {
+                    // ...stop scanning. If state changed to .poweredOn, scanning
+                    // must have been stopped before.
+                    if managerState != .poweredOn {
+                        manager.stopScan()
+                    }
+                    // ...and notify delegate.
+                    manager.queue.async {
+                        manager.delegate?.centralManagerDidUpdateState(manager)
+                    }
+                }
+            }
+            // Compact the list, if any of managers were disposed.
+            managers.removeAll(where: { $0.manager == nil })
+        }
+    }
+    
+    public var state: CBManagerStateType {
+        return initialized ? CBCentralManagerMock.managerState : .unknown
+    }
     public fileprivate(set) var isScanning: Bool
 
     private let rssiDeviation = 15 // dBm
@@ -46,25 +72,74 @@ public class CBCentralManagerMock: CBCentralManagerType {
     private var scanTimers: [Timer] = []
     /// A list of peripherals known to this CBCentralManager.
     private var peripherals: [UUID : CBPeripheralMock] = [:]
+    /// A flag set to true few milliseconds after the manager is created.
+    /// Some features, like the state or retrieving peripherals are not
+    /// available when manager hasn't been initialized yet.
+    private var initialized: Bool = false
     
     public required init() {
         self.isScanning = false
         self.queue = DispatchQueue.main
-        self.state = .poweredOn
+        initialize()
     }
     
-    public required init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?) {
+    public required init(delegate: CBCentralManagerDelegateType?,
+                         queue: DispatchQueue?) {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
-        self.state = .unknown
         self.delegate = delegate
+        initialize()
     }
     
-    public required init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?, options: [String : Any]?) {
+    public required init(delegate: CBCentralManagerDelegateType?,
+                         queue: DispatchQueue?,
+                         options: [String : Any]?) {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
-        self.state = .unknown
         self.delegate = delegate
+        initialize()
+    }
+    
+    private func initialize() {
+        queue.asyncAfter(deadline: .now() + .milliseconds(10)) { [weak self] in
+            if let self = self {
+                CBCentralManagerMock.managers.append(WeakRef(self))
+                self.initialized = true
+                self.delegate?.centralManagerDidUpdateState(self)
+            }
+        }
+    }
+    
+    /// Turns the Bluetooth adapter on.
+    /// The process will take the given amount of time.
+    /// - Parameter duration: The transition interval. By default 100 ms.
+    public static func powerOn(duration: TimeInterval = 0.1) {
+        guard managerState != .poweredOn else {
+            return
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + duration) {
+            managerState = .poweredOn
+        }
+    }
+    
+    /// Turns the Bluetooth adapter off.
+    /// The process will take the given amount of time.
+    /// - Parameter duration: The transition interval. By default 100 ms.
+    public static func powerOff(duration: TimeInterval = 0.1) {
+        guard managerState != .poweredOff else {
+            return
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + duration) {
+            managerState = .poweredOff
+        }
+    }
+    
+    /// Sets the initial state of the Bluetooth adapter. This method
+    /// should only be called ones, before any `CBCentralManagerMock` is
+    /// created. By defult, the initial state is `.poweredOff`.
+    /// - Parameter state: The initial state of the Bluetooth adapter.
+    public static func setInitialState(_ state: CBManagerStateType) {
+        managerState = state
     }
     
     @available(iOS 13.0, *)
@@ -79,7 +154,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     ///
     /// The scanned peripheral is set as `userInfo`.
     /// - Parameter timer: The timer that is fired.
-    @objc func notify(timer: Timer) {
+    @objc private func notify(timer: Timer) {
         guard let scanResult = timer.userInfo as? AdvertisingPeripheral,
               let peripheral = peripherals[scanResult.identifier],
               isScanning else {
@@ -87,11 +162,11 @@ public class CBCentralManagerMock: CBCentralManagerType {
             return
         }
         // Emulate RSSI based on proximity. Apply some deviation.
+        let rssi = scanResult.proximity.RSSI
         let deviation = Int.random(in: -rssiDeviation...rssiDeviation)
-        let RSSI: NSNumber = NSNumber(value: scanResult.proximity.RSSI + deviation)
         delegate?.centralManager(self, didDiscover: peripheral,
                                  advertisementData: scanResult.advertisementData,
-                                 rssi: RSSI)
+                                 rssi: (rssi + deviation) as NSNumber)
         
     }
     
@@ -162,8 +237,13 @@ public class CBCentralManagerMock: CBCentralManagerType {
     }
     
     public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralType] {
-        // Not implemented
-        return []
+        guard state == .poweredOn else {
+            // Starting from iOS 13, this method returns peripherals only in ON state.
+            return []
+        }
+        return identifiers
+            .filter { peripherals[$0] != nil }
+            .map { peripherals[$0]! }
     }
     
     public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralType] {
@@ -260,5 +340,17 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             return _identifier == other._identifier
         }
         return false
+    }
+    
+    public override var hash: Int {
+        return _identifier.hashValue
+    }
+}
+
+private class WeakRef {
+    fileprivate private(set) weak var manager: CBCentralManagerMock?
+    
+    fileprivate init(_ manager: CBCentralManagerMock) {
+        self.manager = manager
     }
 }

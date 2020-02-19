@@ -32,12 +32,6 @@ import Foundation
 import CoreBluetooth
 
 public protocol CBCentralManagerType: class {
-    init()
-    
-    init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?)
-    
-    @available(iOS 7.0, *)
-    init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?, options: [String : Any]?)
     
     /// The delegate object that will be used for mocking purposes.
     var mockDelegate: CBCentralManagerMockDelegate? { get set }

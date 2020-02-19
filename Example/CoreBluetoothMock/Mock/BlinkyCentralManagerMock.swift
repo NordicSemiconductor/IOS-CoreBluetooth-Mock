@@ -40,7 +40,8 @@ class BlinkyCentralManagerMock: CBCentralManagerMockDelegate {
             
         let blinky = AdvertisingPeripheral(advertisementData: [
                                     CBAdvertisementDataLocalNameKey : "nRF Blinky",
-                                    CBAdvertisementDataServiceUUIDsKey : [BlinkyPeripheral.nordicBlinkyServiceUUID]
+                                    CBAdvertisementDataServiceUUIDsKey : [BlinkyPeripheral.nordicBlinkyServiceUUID],
+                                    CBAdvertisementDataIsConnectable : true as NSNumber
                                 ],
                                 advertisingInterval: 2.250,
                                 proximity: .near)
@@ -51,7 +52,8 @@ class BlinkyCentralManagerMock: CBCentralManagerMockDelegate {
                                        CBUUID(string: "180D"), // Heart Rate
                                        CBUUID(string: "180A"), // Device Information
                                        BlinkyPeripheral.nordicBlinkyServiceUUID
-                                   ]
+                                   ],
+                                   CBAdvertisementDataIsConnectable : true as NSNumber
                                ],
                                advertisingInterval: 1.100,
                                proximity: .immediate)

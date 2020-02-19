@@ -66,8 +66,12 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        CBCentralManagerMock.setInitialState(.poweredOn)
         centralManager = CBCentralManagerFactory.instance(forceMock: true)
         centralManager.mockDelegate = BlinkyCentralManagerMock()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+            CBCentralManagerMock.powerOff()
+        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -153,6 +157,7 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
     func centralManagerDidUpdateState(_ central: CBCentralManagerType) {
         if central.state != .poweredOn {
             print("Central is not powered on")
+            activityIndicator.stopAnimating()
         } else {
             activityIndicator.startAnimating()
             centralManager.scanForPeripherals(withServices: [BlinkyPeripheral.nordicBlinkyServiceUUID],

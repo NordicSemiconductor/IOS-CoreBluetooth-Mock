@@ -145,22 +145,24 @@ public class CBCentralManagerNative: CBCentralManagerType {
         return CBCentralManager.supports(features)
     }
     
-    public required init() {
+    public init() {
         self.manager = CBCentralManager()
     }
     
-    public required init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?) {
+    public init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?) {
         self.manager = CBCentralManager(delegate: nil, queue: queue)
         self.delegate = delegate
     }
     
     @available(iOS 7.0, *)
-    public required init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?, options: [String : Any]?) {
+    public init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?,
+                options: [String : Any]?) {
         self.manager = CBCentralManager(delegate: nil, queue: queue, options: options)
         self.delegate = delegate
     }
     
-    public func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?) {
+    public func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?,
+                                   options: [String : Any]?) {
         manager.scanForPeripherals(withServices: serviceUUIDs, options: options)
     }
     
@@ -229,7 +231,8 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
         func peripheral(_ peripheral: CBPeripheral,
                         didDiscoverIncludedServicesFor service: CBService,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didDiscoverIncludedServicesFor: service, error: error)
+            impl.delegate?.peripheral(impl, didDiscoverIncludedServicesFor: service,
+                                      error: error)
         }
         
         func peripheral(_ peripheral: CBPeripheral,
@@ -255,7 +258,8 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
         func peripheral(_ peripheral: CBPeripheral,
                         didUpdateNotificationStateFor characteristic: CBCharacteristic,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didUpdateNotificationStateFor: characteristic, error: error)
+            impl.delegate?.peripheral(impl, didUpdateNotificationStateFor: characteristic,
+                                      error: error)
         }
         
         func peripheral(_ peripheral: CBPeripheral,
