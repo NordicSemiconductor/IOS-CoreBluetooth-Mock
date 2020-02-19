@@ -36,16 +36,16 @@ class BlinkyCentralManagerMock: CBCentralManagerMockDelegate {
     
     func centralManager(_ central: CBCentralManagerMock,
                         didStartScanningForPeripheralsWithServices serviceUUIDs: [CBUUID]?)
-        -> [MockDevice] {
+        -> [AdvertisingPeripheral] {
             
-        let blinky = MockDevice(advertisementData: [
+        let blinky = AdvertisingPeripheral(advertisementData: [
                                     CBAdvertisementDataLocalNameKey : "nRF Blinky",
                                     CBAdvertisementDataServiceUUIDsKey : [BlinkyPeripheral.nordicBlinkyServiceUUID]
                                 ],
                                 advertisingInterval: 2.250,
                                 proximity: .near)
             
-        let other = MockDevice(advertisementData: [
+        let other = AdvertisingPeripheral(advertisementData: [
                                    CBAdvertisementDataLocalNameKey : "NordicHRM",
                                    CBAdvertisementDataServiceUUIDsKey : [
                                        CBUUID(string: "180D"), // Heart Rate

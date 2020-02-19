@@ -36,10 +36,16 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     public var delegate: CBCentralManagerDelegateType?
     
-    fileprivate let queue: DispatchQueue
-    
     public fileprivate(set) var state: CBManagerStateType
     public fileprivate(set) var isScanning: Bool
+
+    private let rssiDeviation = 15 // dBm
+    /// The dispatch queue used for all callbacks.
+    fileprivate let queue: DispatchQueue
+    /// Active timers reporting scan results.
+    private var scanTimers: [Timer] = []
+    /// A list of peripherals known to this CBCentralManager.
+    private var peripherals: [UUID : CBPeripheralMock] = [:]
     
     public required init() {
         self.isScanning = false
@@ -66,39 +72,59 @@ public class CBCentralManagerMock: CBCentralManagerType {
         return features.isSubset(of: .extendedScanAndConnect)
     }
     
+    /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
+    /// devices. When the `CBCentralManagerScanOptionAllowDuplicatesKey` options
+    /// was set when scanning was started, the timer will repeat every advertising
+    /// interval until scanning is stopped.
+    ///
+    /// The scanned peripheral is set as `userInfo`.
+    /// - Parameter timer: The timer that is fired.
     @objc func notify(timer: Timer) {
-        guard let result = timer.userInfo as? MockDevice, isScanning else {
+        guard let scanResult = timer.userInfo as? AdvertisingPeripheral,
+              let peripheral = peripherals[scanResult.identifier],
+              isScanning else {
             timer.invalidate()
             return
         }
-        let name = result.advertisementData[CBAdvertisementDataLocalNameKey] as? String
-        let peripheral = CBPeripheralMock(central: self, name: name)
-        let RSSI: NSNumber = NSNumber(value: result.proximity.rawValue + Int.random(in: -40...40))
+        // Emulate RSSI based on proximity. Apply some deviation.
+        let deviation = Int.random(in: -rssiDeviation...rssiDeviation)
+        let RSSI: NSNumber = NSNumber(value: scanResult.proximity.RSSI + deviation)
         delegate?.centralManager(self, didDiscover: peripheral,
-                                      advertisementData: result.advertisementData,
-                                      rssi: RSSI)
+                                 advertisementData: scanResult.advertisementData,
+                                 rssi: RSSI)
+        
     }
     
-    var timer: Timer?
-    
-    public func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?) {
+    public func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?,
+                                   options: [String : Any]?) {
         guard !isScanning else {
             return
         }
         isScanning = true
-        
-        if let results = mockDelegate?.centralManager(self,
-                                                      didStartScanningForPeripheralsWithServices: serviceUUIDs) {
-            results.forEach { (result) in
-                let services = result.advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
-                if serviceUUIDs == nil || services?.contains(where: serviceUUIDs!.contains) ?? false {
+
+        // Obtain list of mock devices.
+        if let scannedPeripherals = mockDelegate?.centralManager(self,
+                                                                 didStartScanningForPeripheralsWithServices: serviceUUIDs) {
+            scannedPeripherals.forEach { device in
+                // The central manager has scanned a device. Add it the list of known peripherals.
+                if peripherals[device.identifier] == nil {
+                    peripherals[device.identifier] = CBPeripheralMock(basedOn: device, scannedBy: self)
+                }
+                // If no Service UUID was used, or the device matches at least one service,
+                // report it to the delegate (call will be delayed using a Timer).
+                let services = device.advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
+                if serviceUUIDs == nil ||
+                   services?.contains(where: serviceUUIDs!.contains) ?? false {
                     // The timer will be called multiple times if option was set.
                     let allowDuplicates = options?[CBCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? NSNumber(booleanLiteral: false)
-                    Timer.scheduledTimer(timeInterval: result.advertisingInterval,
-                                         target: self,
-                                         selector: #selector(notify(timer:)),
-                                         userInfo: result,
-                                         repeats: allowDuplicates.boolValue)
+                    let timer = Timer.scheduledTimer(timeInterval: device.advertisingInterval,
+                                                     target: self,
+                                                     selector: #selector(notify(timer:)),
+                                                     userInfo: device,
+                                                     repeats: allowDuplicates.boolValue)
+                    if allowDuplicates.boolValue {
+                        scanTimers.append(timer)
+                    }
                 }
             }
         }
@@ -106,6 +132,9 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     public func stopScan() {
         isScanning = false
+        
+        scanTimers.forEach { $0.invalidate() }
+        scanTimers.removeAll()
     }
     
     public func connect(_ peripheral: CBPeripheralType, options: [String : Any]?) {
@@ -149,7 +178,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
 }
 
-public class CBPeripheralMock: CBPeer, CBPeripheralMockType {
+public class CBPeripheralMock: CBPeer, CBPeripheralType {
     public var delegate: CBPeripheralDelegateType?
     
     private let queue: DispatchQueue
@@ -165,10 +194,10 @@ public class CBPeripheralMock: CBPeer, CBPeripheralMockType {
     public internal(set) var canSendWriteWithoutResponse: Bool = false
     public internal(set) var ancsAuthorized: Bool = false
     
-    fileprivate init(central: CBCentralManagerMock, name: String?) {
-        self.name = name
+    fileprivate init(basedOn peripheral: AdvertisingPeripheral, scannedBy central: CBCentralManagerMock) {
+        self.name = peripheral.advertisementData[CBAdvertisementDataLocalNameKey] as? String
+        self._identifier = peripheral.identifier
         self.queue = central.queue
-        self._identifier = UUID()
     }
     
     private var _delegate: CBPeripheralDelegateType?
@@ -224,5 +253,12 @@ public class CBPeripheralMock: CBPeer, CBPeripheralMockType {
     
     public func openL2CAPChannel(_ PSM: CBL2CAPPSM) {
         // TODO
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        if let other = object as? CBPeripheralMock {
+            return _identifier == other._identifier
+        }
+        return false
     }
 }

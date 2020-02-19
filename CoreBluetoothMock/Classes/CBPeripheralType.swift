@@ -72,5 +72,3 @@ public protocol CBPeripheralType: class {
     @available(iOS 11.0, *)
     func openL2CAPChannel(_ PSM: CBL2CAPPSM)
 }
-
-public protocol CBPeripheralMockType: CBPeripheralType { }
