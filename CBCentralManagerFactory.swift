@@ -31,9 +31,13 @@
 import Foundation
 
 /// The factory that instantiates the CBCentralManagerType object.
+/// The factory may be used to automatically instantiate either a native
+/// or mock implementation based on the environment. You may also
+/// instantiate the `CBCentralManagerMock` or `CBCentralManagerNative` without
+/// using this factory.
 public class CBCentralManagerFactory {
     
-    /// Returns an implementaton of CBCentralManager.
+    /// Returns the implementaton of CBCentralManager, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
@@ -49,7 +53,7 @@ public class CBCentralManagerFactory {
         #endif
     }
     
-    /// Returns an implementaton of CBCentralManager.
+    /// Returns the implementaton of CBCentralManager, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
@@ -70,7 +74,7 @@ public class CBCentralManagerFactory {
         #endif
     }
     
-    /// Returns an implementaton of CBCentralManager.
+    /// Returns the implementaton of CBCentralManager, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
