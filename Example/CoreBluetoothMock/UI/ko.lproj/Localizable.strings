@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  nRFBlinky
+
+  Created by Hyojung Seo on 08/02/2019.
+  Copyright © 2019 Nordic Semiconductor ASA. All rights reserved.
+*/
+"ON" = "켜짐";
+"OFF" = "꺼짐";
+"PRESSED" = "활성화됨";
+"RELEASED" = "비활성화됨";
+"Reading..." = "읽는 중...";
+"Unknown Device" = "알 수 없는 기기";

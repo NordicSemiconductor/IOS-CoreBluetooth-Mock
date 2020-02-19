@@ -1,0 +1,45 @@
+
+/* Class = "UITableViewSection"; footerTitle = "Toggling the switch will cause LED 3 on the Blinky peripheral to turn ON or OFF."; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.footerTitle" = "Изменение позиции переключателя приведет к включению или выключению светодиода 3 на переферийном устройстве Blinky.";
+
+/* Class = "UITableViewSection"; headerTitle = "LED"; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.headerTitle" = "СВЕТОДИОД";
+
+/* Class = "UILabel"; text = "Toggle the switch next to the micro USB port to switch it on."; ObjectID = "IAE-tV-Psp"; */
+"IAE-tV-Psp.text" = "Измените позицию переключателя, который находится рядом с портом micro USB для того, чтобы включить его.";
+
+/* Class = "UIBarButtonItem"; title = "Scanner"; ObjectID = "K05-ZQ-Swb"; */
+"K05-ZQ-Swb.title" = "Сканер";
+
+/* Class = "UILabel"; text = "If not, connect it to a PC or a charger using a micro USB cable. Coin cell battery is on the bottom side of the dev kit."; ObjectID = "MCd-9i-lIO"; */
+"MCd-9i-lIO.text" = "Если нет, то подключите устройство к компьютеру, или к зарядкому устройству, используя кабель micro USB.   Таблетка (миниатюрный элемент питания) находится на нижней стороне комплекта разработчика.";
+
+/* Class = "UILabel"; text = "1. Make sure it's switched on."; ObjectID = "bcI-yv-RmI"; */
+"bcI-yv-RmI.text" = "1. Убедитесь, что оно включено.";
+
+/* Class = "UILabel"; text = "CAN'T SEE YOUR BLINKY?"; ObjectID = "eor-wV-hOm"; */
+"eor-wV-hOm.text" = "НЕ ВИДИТЕ ВАШЕ УСТРОЙСТВО BLINKY?";
+
+/* Class = "UINavigationItem"; title = "nRF Blinky"; ObjectID = "mCo-A8-H1i"; */
+"mCo-A8-H1i.title" = "nRF Blinky";
+
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "oaQ-Ex-coH"; */
+"oaQ-Ex-coH.text" = "НЕИЗВЕСТНО";
+
+/* Class = "UITableViewController"; title = "nRF Blinky"; ObjectID = "pK8-7d-htc"; */
+"pK8-7d-htc.title" = "nRF Blinky";
+
+/* Class = "UITableViewSection"; footerTitle = "Pressing and releasing BUTTON 1 on the Blinky peripheral will update the button state here."; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.footerTitle" = "Нажмите и отпустите КНОПКУ 1 на периферийном устройстве Blinky для того, чтобы обновить состояние кнопки.";
+
+/* Class = "UITableViewSection"; headerTitle = "Button"; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.headerTitle" = "Кнопка";
+
+/* Class = "UILabel"; text = "2. Make sure the coin cell battery has power."; ObjectID = "rmw-BF-cDo"; */
+"rmw-BF-cDo.text" = "2. Убедитесь, что таблетка (миниатюрный элемент питания) имеет заряд.";
+
+/* Class = "UILabel"; text = "OFF"; ObjectID = "sXe-8K-21Q"; */
+"sXe-8K-21Q.text" = "НЕИЗВЕСТНО";
+
+/* Class = "UILabel"; text = "Nordic Blinky"; ObjectID = "ufl-Iw-mhn"; */
+"ufl-Iw-mhn.text" = "Nordic Blinky";

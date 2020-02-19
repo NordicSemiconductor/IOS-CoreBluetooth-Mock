@@ -1,0 +1,45 @@
+
+/* Class = "UITableViewSection"; footerTitle = "Toggling the switch will cause LED 3 on the Blinky peripheral to turn ON or OFF."; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.footerTitle" = "滑动开关将打开或关闭Blinky设备的3号LED灯.";
+
+/* Class = "UITableViewSection"; headerTitle = "LED"; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.headerTitle" = "LED";
+
+/* Class = "UILabel"; text = "Toggle the switch next to the micro USB port to switch it on."; ObjectID = "IAE-tV-Psp"; */
+"IAE-tV-Psp.text" = "使用Micro USB端口旁的开关将设备打开.";
+
+/* Class = "UIBarButtonItem"; title = "Scanner"; ObjectID = "K05-ZQ-Swb"; */
+"K05-ZQ-Swb.title" = "扫描";
+
+/* Class = "UILabel"; text = "If not, connect it to a PC or a charger using a micro USB cable. Coin cell battery is on the bottom side of the dev kit."; ObjectID = "MCd-9i-lIO"; */
+"MCd-9i-lIO.text" = "如果开发板不工作, 请用Micro USB电缆将设备连接至PC或是Micro USB充电器. 纽扣电池位于开发板的底部.";
+
+/* Class = "UILabel"; text = "1. Make sure it's switched on."; ObjectID = "bcI-yv-RmI"; */
+"bcI-yv-RmI.text" = "1. 确定设备已经开启.";
+
+/* Class = "UILabel"; text = "CAN'T SEE YOUR BLINKY?"; ObjectID = "eor-wV-hOm"; */
+"eor-wV-hOm.text" = "没有发现 BLINKY?";
+
+/* Class = "UINavigationItem"; title = "nRF Blinky"; ObjectID = "mCo-A8-H1i"; */
+"mCo-A8-H1i.title" = "nRF Blinky";
+
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "oaQ-Ex-coH"; */
+"oaQ-Ex-coH.text" = "未知状态";
+
+/* Class = "UITableViewController"; title = "nRF Blinky"; ObjectID = "pK8-7d-htc"; */
+"pK8-7d-htc.title" = "nRF Blinky";
+
+/* Class = "UITableViewSection"; footerTitle = "Pressing and releasing BUTTON 1 on the Blinky peripheral will update the button state here."; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.footerTitle" = "按下并释放Blinky设备的按钮1将更新此按钮状态.";
+
+/* Class = "UITableViewSection"; headerTitle = "Button"; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.headerTitle" = "按钮";
+
+/* Class = "UILabel"; text = "2. Make sure the coin cell battery has power."; ObjectID = "rmw-BF-cDo"; */
+"rmw-BF-cDo.text" = "2. 确定电池还有剩余电量.";
+
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "sXe-8K-21Q"; */
+"oaQ-Ex-coH.text" = "未知状态";
+
+/* Class = "UILabel"; text = "Nordic Blinky"; ObjectID = "ufl-Iw-mhn"; */
+"ufl-Iw-mhn.text" = "Nordic Blinky";

@@ -1,0 +1,45 @@
+
+/* Class = "UITableViewSection"; footerTitle = "Toggling the switch will cause LED 3 on the Blinky peripheral to turn ON or OFF."; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.footerTitle" = "कळ दाबल्यास ब्लिंकी परिधीय एल. इ. डी. ३ चालू किंवा बंद करेल.";
+
+/* Class = "UITableViewSection"; headerTitle = "LED"; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.headerTitle" = "एल. इ. डी.";
+
+/* Class = "UILabel"; text = "Toggle the switch next to the micro USB port to switch it on."; ObjectID = "IAE-tV-Psp"; */
+"IAE-tV-Psp.text" = "चालू करण्यासाठी छोट्या यू. एस. बी. खाचेच्या बाजूची कळ सरकवा.";
+
+/* Class = "UIBarButtonItem"; title = "Scanner"; ObjectID = "K05-ZQ-Swb"; */
+"K05-ZQ-Swb.title" = "क्रमवीक्षक (स्कॅनर).";
+
+/* Class = "UILabel"; text = "If not, connect it to a PC or a charger using a micro USB cable. Coin cell battery is on the bottom side of the dev kit."; ObjectID = "MCd-9i-lIO"; */
+"MCd-9i-lIO.text" = "नाहीतर, त्याला संगणक अथवा यू एस बी चार्जर सोबत तारेने जोडा. नाण्यासमान  विद्युतघट विकास संचाच्या पाठीमागे आहे.";
+
+/* Class = "UILabel"; text = "1. Make sure it's switched on."; ObjectID = "bcI-yv-RmI"; */
+"bcI-yv-RmI.text" = "१. ते चालू आहे याची खात्री करा.";
+
+/* Class = "UILabel"; text = "CAN'T SEE YOUR BLINKY?"; ObjectID = "eor-wV-hOm"; */
+"eor-wV-hOm.text" = "आपला \"ब्लिंकी\" सपडू शकत नाहीये का?";
+
+/* Class = "UINavigationItem"; title = "nRF Blinky"; ObjectID = "mCo-A8-H1i"; */
+"mCo-A8-H1i.title" = "एन. आर. एफ़. \"ब्लिंकी\"";
+
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "oaQ-Ex-coH"; */
+"oaQ-Ex-coH.text" = "अज्ञात";
+
+/* Class = "UITableViewController"; title = "nRF Blinky"; ObjectID = "pK8-7d-htc"; */
+"pK8-7d-htc.title" = "एन. आर. एफ़. \"ब्लिंकी\"";
+
+/* Class = "UITableViewSection"; footerTitle = "Pressing and releasing BUTTON 1 on the Blinky peripheral will update the button state here."; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.footerTitle" = "ब्लिंकी परिधीयावरील कळ १ दाबून सोडल्यास येथे कळस्थिती अद्यतनित होइल.";
+
+/* Class = "UITableViewSection"; headerTitle = "Button"; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.headerTitle" = "कळ";
+
+/* Class = "UILabel"; text = "2. Make sure the coin cell battery has power."; ObjectID = "rmw-BF-cDo"; */
+"rmw-BF-cDo.text" = "२. नाण्यासमान विद्युतघटामध्ये पुरेसा विद्युत प्रभार असल्याचे सुनिश्चित करा.";
+
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "sXe-8K-21Q"; */
+"sXe-8K-21Q.text" = "अज्ञात";
+
+/* Class = "UILabel"; text = "Nordic Blinky"; ObjectID = "ufl-Iw-mhn"; */
+"ufl-Iw-mhn.text" = "नॉर्डिक ब्लिंकी";

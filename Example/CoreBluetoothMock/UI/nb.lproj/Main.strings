@@ -1,0 +1,45 @@
+
+/* Class = "UITableViewSection"; footerTitle = "Toggling the switch will cause LED 3 on the Blinky peripheral to turn ON or OFF."; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.footerTitle" = "Klikk på bryteren for å slå LED 3 AV eller PÅ.";
+
+/* Class = "UITableViewSection"; headerTitle = "LED"; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.headerTitle" = "LED";
+
+/* Class = "UILabel"; text = "Toggle the switch next to the micro USB port to switch it on."; ObjectID = "IAE-tV-Psp"; */
+"IAE-tV-Psp.text" = "Klikk på bryteren ved micro USB tilkoblingen for å slå på.";
+
+/* Class = "UIBarButtonItem"; title = "Scanner"; ObjectID = "K05-ZQ-Swb"; */
+"K05-ZQ-Swb.title" = "Skanner";
+
+/* Class = "UILabel"; text = "If not, connect it to a PC or a charger using a micro USB cable. Coin cell battery is on the bottom side of the dev kit."; ObjectID = "MCd-9i-lIO"; */
+"MCd-9i-lIO.text" = "Hvis ikke, koble micro USB til en PC eller lader. Batteriet er på undersiden av utviklingskitet";
+
+/* Class = "UILabel"; text = "1. Make sure it's switched on."; ObjectID = "bcI-yv-RmI"; */
+"bcI-yv-RmI.text" = "1. Sørg for at det er slått på.";
+
+/* Class = "UILabel"; text = "CAN'T SEE YOUR BLINKY?"; ObjectID = "eor-wV-hOm"; */
+"eor-wV-hOm.text" = "KAN DU IKKE SE DIN BLINKY?";
+
+/* Class = "UINavigationItem"; title = "nRF Blinky"; ObjectID = "mCo-A8-H1i"; */
+"mCo-A8-H1i.title" = "nRF Blinky";
+
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "oaQ-Ex-coH"; */
+"oaQ-Ex-coH.text" = "UKJENT";
+
+/* Class = "UITableViewController"; title = "nRF Blinky"; ObjectID = "pK8-7d-htc"; */
+"pK8-7d-htc.title" = "nRF Blinky";
+
+/* Class = "UITableViewSection"; footerTitle = "Pressing and releasing BUTTON 1 on the Blinky peripheral will update the button state here."; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.footerTitle" = "Trykk ned og slipp KNAPP 1 på Blinky for å oppdatere tilstanden.";
+
+/* Class = "UITableViewSection"; headerTitle = "Button"; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.headerTitle" = "Knapp";
+
+/* Class = "UILabel"; text = "2. Make sure the coin cell battery has power."; ObjectID = "rmw-BF-cDo"; */
+"rmw-BF-cDo.text" = "2. Sørg for at det er strøm i batteriet.";
+
+/* Class = "UILabel"; text = "OFF"; ObjectID = "sXe-8K-21Q"; */
+"sXe-8K-21Q.text" = "UKJENT";
+
+/* Class = "UILabel"; text = "Nordic Blinky"; ObjectID = "ufl-Iw-mhn"; */
+"ufl-Iw-mhn.text" = "Nordic Blinky";

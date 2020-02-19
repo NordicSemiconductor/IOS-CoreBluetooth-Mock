@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  nRFBlinky
+
+  Created by Remus Barbatei on 08/02/2019.
+  Copyright © 2019 Nordic Semiconductor ASA. All rights reserved.
+*/
+"ON" = "PORNIT";
+"OFF" = "OPRIT";
+"PRESSED" = "APASAT";
+"RELEASED" = "NEAPĂSAT";
+"Reading..." = "Se actualizează starea...";
+"Unknown Device" = "Dispozitiv necunoscut";
