@@ -36,14 +36,15 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     public var delegate: CBCentralManagerDelegateType?
     
-    private static var managers: [WeakRef] = []
+    /// A list of all mock managers instantiated by user.
+    private static var managers: [WeakRef<CBCentralManagerMock>] = []
     
     /// The global state of the Bluetooth adapter on the device.
     internal static var managerState: CBManagerStateType = .poweredOff {
         didSet {
             // For all existing managers...
             managers.forEach { weakRef in
-                if let manager = weakRef.manager {
+                if let manager = weakRef.ref {
                     // ...stop scanning. If state changed to .poweredOn, scanning
                     // must have been stopped before.
                     if managerState != .poweredOn {
@@ -56,7 +57,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
                 }
             }
             // Compact the list, if any of managers were disposed.
-            managers.removeAll(where: { $0.manager == nil })
+            managers.removeAll { $0.ref == nil }
         }
     }
     
@@ -70,7 +71,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     fileprivate let queue: DispatchQueue
     /// Active timers reporting scan results.
     private var scanTimers: [Timer] = []
-    /// A list of peripherals known to this CBCentralManager.
+    /// A map of peripherals known to this central manager.
     private var peripherals: [UUID : CBPeripheralMock] = [:]
     /// A flag set to true few milliseconds after the manager is created.
     /// Some features, like the state or retrieving peripherals are not
@@ -191,7 +192,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
                 if serviceUUIDs == nil ||
                    services?.contains(where: serviceUUIDs!.contains) ?? false {
                     // The timer will be called multiple times if option was set.
-                    let allowDuplicates = options?[CBCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? NSNumber(booleanLiteral: false)
+                    let allowDuplicates = options?[CBCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? false as NSNumber
                     let timer = Timer.scheduledTimer(timeInterval: device.advertisingInterval,
                                                      target: self,
                                                      selector: #selector(notify(timer:)),
@@ -207,33 +208,32 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     public func stopScan() {
         isScanning = false
-        
         scanTimers.forEach { $0.invalidate() }
         scanTimers.removeAll()
     }
     
     public func connect(_ peripheral: CBPeripheralType, options: [String : Any]?) {
-        if let mock = peripheral as? CBPeripheralMock,
-            peripheral.state == .disconnected {
-            mock.state = .connecting
-            queue.asyncAfter(deadline: .now() + .milliseconds(30)) {
-                mock.state = .connected
-                self.delegate?.centralManager(self, didConnect: mock)
-            }
-        }
+//        if let mock = peripheral as? CBPeripheralMock,
+//            mock.state == .disconnected {
+//            mock.state = .connecting
+//            queue.asyncAfter(deadline: .now() + .milliseconds(30)) {
+//                mock.state = .connected
+//                self.delegate?.centralManager(self, didConnect: mock)
+//            }
+//        }
     }
     
     public func cancelPeripheralConnection(_ peripheral: CBPeripheralType) {
-        if let mock = peripheral as? CBPeripheralMock,
-            peripheral.state == .connected || peripheral.state == .connecting {
-            if #available(iOS 9.0, *) {
-                mock.state = .disconnecting
-            }
-            queue.asyncAfter(deadline: .now() + .milliseconds(10)) {
-                mock.state = .disconnected
-                self.delegate?.centralManager(self, didConnect: mock)
-            }
-        }
+//        if let mock = peripheral as? CBPeripheralMock,
+//            peripheral.state == .connected || peripheral.state == .connecting {
+//            if #available(iOS 9.0, *) {
+//                mock.state = .disconnecting
+//            }
+//            queue.asyncAfter(deadline: .now() + .milliseconds(10)) {
+//                mock.state = .disconnected
+//                self.delegate?.centralManager(self, didConnect: mock)
+//            }
+//        }
     }
     
     public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralType] {
@@ -241,19 +241,75 @@ public class CBCentralManagerMock: CBCentralManagerType {
             // Starting from iOS 13, this method returns peripherals only in ON state.
             return []
         }
-        return identifiers
-            .filter { peripherals[$0] != nil }
-            .map { peripherals[$0]! }
+        // Get the peripherals already known to this central manager.
+        let localPeripherals = peripherals[identifiers]
+        // If all were found, return them.
+        if localPeripherals.count == identifiers.count {
+            return localPeripherals
+        }
+        let missingIdentifiers = identifiers.filter { peripherals[$0] == nil }
+        // Otherwise, we need to look for them among other managers, and
+        // copy them to the local manager.
+        let peripheralsKnownByOtherManagers = missingIdentifiers
+            .flatMap { i in
+                CBCentralManagerMock.managers
+                    .compactMap { $0.ref?.peripherals[i] }
+            }
+            .map { CBPeripheralMock(copy: $0, by: self) }
+        peripheralsKnownByOtherManagers.forEach {
+            peripherals[$0.identifier] = $0
+        }
+        // Return them in the same order as requested, some may be missing.
+        return (localPeripherals + peripheralsKnownByOtherManagers)
+            .sorted {
+                let firstIndex = identifiers.firstIndex(of: $0.identifier)!
+                let secondIndex = identifiers.firstIndex(of: $1.identifier)!
+                return firstIndex < secondIndex
+            }
     }
     
     public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralType] {
-        // Not implemented
-        return []
+        guard state == .poweredOn else {
+            // Starting from iOS 13, this method returns peripherals only in ON state.
+            return []
+        }
+        // Get the connected peripherals with at least one of the given services
+        // that are already known to this central manager.
+        let localConnectedPeripherals = peripherals[serviceUUIDs]
+            .filter { $0.state == .connected }
+        // Other central managers also may know some connected peripherals that
+        // are not known to the local one.
+        let connectedPeripheralsKnownByOtherManagers = CBCentralManagerMock.managers
+            // Get only those managers that were not disposed.
+            .filter { $0.ref != nil }
+            // Look for connected peripherals known to other managers.
+            .flatMap {
+                $0.ref!.peripherals[serviceUUIDs]
+                    .filter { $0.state == .connected }
+            }
+            // Search for ones that are not known to the local manager.
+            .filter { other in
+                !localConnectedPeripherals.contains { local in
+                    local.identifier == other.identifier
+                }
+            }
+            // Create a local copy.
+            .map { CBPeripheralMock(copy: $0, by: self) }
+        // Add those copies to the local manager.
+        connectedPeripheralsKnownByOtherManagers.forEach {
+            peripherals[$0.identifier] = $0
+        }
+        return localConnectedPeripherals + connectedPeripheralsKnownByOtherManagers
     }
     
     @available(iOS 13.0, *)
     public func registerForConnectionEvents(options: [CBConnectionEventMatchingOption : Any]?) {
         // Not implemented
+    }
+    
+    public func initiateConnectedPeripheral(name: String? = nil, services: [CBService]) {
+        let peripheral = CBPeripheralMock(name: name, services: services, connectedBy: self)
+        peripherals[peripheral.identifier] = peripheral
     }
     
 }
@@ -275,11 +331,34 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     public internal(set) var ancsAuthorized: Bool = false
     
     fileprivate init(basedOn peripheral: AdvertisingPeripheral, scannedBy central: CBCentralManagerMock) {
-        self.name = peripheral.advertisementData[CBAdvertisementDataLocalNameKey] as? String
         self._identifier = peripheral.identifier
+        self.name = peripheral.advertisementData[CBAdvertisementDataLocalNameKey] as? String
         self.queue = central.queue
     }
     
+    fileprivate init(name: String?, services: [CBService],
+                     connectedBy central: CBCentralManagerMock) {
+        self._identifier = UUID()
+        self.name = name
+        self.queue = central.queue
+        
+        // Emulate a connected device.
+        self.state = .connected
+        self.services = services
+        self.canSendWriteWithoutResponse = true
+    }
+    
+    fileprivate init(copy: CBPeripheralMock, by central: CBCentralManagerMock) {
+        self._identifier = copy._identifier
+        self.name = copy.name
+        self.queue = central.queue
+        
+        // State is not copied from manager to manager.
+        self.state = .disconnected
+        self.services = nil
+        self.canSendWriteWithoutResponse = false
+    }
+        
     private var _delegate: CBPeripheralDelegateType?
     
     public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
@@ -347,10 +426,28 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     }
 }
 
-private class WeakRef {
-    fileprivate private(set) weak var manager: CBCentralManagerMock?
+private class WeakRef<T: AnyObject> {
+    fileprivate private(set) weak var ref: T?
     
-    fileprivate init(_ manager: CBCentralManagerMock) {
-        self.manager = manager
+    fileprivate init(_ value: T) {
+        self.ref = value
     }
+}
+
+private extension Dictionary where Key == UUID, Value == CBPeripheralMock {
+    
+    subscript(identifiers: [UUID]) -> [CBPeripheralMock] {
+        return identifiers.compactMap { self[$0] }
+    }
+    
+    subscript(serviceUUIDs: [CBUUID]) -> [CBPeripheralMock] {
+        return filter { (_, peripheral) in
+            peripheral.services?
+                .contains(where: { service in
+                    serviceUUIDs.contains(service.uuid)
+                })
+            ?? false
+        }.map { $0.value }
+    }
+    
 }
