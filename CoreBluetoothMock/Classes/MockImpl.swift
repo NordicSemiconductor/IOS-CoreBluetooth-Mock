@@ -414,13 +414,6 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         // TODO
     }
     
-    public override func isEqual(_ object: Any?) -> Bool {
-        if let other = object as? CBPeripheralMock {
-            return _identifier == other._identifier
-        }
-        return false
-    }
-    
     public override var hash: Int {
         return _identifier.hashValue
     }

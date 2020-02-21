@@ -395,13 +395,6 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
         peripheral.openL2CAPChannel(PSM)
     }
     
-    public override func isEqual(_ object: Any?) -> Bool {
-        if let other = object as? CBPeripheralNative {
-            return identifier == other.identifier
-        }
-        return false
-    }
-    
     public override var hash: Int {
         return identifier.hashValue
     }
