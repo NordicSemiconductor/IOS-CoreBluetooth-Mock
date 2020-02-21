@@ -47,7 +47,6 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
 
     private var hapticGenerator: NSObject? // UIImpactFeedbackGenerator is available on iOS 10 and above
     private var blinkyPeripheral: BlinkyPeripheral!
-    private var centralManager: CBCentralManager!
     
     // MARK: - Public API
     
@@ -83,7 +82,7 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
     
     // MARK: - Implementation
     
-    private func handleSwitchValueChange(newValue isOn: Bool){
+    private func handleSwitchValueChange(newValue isOn: Bool) {
         if isOn {
             blinkyPeripheral.turnOnLED()
             ledStateLabel.text = "ON".localized
