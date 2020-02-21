@@ -102,6 +102,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     }
     
     private func initialize() {
+        // Let's say this takes 10 ms. Less or more.
         queue.asyncAfter(deadline: .now() + .milliseconds(10)) { [weak self] in
             if let self = self {
                 CBCentralManagerMock.managers.append(WeakRef(self))
@@ -213,32 +214,57 @@ public class CBCentralManagerMock: CBCentralManagerType {
     }
     
     public func connect(_ peripheral: CBPeripheralType, options: [String : Any]?) {
-//        if let mock = peripheral as? CBPeripheralMock,
-//            mock.state == .disconnected {
-//            mock.state = .connecting
-//            queue.asyncAfter(deadline: .now() + .milliseconds(30)) {
-//                mock.state = .connected
-//                self.delegate?.centralManager(self, didConnect: mock)
-//            }
-//        }
+        // Central manager must be in powered on state.
+        guard state == .poweredOn else {
+            return
+        }
+        if let o = options, !o.isEmpty {
+            NSLog("Warning: Connection options are not supported when mocking")
+        }
+        // Ignore peripherals that are not mocks, or are not in disconnected state.
+        guard let mock = peripheral as? CBPeripheralMock,
+              mock.state == .disconnected else {
+            return
+        }
+        // The peripheral must come from this central manager. Ignore other.
+        // To connect a peripheral obtained using another central manager
+        // use `retrievePeripherals(withIdentifiers:)` or
+        // `retrieveConnectedPeripherals(withServices:)`.
+        guard peripherals.values.contains(mock) else {
+            return
+        }
+        
+        if let (services, mtu) = mockDelegate?.centralManager(self,
+                                        initiatedConnectionToPeripheral: mock) {
+            mock.allServices = services
+            mock.mtu = mtu
+            mock.state = .connecting
+            queue.asyncAfter(deadline: .now() + .milliseconds(30)) {
+                mock.state = .connected
+                self.delegate?.centralManager(self, didConnect: mock)
+            }
+        }
     }
     
     public func cancelPeripheralConnection(_ peripheral: CBPeripheralType) {
-//        if let mock = peripheral as? CBPeripheralMock,
-//            peripheral.state == .connected || peripheral.state == .connecting {
-//            if #available(iOS 9.0, *) {
-//                mock.state = .disconnecting
-//            }
-//            queue.asyncAfter(deadline: .now() + .milliseconds(10)) {
-//                mock.state = .disconnected
-//                self.delegate?.centralManager(self, didConnect: mock)
-//            }
-//        }
+        if let mock = peripheral as? CBPeripheralMock,
+            peripheral.state == .connected || peripheral.state == .connecting {
+            if #available(iOS 9.0, *) {
+                mock.state = .disconnecting
+            }
+            queue.asyncAfter(deadline: .now() + .milliseconds(10)) {
+                mock.state = .disconnected
+                mock.services = nil
+                self.delegate?.centralManager(self,
+                                              didDisconnectPeripheral: mock,
+                                              error: nil)
+            }
+        }
     }
     
     public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralType] {
+        // Starting from iOS 13, this method returns peripherals only in ON state.
         guard state == .poweredOn else {
-            // Starting from iOS 13, this method returns peripherals only in ON state.
             return []
         }
         // Get the peripherals already known to this central manager.
@@ -307,7 +333,17 @@ public class CBCentralManagerMock: CBCentralManagerType {
         // Not implemented
     }
     
-    public func initiateConnectedPeripheral(name: String? = nil, services: [CBService]) {
+    /// This method adds a mock connected peripheral to the central manager,
+    /// as if it was connected by another application.
+    ///
+    /// The peripheral can afterwards be obtained using
+    /// `retrieveConnectedPeripherals(withServices:)`. The returned peripheral
+    /// will have state `.disconnected` and needs to be connected using the
+    /// central manager instance that retrieved it.
+    /// - Parameters:
+    ///   - name: The optional peripheral name.
+    ///   - services: List of device services.
+    public func initiateConnectedPeripheral(name: String? = nil, services: [CBServiceMock]) {
         let peripheral = CBPeripheralMock(name: name, services: services, connectedBy: self)
         peripherals[peripheral.identifier] = peripheral
     }
@@ -319,16 +355,26 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     
     private let queue: DispatchQueue
     private let _identifier: UUID
+    /// A list of all services. The `services` returns only discovered services,
+    /// while this list contains all.
+    fileprivate var allServices: [CBServiceType]? = nil {
+        didSet {
+            allServices?.forEach {
+                $0.peripheral = self
+            }
+        }
+    }
+    fileprivate var mtu: Int = 0
     
     public override var identifier: UUID {
         return _identifier
     }
     
-    public internal(set) var name: String?
-    public internal(set) var state: CBPeripheralState = .disconnected
-    public internal(set) var services: [CBService]? = nil
-    public internal(set) var canSendWriteWithoutResponse: Bool = false
-    public internal(set) var ancsAuthorized: Bool = false
+    public fileprivate(set) var name: String?
+    public fileprivate(set) var state: CBPeripheralState = .disconnected
+    public fileprivate(set) var services: [CBServiceType]? = nil
+    public fileprivate(set) var canSendWriteWithoutResponse: Bool = false
+    public fileprivate(set) var ancsAuthorized: Bool = false
     
     fileprivate init(basedOn peripheral: AdvertisingPeripheral, scannedBy central: CBCentralManagerMock) {
         self._identifier = peripheral.identifier
@@ -336,16 +382,17 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         self.queue = central.queue
     }
     
-    fileprivate init(name: String?, services: [CBService],
+    fileprivate init(name: String?, services: [CBServiceType],
                      connectedBy central: CBCentralManagerMock) {
         self._identifier = UUID()
         self.name = name
         self.queue = central.queue
         
-        // Emulate a connected device.
-        self.state = .connected
-        self.services = services
-        self.canSendWriteWithoutResponse = true
+        // Emulate a device connected by other central manager.
+        // It must be connected using this central manager before use.
+        self.state = .disconnected
+        self.allServices = services
+        self.canSendWriteWithoutResponse = false
     }
     
     fileprivate init(copy: CBPeripheralMock, by central: CBCentralManagerMock) {
@@ -358,30 +405,89 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         self.services = nil
         self.canSendWriteWithoutResponse = false
     }
-        
-    private var _delegate: CBPeripheralDelegateType?
     
     public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
-//        if serviceUUIDs?.contains(BlinkyPeripheral.nordicBlinkyServiceUUID) ?? true {
-//            queue.asyncAfter(deadline: .now() + .milliseconds(40)) {
-//                self.delegate?.peripheral(self, didDiscoverServices: nil)
-//            }
-//        }
+        guard state == .connected, let allServices = allServices else {
+            return
+        }
+        
+        services = services ?? []
+        services = services! + allServices
+            // Filter all device services that match given list (if set).
+            .filter { serviceUUIDs?.contains($0.uuid) ?? true }
+            // Filter those of them, that are not already in discovered services.
+            .filter { s in !services!.contains(where: { ds in s.identifier == ds.identifier }) }
+            // Copy the service info, without included services or characteristics.
+            .map { CBServiceType(shallowCopy: $0) }
+        // Service discovery takes some time. Let's say 100 ms.
+        queue.asyncAfter(deadline: .now() + .milliseconds(100)) {
+            self.delegate?.peripheral(self, didDiscoverServices: nil)
+        }
     }
     
-    public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?, for service: CBService) {
-//        if service == BlinkyPeripheral.nordicBlinkyServiceUUID {
-//            queue.asyncAfter(deadline: .now() + .milliseconds(40)) {
-//                self.delegate?.peripheral(self, didDiscoverCharacteristicsFor: service, error: nil)
-//            }
-//        }
+    public func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
+                                         for service: CBServiceType) {
+        guard state == .connected, let allServices = allServices else {
+            return
+        }
+        guard let services = services, services.contains(service),
+              let originalService = allServices.first(where: { $0.identifier == service.identifier} ) else {
+            return
+        }
+        guard let originalIncludedServices = originalService._includedServices else {
+            return
+        }
+        
+        service._includedServices = service._includedServices ?? []
+        service._includedServices = service._includedServices! +
+            originalIncludedServices
+                // Filter all included service that match given list (if set).
+                .filter { includedServiceUUIDs?.contains($0.uuid) ?? true }
+                // Filter those of them, that are not already in discovered services.
+                .filter { s in !service._includedServices!.contains(where: { ds in s.identifier == ds.identifier }) }
+                // Copy the service info, without included characterisitics.
+                .map { CBServiceType(shallowCopy: $0) }
+            queue.asyncAfter(deadline: .now() + .milliseconds(40)) {
+                self.delegate?.peripheral(self,
+                                          didDiscoverIncludedServicesFor: service,
+                                          error: nil)
+            }
     }
     
-    public func discoverDescriptors(for characteristic: CBCharacteristic) {
+    public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
+                                        for service: CBServiceType) {
+        guard state == .connected, let allServices = allServices else {
+            return
+        }
+        guard let services = services, services.contains(service),
+              let originalService = allServices.first(where: { $0.identifier == service.identifier} ) else {
+            return
+        }
+        guard let originalCharacteristics = originalService._characteristics else {
+            return
+        }
+        
+        service._characteristics = service._characteristics ?? []
+        service._characteristics = service._characteristics! +
+            originalCharacteristics
+                // Filter all service characteristics that match given list (if set).
+                .filter { characteristicUUIDs?.contains($0.uuid) ?? true }
+                // Filter those of them, that are not already in discovered services.
+                .filter { c in !service._characteristics!.contains(where: { dc in c.identifier == dc.identifier }) }
+                // Copy the characteristic info, without included descriptors or value.
+                .map { CBCharacteristicType(shallowCopy: $0, in: service) }
+            queue.asyncAfter(deadline: .now() + .milliseconds(40)) {
+                self.delegate?.peripheral(self,
+                                          didDiscoverCharacteristicsFor: service,
+                                          error: nil)
+            }
+    }
+    
+    public func discoverDescriptors(for characteristic: CBCharacteristicType) {
         // TODO
     }
     
-    public func readValue(for characteristic: CBCharacteristic) {
+    public func readValue(for characteristic: CBCharacteristicType) {
 //        if characteristic.uuid == BlinkyPeripheral.ledCharacteristicUUID {
 //            queue.asyncAfter(deadline: .now() + .milliseconds(40)) {
 //                self.delegate?.peripheral(self, didUpdateValueFor: characteristic, error: nil)
@@ -389,25 +495,45 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
 //        }
     }
     
-    public func readValue(for descriptor: CBDescriptor) {
+    public func readValue(for descriptor: CBDescriptorType) {
         // TODO
     }
     
     public func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int {
-        // TODO
-        return 0
+        guard state == .connected else {
+            return 0
+        }
+        return type == .withResponse ? 512 : max(0, min(517 - 3, mtu - 3))
     }
     
-    public func writeValue(_ data: Data, for characteristic: CBCharacteristic, type: CBCharacteristicWriteType) {
+    public func writeValue(_ data: Data,
+                           for characteristic: CBCharacteristicType,
+                           type: CBCharacteristicWriteType) {
         // TODO
     }
     
-    public func writeValue(_ data: Data, for descriptor: CBDescriptor) {
+    public func writeValue(_ data: Data, for descriptor: CBDescriptorType) {
         // TODO
     }
     
-    public func setNotifyValue(_ enabled: Bool, for characteristic: CBCharacteristic) {
-        // TODO
+    public func setNotifyValue(_ enabled: Bool,
+                               for characteristic: CBCharacteristicType) {
+        guard state == .connected else {
+            return
+        }
+        guard let services = services,
+            services.contains(where: { $0._characteristics?.contains(characteristic) ?? false }) else {
+            return
+        }
+        guard enabled != characteristic.isNotifying else {
+            return
+        }
+        queue.asyncAfter(deadline: .now() + .microseconds(30)) {
+            characteristic.isNotifying = enabled
+            self.delegate?.peripheral(self,
+                                      didUpdateNotificationStateFor: characteristic,
+                                      error: nil)
+        }
     }
     
     public func openL2CAPChannel(_ PSM: CBL2CAPPSM) {

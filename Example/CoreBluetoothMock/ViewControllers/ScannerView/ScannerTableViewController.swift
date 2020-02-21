@@ -67,11 +67,12 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
     override func viewDidLoad() {
         super.viewDidLoad()
         CBCentralManagerMock.setInitialState(.poweredOn)
-        centralManager = CBCentralManagerFactory.instance(forceMock: true)
+        centralManager = CBCentralManagerFactory.instance(forceMock: false)
         centralManager.mockDelegate = BlinkyCentralManagerMock()
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
-            CBCentralManagerMock.powerOff()
-        }
+        // This will disconnect mock central manager in 5 seconds.
+        //        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
+        //            CBCentralManagerMock.powerOff()
+        //        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

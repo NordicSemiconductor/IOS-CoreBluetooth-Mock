@@ -33,32 +33,69 @@ import CoreBluetooth
 import CoreBluetoothMock
 
 class BlinkyCentralManagerMock: CBCentralManagerMockDelegate {
+    private let blinkyId = UUID()
     
     func centralManager(_ central: CBCentralManagerMock,
                         didStartScanningForPeripheralsWithServices serviceUUIDs: [CBUUID]?)
         -> [AdvertisingPeripheral] {
             
-        let blinky = AdvertisingPeripheral(advertisementData: [
+        let blinky = AdvertisingPeripheral(identifier: blinkyId,
+                                advertisementData: [
                                     CBAdvertisementDataLocalNameKey : "nRF Blinky",
                                     CBAdvertisementDataServiceUUIDsKey : [BlinkyPeripheral.nordicBlinkyServiceUUID],
                                     CBAdvertisementDataIsConnectable : true as NSNumber
                                 ],
-                                advertisingInterval: 2.250,
+                                advertisingInterval: 0.250, // [ms]
                                 proximity: .near)
             
-        let other = AdvertisingPeripheral(advertisementData: [
+        let hrm = AdvertisingPeripheral(advertisementData: [
                                    CBAdvertisementDataLocalNameKey : "NordicHRM",
                                    CBAdvertisementDataServiceUUIDsKey : [
                                        CBUUID(string: "180D"), // Heart Rate
-                                       CBUUID(string: "180A"), // Device Information
-                                       BlinkyPeripheral.nordicBlinkyServiceUUID
+                                       CBUUID(string: "180A")  // Device Information
                                    ],
                                    CBAdvertisementDataIsConnectable : true as NSNumber
                                ],
-                               advertisingInterval: 1.100,
+                               advertisingInterval: 0.100, // [ms]
                                proximity: .immediate)
+                                   
+        let beacon = AdvertisingPeripheral(advertisementData: [
+                                  CBAdvertisementDataServiceUUIDsKey : [
+                                      CBUUID(string: "FEAA")  // Eddystone
+                                  ],
+                                  CBAdvertisementDataServiceDataKey : [
+                                    // Physical Web beacon: 10ee03676f2e676c2f7049576466972
+                                    // type: URL
+                                    // TX Power: -18 dBm
+                                    // URL: https://goo.gl/pIWdir -> Thingy:52
+                                      CBUUID(string: "FEAA") : Data(base64Encoded: "EO4DZ28uZ2wvcElXZGaXIA==")
+                                  ]
+                              ],
+                              advertisingInterval: 1.000, // [ms]
+                              proximity: .far)
             
-        return [blinky, other]
+        return [blinky, hrm, beacon]
+    }
+    
+    func centralManager(_ central: CBCentralManagerMock,
+                        initiatedConnectionToPeripheral peripheral: CBPeripheralMock)
+        -> ([CBServiceMock], mtu: Int)? {
+        if peripheral.identifier == blinkyId {
+            let blinkyService = CBServiceMock(
+                type: BlinkyPeripheral.nordicBlinkyServiceUUID,
+                primary: true)
+            let buttonCharacteristic = CBCharacteristicMock(
+                type: BlinkyPeripheral.buttonCharacteristicUUID,
+                properties: [.notify, .read])
+            let cccd = CBClientCharacteristicConfigurationDescriptorMock()
+            buttonCharacteristic.descriptors = [cccd]
+            let ledCharacteristic = CBCharacteristicMock(
+                type: BlinkyPeripheral.ledCharacteristicUUID,
+                properties: [.write, .read])
+            blinkyService.characteristics = [ledCharacteristic, buttonCharacteristic]
+            return ([blinkyService], mtu: 251)
+        }
+        return nil
     }
     
 }

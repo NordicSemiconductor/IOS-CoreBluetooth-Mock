@@ -225,65 +225,108 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
         
         func peripheral(_ peripheral: CBPeripheral,
                         didDiscoverServices error: Error?) {
+            smartCopy(peripheral.services)
             impl.delegate?.peripheral(impl, didDiscoverServices: error)
         }
         
         func peripheral(_ peripheral: CBPeripheral,
                         didDiscoverIncludedServicesFor service: CBService,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didDiscoverIncludedServicesFor: service,
-                                      error: error)
+            smartCopy(peripheral.services)
+            usingMock(of: service) { peripheral, delegate, service in
+                delegate.peripheral(peripheral,
+                                    didDiscoverIncludedServicesFor: service,
+                                    error: error)
+            }
         }
         
         func peripheral(_ peripheral: CBPeripheral,
                         didDiscoverCharacteristicsFor service: CBService,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didDiscoverCharacteristicsFor: service,
-                                      error: error)
+            smartCopy(peripheral.services)
+            usingMock(of: service) { peripheral, delegate, service in
+                delegate.peripheral(peripheral,
+                                    didDiscoverCharacteristicsFor: service,
+                                    error: error)
+            }
         }
         
         func peripheral(_ peripheral: CBPeripheral,
                         didDiscoverDescriptorsFor characteristic: CBCharacteristic,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didDiscoverDescriptorsFor: characteristic,
-                                      error: error)
+            smartCopy(peripheral.services)
+            usingMock(of: characteristic) { peripheral, delegate, characteristic in
+                delegate.peripheral(peripheral,
+                                    didDiscoverDescriptorsFor: characteristic,
+                                    error: error)
+            }
         }
 
         @available(iOS 7.0, *)
         func peripheral(_ peripheral: CBPeripheral,
                         didModifyServices invalidatedServices: [CBService]) {
-            impl.delegate?.peripheral(impl, didModifyServices: invalidatedServices)
+            var invalidatedServiceMocks: [CBServiceType] = []
+            invalidatedServices.forEach { service in
+                if let services = impl.mockServices,
+                   let index = services
+                    .firstIndex(where: { $0.service == service}) {
+                    invalidatedServiceMocks.append(services[index])
+                    impl.mockServices?.remove(at: index)
+                }
+            }
+            impl.delegate?.peripheral(impl, didModifyServices: invalidatedServiceMocks)
         }
         
         func peripheral(_ peripheral: CBPeripheral,
                         didUpdateNotificationStateFor characteristic: CBCharacteristic,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didUpdateNotificationStateFor: characteristic,
-                                      error: error)
+            usingMock(of: characteristic) { peripheral, delegate, characteristic in
+                delegate.peripheral(peripheral,
+                                    didUpdateNotificationStateFor: characteristic,
+                                    error: error)
+            }
         }
         
         func peripheral(_ peripheral: CBPeripheral,
                         didWriteValueFor characteristic: CBCharacteristic,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didWriteValueFor: characteristic, error: error)
+            usingMock(of: characteristic) { peripheral, delegate, characteristic in
+                delegate.peripheral(peripheral,
+                                    didWriteValueFor: characteristic,
+                                    error: error)
+            }
         }
         
         func peripheral(_ peripheral: CBPeripheral,
                         didWriteValueFor descriptor: CBDescriptor,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didWriteValueFor: descriptor, error: error)
+            usingMock(of: descriptor) { peripheral, delegate, descriptor in
+                delegate.peripheral(peripheral,
+                                    didWriteValueFor: descriptor,
+                                    error: error)
+            }
         }
         
         func peripheral(_ peripheral: CBPeripheral,
                         didUpdateValueFor characteristic: CBCharacteristic,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didUpdateValueFor: characteristic, error: error)
+            usingMock(of: characteristic) { peripheral, delegate, mockCharacteristic in
+                mockCharacteristic.value = characteristic.value
+                delegate.peripheral(peripheral,
+                                    didUpdateValueFor: mockCharacteristic,
+                                    error: error)
+            }
         }
         
         func peripheral(_ peripheral: CBPeripheral,
                         didUpdateValueFor descriptor: CBDescriptor,
                         error: Error?) {
-            impl.delegate?.peripheral(impl, didUpdateValueFor: descriptor, error: error)
+            usingMock(of: descriptor) { peripheral, delegate, mockDescriptor in
+                mockDescriptor.value = descriptor.value
+                delegate.peripheral(peripheral,
+                                    didUpdateValueFor: mockDescriptor,
+                                    error: error)
+            }
         }
         
         func peripheral(_ peripheral: CBPeripheral,
@@ -301,6 +344,81 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
                         didOpen channel: CBL2CAPChannel?,
                         error: Error?) {
             impl.delegate?.peripheral(impl, didOpen: channel, error: error)
+        }
+        
+        /// Updates the local list of serivces with received ones.
+        /// - Parameter services: New list of services.
+        private func smartCopy(_ services: [CBService]?) {
+            guard let services = services else {
+                return
+            }
+            // So far the "smart" copy isn't that smart and just replaces
+            // all old references with new ones. The old should still work,
+            // as they have the correct native references and isEqual also
+            // compares them. But ideally, the copy should only add new
+            // attributes, without replacing any existing.
+            // TODO: Implement smart copy of services.
+            impl.mockServices = services.map { CBServiceNative($0, in: impl) }            
+        }
+        
+        /// Returns the wrapper for the native CBService.
+        /// - Parameter service: The native service.
+        private func mock(of service: CBService) -> CBServiceNative? {
+            return impl.mockServices?.first { $0.service == service }
+        }
+        
+        /// Returns the wrapper for the native CBCharacteristic.
+        /// - Parameter characteristic: The native characteristic.
+        private func mock(of characteristic: CBCharacteristic) -> CBCharacteristicNative? {
+            let service = mock(of: characteristic.service)
+            return (service?._characteristics as? [CBCharacteristicNative])?
+                .first { $0.characteristic == characteristic }
+        }
+        
+        /// Returns the wrapper for the native CBDescriptor.
+        /// - Parameter descriptor: The native descriptor.
+        private func mock(of descriptor: CBDescriptor) -> CBDescriptorNative? {
+            let characteristic = mock(of: descriptor.characteristic)
+            return (characteristic?._descriptors as? [CBDescriptorNative])?
+                .first { $0.descriptor == descriptor }
+        }
+        
+        /// Calls the action with mock service.
+        /// - Parameters:
+        ///   - service: The native service.
+        ///   - action: The action to perform on its mock.
+        private func usingMock(of service: CBService,
+                               action: @escaping (CBPeripheralType, CBPeripheralDelegateType, CBServiceType) -> ()) {
+            if let delegate = impl.delegate,
+               let serviceMock = mock(of: service) {
+                action(impl, delegate, serviceMock)
+            }
+        }
+        
+        /// Calls the action with mock characteristic.
+        /// - Parameters:
+        ///   - service: The native characteristic.
+        ///   - action: The action to perform on its mock.
+        private func usingMock(of characteristic: CBCharacteristic,
+                               action: @escaping (CBPeripheralType, CBPeripheralDelegateType, CBCharacteristicType) -> ()) {
+            usingMock(of: characteristic.service) { p, d, s in
+                if let characteristicMock = self.mock(of: characteristic) {
+                    action(p, d, characteristicMock)
+                }
+            }
+        }
+        
+        /// Calls the action with mock descriptor.
+        /// - Parameters:
+        ///   - service: The native descriptor.
+        ///   - action: The action to perform on its mock.
+        private func usingMock(of descriptor: CBDescriptor,
+                               action: @escaping (CBPeripheralType, CBPeripheralDelegateType, CBDescriptorType) -> ()) {
+            usingMock(of: descriptor.characteristic) { p, d, c in
+                if let descriptorMock = self.mock(of: descriptor) {
+                    action(p, d, descriptorMock)
+                }
+            }
         }
     }
     
@@ -332,8 +450,9 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
         return peripheral.state
     }
     
-    public var services: [CBService]? {
-        return peripheral.services
+    private var mockServices: [CBServiceNative]?
+    public var services: [CBServiceType]? {
+        return mockServices
     }
     
     @available(iOS 11.0, *)
@@ -356,21 +475,36 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
         peripheral.discoverServices(serviceUUIDs)
     }
     
+    public func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
+                                         for service: CBServiceType) {
+        if let n = service as? CBServiceNative {
+            peripheral.discoverIncludedServices(includedServiceUUIDs, for: n.service)
+        }
+    }
+    
     public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
-                                        for service: CBService) {
-        peripheral.discoverCharacteristics(characteristicUUIDs, for: service)
+                                        for service: CBServiceType) {
+        if let n = service as? CBServiceNative {
+            peripheral.discoverCharacteristics(characteristicUUIDs, for: n.service)
+        }
     }
     
-    public func discoverDescriptors(for characteristic: CBCharacteristic) {
-        peripheral.discoverDescriptors(for: characteristic)
+    public func discoverDescriptors(for characteristic: CBCharacteristicType) {
+        if let n = characteristic as? CBCharacteristicNative {
+            peripheral.discoverDescriptors(for: n.characteristic)
+        }
     }
     
-    public func readValue(for characteristic: CBCharacteristic) {
-        peripheral.readValue(for: characteristic)
+    public func readValue(for characteristic: CBCharacteristicType) {
+        if let n = characteristic as? CBCharacteristicNative {
+            peripheral.readValue(for: n.characteristic)
+        }
     }
     
-    public func readValue(for descriptor: CBDescriptor) {
-        peripheral.readValue(for: descriptor)
+    public func readValue(for descriptor: CBDescriptorType) {
+        if let n = descriptor as? CBDescriptorNative {
+            peripheral.readValue(for: n.descriptor)
+        }
     }
     
     @available(iOS 9.0, *)
@@ -378,16 +512,24 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
         return peripheral.maximumWriteValueLength(for: type)
     }
     
-    public func writeValue(_ data: Data, for characteristic: CBCharacteristic, type: CBCharacteristicWriteType) {
-        peripheral.writeValue(data, for: characteristic, type: type)
+    public func writeValue(_ data: Data, for characteristic: CBCharacteristicType,
+                           type: CBCharacteristicWriteType) {
+        if let n = characteristic as? CBCharacteristicNative {
+            peripheral.writeValue(data, for: n.characteristic, type: type)
+        }
     }
     
-    public func writeValue(_ data: Data, for descriptor: CBDescriptor) {
-        peripheral.writeValue(data, for: descriptor)
+    public func writeValue(_ data: Data, for descriptor: CBDescriptorType) {
+        if let n = descriptor as? CBDescriptorNative {
+            peripheral.writeValue(data, for: n.descriptor)
+        }
     }
     
-    public func setNotifyValue(_ enabled: Bool, for characteristic: CBCharacteristic) {
-        peripheral.setNotifyValue(enabled, for: characteristic)
+    public func setNotifyValue(_ enabled: Bool,
+                               for characteristic: CBCharacteristicType) {
+        if let n = characteristic as? CBCharacteristicNative {
+            peripheral.setNotifyValue(enabled, for: n.characteristic)
+        }
     }
     
     @available(iOS 11.0, *)

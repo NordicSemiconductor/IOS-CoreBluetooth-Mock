@@ -89,4 +89,22 @@ public protocol CBCentralManagerMockDelegate: class {
     func centralManager(_ central: CBCentralManagerMock,
                         didStartScanningForPeripheralsWithServices serviceUUIDs: [CBUUID]?) -> [AdvertisingPeripheral]
     
+    /// Method called when the central manager initiated connection to the
+    /// given peripheral. If the peripheral is connectable, and the connection
+    /// should succeed, the method should return list of services. Otherwise
+    /// <i>nil</i> should be returned.
+    ///
+    /// This method will not be called if the peripheral was already connected
+    /// by another central manager, or was set as initially connected using
+    /// `initiateConnectedPeripheral(name:services:)` in any mock central manager.
+    /// - Parameters:
+    ///   - central: The central manager used for connection.
+    ///   - peripheral: The target peripheral.
+    /// - Returns: List of device services, if connection should succeed, or
+    ///            <i>nil</i> if device is not connectable or out of range, and
+    ///            the MTU. iOS requests MTU 251 by default after connection,
+    ///            but the device does not need to support it. The highest
+    ///            possible MTU allowed by Bluetooth specification is 517.
+    func centralManager(_ central: CBCentralManagerMock,
+                        initiatedConnectionToPeripheral peripheral: CBPeripheralMock) -> ([CBServiceMock], mtu: Int)?
 }
