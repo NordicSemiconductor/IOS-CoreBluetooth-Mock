@@ -32,70 +32,90 @@ import Foundation
 import CoreBluetooth
 import CoreBluetoothMock
 
-class BlinkyCentralManagerMock: CBCentralManagerMockDelegate {
-    private let blinkyId = UUID()
-    
-    func centralManager(_ central: CBCentralManagerMock,
-                        didStartScanningForPeripheralsWithServices serviceUUIDs: [CBUUID]?)
-        -> [AdvertisingPeripheral] {
-            
-        let blinky = AdvertisingPeripheral(identifier: blinkyId,
-                                advertisementData: [
-                                    CBAdvertisementDataLocalNameKey : "nRF Blinky",
-                                    CBAdvertisementDataServiceUUIDsKey : [BlinkyPeripheral.nordicBlinkyServiceUUID],
-                                    CBAdvertisementDataIsConnectable : true as NSNumber
-                                ],
-                                advertisingInterval: 0.250, // [ms]
-                                proximity: .near)
-            
-        let hrm = AdvertisingPeripheral(advertisementData: [
-                                   CBAdvertisementDataLocalNameKey : "NordicHRM",
-                                   CBAdvertisementDataServiceUUIDsKey : [
-                                       CBUUID(string: "180D"), // Heart Rate
-                                       CBUUID(string: "180A")  // Device Information
-                                   ],
-                                   CBAdvertisementDataIsConnectable : true as NSNumber
-                               ],
-                               advertisingInterval: 0.100, // [ms]
-                               proximity: .immediate)
-                                   
-        let beacon = AdvertisingPeripheral(advertisementData: [
-                                  CBAdvertisementDataServiceUUIDsKey : [
-                                      CBUUID(string: "FEAA")  // Eddystone
-                                  ],
-                                  CBAdvertisementDataServiceDataKey : [
-                                    // Physical Web beacon: 10ee03676f2e676c2f7049576466972
-                                    // type: URL
-                                    // TX Power: -18 dBm
-                                    // URL: https://goo.gl/pIWdir -> Thingy:52
-                                      CBUUID(string: "FEAA") : Data(base64Encoded: "EO4DZ28uZ2wvcElXZGaXIA==")
-                                  ]
-                              ],
-                              advertisingInterval: 1.000, // [ms]
-                              proximity: .far)
-            
-        return [blinky, hrm, beacon]
-    }
-    
-    func centralManager(_ central: CBCentralManagerMock,
-                        initiatedConnectionToPeripheral peripheral: CBPeripheralMock)
-        -> ([CBServiceMock], mtu: Int)? {
-        if peripheral.identifier == blinkyId {
-            let blinkyService = CBServiceMock(
-                type: BlinkyPeripheral.nordicBlinkyServiceUUID,
-                primary: true)
-            let buttonCharacteristic = CBCharacteristicMock(
-                type: BlinkyPeripheral.buttonCharacteristicUUID,
-                properties: [.notify, .read])
-            let cccd = CBClientCharacteristicConfigurationDescriptorMock()
-            buttonCharacteristic.descriptors = [cccd]
-            let ledCharacteristic = CBCharacteristicMock(
-                type: BlinkyPeripheral.ledCharacteristicUUID,
-                properties: [.write, .read])
-            blinkyService.characteristics = [ledCharacteristic, buttonCharacteristic]
-            return ([blinkyService], mtu: 251)
-        }
-        return nil
-    }
-    
-}
+// MARK: - Mock nRF Blinky
+
+private let blinkySerivce = CBServiceMock(
+    type: BlinkyPeripheral.nordicBlinkyServiceUUID, primary: true,
+    characteristics:
+        CBCharacteristicMock(
+            type: BlinkyPeripheral.buttonCharacteristicUUID,
+            properties: [.notify, .read],
+            descriptors: CBClientCharacteristicConfigurationDescriptorMock()
+        ),
+        CBCharacteristicMock(
+            type: BlinkyPeripheral.ledCharacteristicUUID,
+            properties: [.write, .read]
+        )
+)
+
+let blinky = MockPeripheral
+    .simulatePeripheral(proximity: .near)
+    .advertising(
+        advertisementData: [
+            CBAdvertisementDataLocalNameKey : "nRF Blinky",
+            CBAdvertisementDataServiceUUIDsKey : [BlinkyPeripheral.nordicBlinkyServiceUUID],
+            CBAdvertisementDataIsConnectable : true as NSNumber
+        ],
+        withInterval: 0.250,
+        alsoWhenConnected: false)
+    .connectable(
+        name: "nRF Blinky",
+        services: [blinkySerivce],
+        connectionInterval: 0.045,
+        mtu: 23)
+    .build()
+
+// MARK: - Mock Nordic HRM
+
+private let hrmSerivce = CBServiceMock(
+    type: CBUUID(string: "180D"), primary: true,
+    characteristics:
+        CBCharacteristicMock(
+            type: CBUUID(string: "2A37"), // Heart Rate Measurement
+            properties: [.notify],
+            descriptors: CBClientCharacteristicConfigurationDescriptorMock()
+        ),
+        CBCharacteristicMock(
+            type: CBUUID(string: "2A38"), // Body Sensor Location
+            properties: [.read]
+        )
+)
+
+let hrm = MockPeripheral
+    .simulatePeripheral(proximity: .far)
+    .advertising(
+        advertisementData: [
+            CBAdvertisementDataLocalNameKey : "NordicHRM",
+            CBAdvertisementDataServiceUUIDsKey : [
+                CBUUID(string: "180D"), // Heart Rate
+                CBUUID(string: "180A")  // Device Information
+            ],
+            CBAdvertisementDataIsConnectable : true as NSNumber
+        ],
+        withInterval: 0.100)
+    .connectable(
+        name: "NordicHRM",
+        services: [hrmSerivce],
+        connectionInterval: 0.250,
+        mtu: 251)
+    .build()
+
+// MARK: - Physical Web Beacon
+
+let thingy = MockPeripheral
+    .simulatePeripheral()
+    .advertising(
+        advertisementData: [
+            CBAdvertisementDataServiceUUIDsKey : [
+                CBUUID(string: "FEAA")  // Eddystone
+            ],
+            CBAdvertisementDataServiceDataKey : [
+                // Physical Web beacon: 10ee03676f2e676c2f7049576466972
+                // type: URL
+                // TX Power: -18 dBm
+                // URL: https://goo.gl/pIWdir -> Thingy:52
+                CBUUID(string: "FEAA") : Data(base64Encoded: "EO4DZ28uZ2wvcElXZGaXIA==")
+            ]
+        ],
+        withInterval: 2.500)
+    .build()

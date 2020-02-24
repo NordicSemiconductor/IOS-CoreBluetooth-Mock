@@ -32,13 +32,6 @@ import Foundation
 import CoreBluetooth
 
 public class CBCentralManagerNative: CBCentralManagerType {
-    // The mock delegate is not used in the native implementation.
-    public weak var mockDelegate: CBCentralManagerMockDelegate? {
-        didSet {
-            mockDelegate = nil
-        }
-    }
-    
     private let manager: CBCentralManager
     private var peripherals: [UUID : CBPeripheralNative] = [:]
     

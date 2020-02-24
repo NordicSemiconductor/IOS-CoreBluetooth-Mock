@@ -33,9 +33,6 @@ import CoreBluetooth
 
 public protocol CBCentralManagerType: class {
     
-    /// The delegate object that will be used for mocking purposes.
-    var mockDelegate: CBCentralManagerMockDelegate? { get set }
-    
     /// The delegate object that will receive central events.
     var delegate: CBCentralManagerDelegateType? { get set }
     

@@ -70,9 +70,10 @@ public class CBServiceType: CBAttribute {
         self.isPrimary = isPrimary
     }
     
-    internal init(shallowCopy service: CBServiceType) {
+    internal init(shallowCopy service: CBServiceType,
+                  for peripheral: CBPeripheralMock) {
         self.identifier = service.identifier
-        self.peripheral = service.peripheral
+        self.peripheral = peripheral
         self._uuid = service._uuid
         self.isPrimary = service.isPrimary
     }
@@ -117,8 +118,15 @@ public class CBServiceMock: CBServiceType {
         get { return _characteristics }
     }
     
-    public override init(type uuid: CBUUID, primary isPrimary: Bool) {
+    /// Returns a service, initialized with a service type and UUID.
+    /// - Parameters:
+    ///   - uuid: The Bluetooth UUID of the service.
+    ///   - isPrimary: The type of the service (primary or secondary).
+    ///   - characteristics: Optional list of characteristics.
+    public init(type uuid: CBUUID, primary isPrimary: Bool,
+                characteristics: CBCharacteristicMock...) {
         super.init(type: uuid, primary: isPrimary)
+        self.characteristics = characteristics
     }
 }
 
@@ -205,8 +213,15 @@ public class CBCharacteristicMock: CBCharacteristicType {
         get { return _descriptors }
     }
     
-    public override init(type uuid: CBUUID, properties: CBCharacteristicProperties) {
+    /// Returns an initialized characteristic.
+    /// - Parameters:
+    ///   - uuid: The Bluetooth UUID of the characteristic.
+    ///   - properties: The properties of the characteristic.
+    ///   - descriptors: Optional list of descriptors.
+    public init(type uuid: CBUUID, properties: CBCharacteristicProperties,
+                descriptors: CBDescriptorMock...) {
         super.init(type: uuid, properties: properties)
+        self.descriptors = descriptors
     }
 }
 
@@ -263,7 +278,7 @@ public class CBDescriptorMock: CBDescriptorType {
     }
 }
 
-public class CBClientCharacteristicConfigurationDescriptorMock: CBDescriptorType {
+public class CBClientCharacteristicConfigurationDescriptorMock: CBDescriptorMock {
     
     public init() {
         super.init(type: CBUUID(string: "2902"))
