@@ -240,6 +240,12 @@ public class CBDescriptorType: CBAttribute {
     /// The value of the descriptor.
     public internal(set) var value: Any?
     
+    /// Returns <i>true</i> if the descriptor is a Client Configuration
+    /// Characteristic Descriptor (CCCD); otherwise <i>false</i>.
+    internal var isCCCD: Bool {
+        return uuid.uuidString == "2902"
+    }
+    
     init(type uuid: CBUUID) {
         self.identifier = UUID()
         self.characteristic = uninitializedCharacteristic

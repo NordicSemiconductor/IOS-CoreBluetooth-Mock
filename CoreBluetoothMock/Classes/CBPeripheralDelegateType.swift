@@ -52,25 +52,25 @@ public protocol CBPeripheralDelegateType: class {
     func peripheral(_ peripheral: CBPeripheralType,
                     didDiscoverCharacteristicsFor service: CBServiceType,
                     error: Error?)
-
+                    
     func peripheral(_ peripheral: CBPeripheralType,
-                    didUpdateValueFor characteristic: CBCharacteristicType,
-                    error: Error?)
-
-    func peripheral(_ peripheral: CBPeripheralType,
-                    didWriteValueFor characteristic: CBCharacteristicType,
+                    didDiscoverDescriptorsFor characteristic: CBCharacteristicType,
                     error: Error?)
 
     func peripheral(_ peripheral: CBPeripheralType,
                     didUpdateNotificationStateFor characteristic: CBCharacteristicType,
                     error: Error?)
-    
+
     func peripheral(_ peripheral: CBPeripheralType,
-                    didDiscoverDescriptorsFor characteristic: CBCharacteristicType,
+                    didUpdateValueFor characteristic: CBCharacteristicType,
                     error: Error?)
-    
+                    
     func peripheral(_ peripheral: CBPeripheralType,
                     didUpdateValueFor descriptor: CBDescriptorType, error: Error?)
+
+    func peripheral(_ peripheral: CBPeripheralType,
+                    didWriteValueFor characteristic: CBCharacteristicType,
+                    error: Error?)
     
     func peripheral(_ peripheral: CBPeripheralType,
                     didWriteValueFor descriptor: CBDescriptorType, error: Error?)

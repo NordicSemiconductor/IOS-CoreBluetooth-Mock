@@ -20,7 +20,7 @@
 		52B537AF23FBE84900372948 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52B5379223FBE84900372948 /* LaunchScreen.storyboard */; };
 		52B537B023FBE84900372948 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52B5379423FBE84900372948 /* Main.storyboard */; };
 		52B537B223FBE85100372948 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537B123FBE85100372948 /* AppDelegate.swift */; };
-		52B537D823FC129400372948 /* BlinkyCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537D723FC129400372948 /* BlinkyCentralManagerMock.swift */; };
+		52B537D823FC129400372948 /* MockPeripherals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537D723FC129400372948 /* MockPeripherals.swift */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
 		EA1E241F1A9CD0E2110330D2 /* libPods-nRFBlinky.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E17323EF114A3CE4110FBE0 /* libPods-nRFBlinky.a */; };
@@ -84,7 +84,7 @@
 		52B537A223FBE84900372948 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Main.strings; sourceTree = "<group>"; };
 		52B537A323FBE84900372948 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Localizable.strings; sourceTree = "<group>"; };
 		52B537B123FBE85100372948 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		52B537D723FC129400372948 /* BlinkyCentralManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlinkyCentralManagerMock.swift; sourceTree = "<group>"; };
+		52B537D723FC129400372948 /* MockPeripherals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPeripherals.swift; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* nRF Blinky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "nRF Blinky.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -179,7 +179,7 @@
 		52B537D623FC126600372948 /* Mock */ = {
 			isa = PBXGroup;
 			children = (
-				52B537D723FC129400372948 /* BlinkyCentralManagerMock.swift */,
+				52B537D723FC129400372948 /* MockPeripherals.swift */,
 			);
 			path = Mock;
 			sourceTree = "<group>";
@@ -345,10 +345,9 @@
 			};
 			buildConfigurationList = 607FACCB1AFB9204008FA782 /* Build configuration list for PBXProject "CoreBluetoothMock" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 				de,
@@ -459,7 +458,7 @@
 				52B537AC23FBE84900372948 /* BlinkyViewController.swift in Sources */,
 				52B537A723FBE84900372948 /* BlinkyPeripheral.swift in Sources */,
 				52B537AB23FBE84900372948 /* RootViewController.swift in Sources */,
-				52B537D823FC129400372948 /* BlinkyCentralManagerMock.swift in Sources */,
+				52B537D823FC129400372948 /* MockPeripherals.swift in Sources */,
 				52B537B223FBE85100372948 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -667,6 +666,7 @@
 				PRODUCT_NAME = "nRF Blinky";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -684,6 +684,7 @@
 				PRODUCT_NAME = "nRF Blinky";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

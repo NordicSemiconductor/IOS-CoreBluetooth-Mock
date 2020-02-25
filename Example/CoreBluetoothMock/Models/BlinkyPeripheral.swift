@@ -269,7 +269,20 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegateType, CBCentralManagerDele
     }
     
     func centralManager(_ central: CBCentralManagerType,
-                        didDisconnectPeripheral peripheral: CBPeripheralType, error: Error?) {
+                        didFailToConnect peripheral: CBPeripheralType,
+                        error: Error?) {
+        if peripheral.identifier == basePeripheral.identifier {
+            if let error = error {
+                print("Connection failed: \(error)")
+            } else {
+                print("Connection failed: No error")
+            }
+        }
+    }
+    
+    func centralManager(_ central: CBCentralManagerType,
+                        didDisconnectPeripheral peripheral: CBPeripheralType,
+                        error: Error?) {
         if peripheral.identifier == basePeripheral.identifier {
             print("Blinky disconnected")
             delegate?.blinkyDidDisconnect()
@@ -279,7 +292,12 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegateType, CBCentralManagerDele
     // MARK: - CBPeripheralDelegate
     
     func peripheral(_ peripheral: CBPeripheralType,
-                    didUpdateValueFor characteristic: CBCharacteristicType, error: Error?) {
+                    didUpdateValueFor characteristic: CBCharacteristicType,
+                    error: Error?) {
+        guard error == nil else {
+            print("Operation failed: \(error!)")
+            return
+        }
         if characteristic == buttonCharacteristic {
             if let value = characteristic.value {
                 didReceiveButtonNotification(withValue: value)
@@ -295,8 +313,12 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegateType, CBCentralManagerDele
                     didUpdateNotificationStateFor characteristic: CBCharacteristicType,
                     error: Error?) {
         if characteristic == buttonCharacteristic {
+            assert(characteristic.service.isPrimary)
+            assert(characteristic.service.peripheral.identifier == basePeripheral.identifier)
+            assert(characteristic.isNotifying)
             print("Button notifications enabled")
-            delegate?.blinkyDidConnect(ledSupported: ledCharacteristic != nil, buttonSupported: buttonCharacteristic != nil)
+            delegate?.blinkyDidConnect(ledSupported: ledCharacteristic != nil,
+                                       buttonSupported: buttonCharacteristic != nil)
             readButtonValue()
             readLEDValue()
         }
@@ -308,6 +330,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegateType, CBCentralManagerDele
                 if service.uuid == BlinkyPeripheral.nordicBlinkyServiceUUID {
                     print("LED Button service found")
                     //Capture and discover all characteristics for the blinky service
+                    assert(service.isPrimary)
                     assert(service.characteristics == nil)
                     assert(service.peripheral.identifier == peripheral.identifier)
                     discoverCharacteristicsForBlinkyService(service)
@@ -344,6 +367,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegateType, CBCentralManagerDele
             readLEDValue()
         } else {
             print("Device not supported: Required characteristics not found.")
+            delegate?.blinkyDidConnect(ledSupported: false, buttonSupported: false)
         }
     }
     

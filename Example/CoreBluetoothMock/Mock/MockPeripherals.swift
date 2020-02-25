@@ -48,6 +48,38 @@ private let blinkySerivce = CBServiceMock(
         )
 )
 
+private class BlinkyMockPeripheralDelegate: MockPeripheralDelegate {
+    private var ledState: Bool = false
+    private var buttonState: Bool = false
+    
+    private var ledData: Data {
+        return ledState ? Data([0x01]) : Data([0x00])
+    }
+    
+    private var buttonData: Data {
+        return buttonState ? Data([0x01]) : Data([0x00])
+    }
+    
+    func peripheral(_ peripheral: MockPeripheral,
+                    didReceiveReadRequestFor characteristic: CBCharacteristicType)
+        -> Result<Data, Error> {
+            if characteristic.uuid == BlinkyPeripheral.ledCharacteristicUUID {
+                return .success(ledData)
+            } else {
+                return .success(buttonData)
+            }
+    }
+    
+    func peripheral(_ peripheral: MockPeripheral,
+                    didReceiveWriteRequestFor characteristic: CBCharacteristicType,
+                    data: Data) -> Result<Void, Error> {
+        if data.count > 0 {
+            ledState = data[0] != 0x00
+        }
+        return .success(())
+    }
+}
+
 let blinky = MockPeripheral
     .simulatePeripheral(proximity: .near)
     .advertising(
@@ -61,7 +93,8 @@ let blinky = MockPeripheral
     .connectable(
         name: "nRF Blinky",
         services: [blinkySerivce],
-        connectionInterval: 0.045,
+        delegate: BlinkyMockPeripheralDelegate(),
+        connectionInterval: 0.150,
         mtu: 23)
     .build()
 
@@ -81,6 +114,14 @@ private let hrmSerivce = CBServiceMock(
         )
 )
 
+private struct DummyMockPeripheralDelegate: MockPeripheralDelegate {
+    // Let's use default implementation.
+    // The HRM will not show up in the scan result, as it
+    // doesn't advertise with Nordic LED Button service.
+    // If you uncomment the line below, and try to connect,
+    // connection will fail on "Device not supported" error.
+}
+
 let hrm = MockPeripheral
     .simulatePeripheral(proximity: .far)
     .advertising(
@@ -88,7 +129,8 @@ let hrm = MockPeripheral
             CBAdvertisementDataLocalNameKey : "NordicHRM",
             CBAdvertisementDataServiceUUIDsKey : [
                 CBUUID(string: "180D"), // Heart Rate
-                CBUUID(string: "180A")  // Device Information
+                CBUUID(string: "180A"), // Device Information
+                // BlinkyPeripheral.nordicBlinkyServiceUUID // <- this line
             ],
             CBAdvertisementDataIsConnectable : true as NSNumber
         ],
@@ -96,6 +138,7 @@ let hrm = MockPeripheral
     .connectable(
         name: "NordicHRM",
         services: [hrmSerivce],
+        delegate: DummyMockPeripheralDelegate(),
         connectionInterval: 0.250,
         mtu: 251)
     .build()

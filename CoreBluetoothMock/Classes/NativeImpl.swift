@@ -273,9 +273,10 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
         func peripheral(_ peripheral: CBPeripheral,
                         didUpdateNotificationStateFor characteristic: CBCharacteristic,
                         error: Error?) {
-            usingMock(of: characteristic) { peripheral, delegate, characteristic in
+            usingMock(of: characteristic) { peripheral, delegate, mock in
+                mock.isNotifying = characteristic.isNotifying
                 delegate.peripheral(peripheral,
-                                    didUpdateNotificationStateFor: characteristic,
+                                    didUpdateNotificationStateFor: mock,
                                     error: error)
             }
         }

@@ -217,7 +217,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
             .forEach { mock in
                 // The central manager has scanned a device. Add it the list of known peripherals.
                 if peripherals[mock.identifier] == nil {
-                    peripherals[mock.identifier] = CBPeripheralMock(basedOn: mock, scannedBy: self)
+                    peripherals[mock.identifier] = CBPeripheralMock(basedOn: mock,
+                                                                    scannedBy: self)
                 }
                 // If no Service UUID was used, or the device matches at least one service,
                 // report it to the delegate (call will be delayed using a Timer).
@@ -244,7 +245,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
         scanTimers.removeAll()
     }
     
-    public func connect(_ peripheral: CBPeripheralType, options: [String : Any]?) {
+    public func connect(_ peripheral: CBPeripheralType,
+                        options: [String : Any]?) {
         // Central manager must be in powered on state.
         guard state == .poweredOn else {
             return
@@ -265,11 +267,21 @@ public class CBCentralManagerMock: CBCentralManagerType {
             return
         }
         
-        if mock.isConnectable {
+        if let delegate = mock.connectionDelegate,
+           let interval = mock.mock.connectionInterval {
             mock.state = .connecting
-            queue.asyncAfter(deadline: .now() + .milliseconds(30)) {
-                mock.state = .connected
-                self.delegate?.centralManager(self, didConnect: mock)
+            switch delegate.peripheralDidReceiveConnectionRequest(mock.mock) {
+            case .success:
+                queue.asyncAfter(deadline: .now() + interval) {
+                    mock.state = .connected
+                    self.delegate?.centralManager(self, didConnect: mock)
+                }
+            case .failure(let error):
+                queue.asyncAfter(deadline: .now() + interval) {
+                    mock.state = .connected
+                    self.delegate?.centralManager(self, didFailToConnect: mock,
+                                                  error: error)
+                }
             }
         }
     }
@@ -378,18 +390,22 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     public var delegate: CBPeripheralDelegateType?
     
     private let queue: DispatchQueue
-    private let mock: MockPeripheral
+    fileprivate let mock: MockPeripheral
     
     fileprivate var wasScanned: Bool   = false
     fileprivate var wasConnected: Bool = false
-    fileprivate var isConnectable: Bool {
-        return mock.services != nil
+    fileprivate var connectionDelegate: MockPeripheralDelegate? {
+        return mock.connectionDelegate
     }
     
     public override var identifier: UUID {
         return mock.identifier
     }
     public var name: String? {
+        // If the device wasn't connected and has just been scanned first time,
+        // return nil. When scanning continued, the Local Name from the
+        // advertisment data is returned. When the device was connected, the
+        // central reads the Device Name characteristic and returns cached value.
         return wasConnected ?
             mock.name :
             wasScanned ?
@@ -413,133 +429,355 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     }
     
     public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
-        guard state == .connected, let allServices = mock.services else {
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval,
+              let allServices = mock.services else {
             return
         }
         
-        services = services ?? []
-        services = services! + allServices
-            // Filter all device services that match given list (if set).
-            .filter { serviceUUIDs?.contains($0.uuid) ?? true }
-            // Filter those of them, that are not already in discovered services.
-            .filter { s in !services!.contains(where: { ds in s.identifier == ds.identifier }) }
-            // Copy the service info, without included services or characteristics.
-            .map { CBServiceType(shallowCopy: $0, for: self) }
-        // Service discovery takes some time. Let's say 100 ms.
-        queue.asyncAfter(deadline: .now() + .milliseconds(100)) {
-            self.delegate?.peripheral(self, didDiscoverServices: nil)
+        switch delegate.peripheral(mock,
+                                   didReceiveServiceDiscoveryRequest: serviceUUIDs) {
+        case .success:
+            services = services ?? []
+            let initialSize = services!.count
+            services = services! + allServices
+                // Filter all device services that match given list (if set).
+                .filter { serviceUUIDs?.contains($0.uuid) ?? true }
+                // Filter those of them, that are not already in discovered services.
+                .filter { s in !services!
+                    .contains(where: { ds in s.identifier == ds.identifier })
+                }
+                // Copy the service info, without included services or characteristics.
+                .map { CBServiceType(shallowCopy: $0, for: self) }
+            let newServicesCount = services!.count - initialSize
+            // Service discovery may takes the more time, the more services
+            // are discovered.
+            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) {
+                self.delegate?.peripheral(self, didDiscoverServices: nil)
+            }
+        case .failure(let error):
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self, didDiscoverServices: error)
+            }
         }
     }
     
     public func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
                                          for service: CBServiceType) {
-        guard state == .connected, let allServices = mock.services else {
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval,
+              let allServices = mock.services else {
             return
         }
         guard let services = services, services.contains(service),
-              let originalService = allServices.first(where: { $0.identifier == service.identifier} ) else {
+              let originalService = allServices.first(where: {
+                  $0.identifier == service.identifier
+              }) else {
             return
         }
-        guard let originalIncludedServices = originalService._includedServices else {
+        guard let originalIncludedServices = originalService.includedServices else {
             return
         }
         
-        service._includedServices = service._includedServices ?? []
-        service._includedServices = service._includedServices! +
-            originalIncludedServices
-                // Filter all included service that match given list (if set).
-                .filter { includedServiceUUIDs?.contains($0.uuid) ?? true }
-                // Filter those of them, that are not already in discovered services.
-                .filter { s in !service._includedServices!.contains(where: { ds in s.identifier == ds.identifier }) }
-                // Copy the service info, without included characterisitics.
-                .map { CBServiceType(shallowCopy: $0, for: self) }
-            queue.asyncAfter(deadline: .now() + .milliseconds(40)) {
+        switch delegate.peripheral(mock,
+                                   didReceiveIncludedServiceDiscoveryRequest: includedServiceUUIDs,
+                                   for: service as! CBServiceMock) {
+        case .success:
+            service._includedServices = service._includedServices ?? []
+            let initialSize = service._includedServices!.count
+            service._includedServices = service._includedServices! +
+                originalIncludedServices
+                    // Filter all included service that match given list (if set).
+                    .filter { includedServiceUUIDs?.contains($0.uuid) ?? true }
+                    // Filter those of them, that are not already in discovered services.
+                    .filter { s in !service._includedServices!
+                        .contains(where: { ds in s.identifier == ds.identifier })
+                    }
+                    // Copy the service info, without included characterisitics.
+                    .map { CBServiceType(shallowCopy: $0, for: self) }
+            let newServicesCount = service._includedServices!.count - initialSize
+            // Service discovery may takes the more time, the more services
+            // are discovered.
+            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) {
                 self.delegate?.peripheral(self,
                                           didDiscoverIncludedServicesFor: service,
                                           error: nil)
             }
+        case .failure(let error):
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didDiscoverIncludedServicesFor: service,
+                                          error: error)
+            }
+        }
+        
     }
     
     public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
                                         for service: CBServiceType) {
-        guard state == .connected, let allServices = mock.services else {
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval,
+              let allServices = mock.services else {
             return
         }
         guard let services = services, services.contains(service),
-              let originalService = allServices.first(where: { $0.identifier == service.identifier} ) else {
+              let originalService = allServices.first(where: {
+                  $0.identifier == service.identifier
+              }) else {
             return
         }
-        guard let originalCharacteristics = originalService._characteristics else {
+        guard let originalCharacteristics = originalService.characteristics else {
             return
         }
         
-        service._characteristics = service._characteristics ?? []
-        service._characteristics = service._characteristics! +
-            originalCharacteristics
-                // Filter all service characteristics that match given list (if set).
-                .filter { characteristicUUIDs?.contains($0.uuid) ?? true }
-                // Filter those of them, that are not already in discovered services.
-                .filter { c in !service._characteristics!.contains(where: { dc in c.identifier == dc.identifier }) }
-                // Copy the characteristic info, without included descriptors or value.
-                .map { CBCharacteristicType(shallowCopy: $0, in: service) }
-            queue.asyncAfter(deadline: .now() + .milliseconds(40)) {
+        switch delegate.peripheral(mock,
+                                   didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs,
+                                   for: service) {
+        case .success:
+            service._characteristics = service._characteristics ?? []
+            let initialSize = service._characteristics!.count
+            service._characteristics = service._characteristics! +
+                originalCharacteristics
+                    // Filter all service characteristics that match given list (if set).
+                    .filter { characteristicUUIDs?.contains($0.uuid) ?? true }
+                    // Filter those of them, that are not already in discovered characteritics.
+                    .filter { c in !service._characteristics!
+                        .contains(where: { dc in c.identifier == dc.identifier })
+                    }
+                    // Copy the characteristic info, without included descriptors or value.
+                    .map { CBCharacteristicType(shallowCopy: $0, in: service) }
+            let newCharacteristicsCount = service._characteristics!.count - initialSize
+            // Characteristics discovery may takes the more time, the more characteristics
+            // are discovered.
+            queue.asyncAfter(deadline: .now() + interval * Double(newCharacteristicsCount)) {
                 self.delegate?.peripheral(self,
                                           didDiscoverCharacteristicsFor: service,
                                           error: nil)
             }
+        case .failure(let error):
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didDiscoverCharacteristicsFor: service,
+                                          error: error)
+            }
+        }
     }
     
     public func discoverDescriptors(for characteristic: CBCharacteristicType) {
-        // TODO
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval,
+              let allServices = mock.services else {
+            return
+        }
+        guard let services = services, services.contains(characteristic.service),
+              let originalService = allServices.first(where: {
+                  $0.identifier == characteristic.service.identifier
+              }),
+              let originalCharacteristic = originalService.characteristics?.first(where: {
+                  $0.identifier == characteristic.identifier
+              }) else {
+            return
+        }
+        guard let originalDescriptors = originalCharacteristic.descriptors else {
+            return
+        }
+        
+        switch delegate.peripheral(mock,
+                                   didReceiveDescriptorsDiscoveryRequestFor: characteristic) {
+        case .success:
+            characteristic._descriptors = characteristic._descriptors ?? []
+            let initialSize = characteristic._descriptors!.count
+            characteristic._descriptors = characteristic._descriptors! +
+                originalDescriptors
+                    // Filter those of them, that are not already in discovered descriptors.
+                    .filter { d in !characteristic._descriptors!
+                        .contains(where: { dd in d.identifier == dd.identifier })
+                    }
+                    // Copy the descriptors info, without the value.
+                    .map { CBDescriptorType(shallowCopy: $0, in: characteristic) }
+            let newDescriptorsCount = characteristic._descriptors!.count - initialSize
+            // Descriptors discovery may takes the more time, the more descriptors
+            // are discovered.
+            queue.asyncAfter(deadline: .now() + interval * Double(newDescriptorsCount)) {
+                self.delegate?.peripheral(self,
+                                          didDiscoverDescriptorsFor: characteristic,
+                                          error: nil)
+            }
+        case .failure(let error):
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didDiscoverDescriptorsFor: characteristic,
+                                          error: error)
+            }
+        }
     }
     
     public func readValue(for characteristic: CBCharacteristicType) {
-//        if characteristic.uuid == BlinkyPeripheral.ledCharacteristicUUID {
-//            queue.asyncAfter(deadline: .now() + .milliseconds(40)) {
-//                self.delegate?.peripheral(self, didUpdateValueFor: characteristic, error: nil)
-//            }
-//        }
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval else {
+            return
+        }
+        guard let services = services,
+              services.contains(characteristic.service) else {
+            return
+        }
+        switch delegate.peripheral(mock,
+                                   didReceiveReadRequestFor: characteristic) {
+        case .success(let data):
+            characteristic.value = data
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didUpdateValueFor: characteristic,
+                                          error: nil)
+            }
+        case .failure(let error):
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didUpdateValueFor: characteristic,
+                                          error: error)
+            }
+        }
     }
     
     public func readValue(for descriptor: CBDescriptorType) {
-        // TODO
-    }
-    
-    public func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int {
-        guard let mtu = mock.mtu, state == .connected else {
-            return 0
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval else {
+            return
         }
-        return type == .withResponse ? 512 : max(0, min(517 - 3, mtu - 3))
+        guard let services = services,
+              services.contains(descriptor.characteristic.service) else {
+            return
+        }
+        switch delegate.peripheral(mock,
+                                   didReceiveReadRequestFor: descriptor) {
+        case .success(let data):
+            descriptor.value = data
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didUpdateValueFor: descriptor,
+                                          error: nil)
+            }
+        case .failure(let error):
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didUpdateValueFor: descriptor,
+                                          error: error)
+            }
+        }
     }
     
     public func writeValue(_ data: Data,
                            for characteristic: CBCharacteristicType,
                            type: CBCharacteristicWriteType) {
-        // TODO
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval else {
+            return
+        }
+        guard let services = services,
+              services.contains(characteristic.service) else {
+            return
+        }
+        
+        if type == .withResponse {
+            switch delegate.peripheral(mock,
+                                       didReceiveWriteRequestFor: characteristic,
+                                       data: data) {
+            case .success:
+                queue.asyncAfter(deadline: .now() + interval) {
+                    self.delegate?.peripheral(self,
+                                              didWriteValueFor: characteristic,
+                                              error: nil)
+                }
+            case .failure(let error):
+                queue.asyncAfter(deadline: .now() + interval) {
+                    self.delegate?.peripheral(self,
+                                              didWriteValueFor: characteristic,
+                                              error: error)
+                }
+            }
+        } else {
+            delegate.peripheral(mock,
+                                didReceiveWriteCommandFor: characteristic,
+                                data: data)
+        }
     }
     
     public func writeValue(_ data: Data, for descriptor: CBDescriptorType) {
-        // TODO
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval else {
+            return
+        }
+        guard let services = services,
+              services.contains(descriptor.characteristic.service) else {
+            return
+        }
+        
+        switch delegate.peripheral(mock,
+                                   didReceiveWriteRequestFor: descriptor,
+                                   data: data) {
+        case .success:
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didWriteValueFor: descriptor,
+                                          error: nil)
+            }
+        case .failure(let error):
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didWriteValueFor: descriptor,
+                                          error: error)
+            }
+        }
+    }
+    
+    public func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int {
+        guard state == .connected,
+              let mtu = mock.mtu else {
+            return 0
+        }
+        return type == .withResponse ? 512 : mtu - 3
     }
     
     public func setNotifyValue(_ enabled: Bool,
                                for characteristic: CBCharacteristicType) {
-        guard state == .connected else {
+        guard state == .connected,
+              let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval else {
             return
         }
         guard let services = services,
-            services.contains(where: { $0._characteristics?.contains(characteristic) ?? false }) else {
+              services.contains(characteristic.service) else {
             return
         }
         guard enabled != characteristic.isNotifying else {
             return
         }
-        queue.asyncAfter(deadline: .now() + .microseconds(30)) {
-            characteristic.isNotifying = enabled
-            self.delegate?.peripheral(self,
-                                      didUpdateNotificationStateFor: characteristic,
-                                      error: nil)
-        }
+        
+        switch delegate.peripheral(mock,
+                                   didReceiveSetNotifyRequest: enabled,
+                                   for: characteristic) {
+        case .success:
+            queue.asyncAfter(deadline: .now() + interval) {
+                characteristic.isNotifying = enabled
+                self.delegate?.peripheral(self,
+                                          didUpdateNotificationStateFor: characteristic,
+                                          error: nil)
+            }
+        case .failure(let error):
+            queue.asyncAfter(deadline: .now() + interval) {
+                self.delegate?.peripheral(self,
+                                          didUpdateNotificationStateFor: characteristic,
+                                          error: error)
+            }
+        }        
     }
     
     public func openL2CAPChannel(_ PSM: CBL2CAPPSM) {
