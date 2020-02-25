@@ -386,6 +386,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
 }
 
+// MARK: - CBPeripheralMock implementation
+
 public class CBPeripheralMock: CBPeer, CBPeripheralType {
     public var delegate: CBPeripheralDelegateType?
     
@@ -417,6 +419,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     public fileprivate(set) var canSendWriteWithoutResponse: Bool = false
     public fileprivate(set) var ancsAuthorized: Bool = false
     
+    // MARK: Initializers
+    
     fileprivate init(basedOn mock: MockPeripheral,
                      scannedBy central: CBCentralManagerMock) {
         self.mock = mock
@@ -427,6 +431,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         self.mock = copy.mock
         self.queue = central.queue
     }
+    
+    // MARK: Service discovery
     
     public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
         guard state == .connected,
@@ -616,6 +622,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }
     }
     
+    // MARK: Read requests
+    
     public func readValue(for characteristic: CBCharacteristicType) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
@@ -671,6 +679,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             }
         }
     }
+    
+    // MARK: Write requests
     
     public func writeValue(_ data: Data,
                            for characteristic: CBCharacteristicType,
@@ -746,6 +756,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         return type == .withResponse ? 512 : mtu - 3
     }
     
+    // MARK: Enabling notifications and indications
+    
     public func setNotifyValue(_ enabled: Bool,
                                for characteristic: CBCharacteristicType) {
         guard state == .connected,
@@ -780,6 +792,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }        
     }
     
+    // MARK: Other
+    
     public func openL2CAPChannel(_ PSM: CBL2CAPPSM) {
         // TODO
     }
@@ -788,6 +802,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         return mock.identifier.hashValue
     }
 }
+
+// MARK: - Helpers
 
 private class WeakRef<T: AnyObject> {
     fileprivate private(set) weak var ref: T?
