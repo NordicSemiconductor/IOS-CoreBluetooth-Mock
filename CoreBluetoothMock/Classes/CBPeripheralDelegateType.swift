@@ -74,7 +74,8 @@ public protocol CBPeripheralDelegateType: class {
     
     func peripheral(_ peripheral: CBPeripheralType,
                     didWriteValueFor descriptor: CBDescriptorType, error: Error?)
-
+    
+    @available(iOS 11.0, *)
     func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheralType)
 
     @available(iOS 11.0, *)

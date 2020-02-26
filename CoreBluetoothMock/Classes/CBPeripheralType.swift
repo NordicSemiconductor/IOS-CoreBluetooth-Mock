@@ -64,6 +64,9 @@ public protocol CBPeripheralType: class {
     @available(iOS 13.0, *)
     var ancsAuthorized: Bool { get }
     
+    /// While connected, retrieves the current RSSI of the link.
+    func readRSSI()
+    
     /// Discovers available service(s) on the peripheral.
     /// - Parameter serviceUUIDs: A list of <code>CBUUID</code> objects
     ///                           representing the service types to be

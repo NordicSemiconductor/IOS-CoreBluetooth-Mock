@@ -311,6 +311,10 @@ fileprivate class CBPeripheralUninitialized: CBPeripheralType, CustomDebugString
         set { uninitialized() }
     }
     
+    func readRSSI() {
+        uninitialized()
+    }
+    
     func discoverServices(_ serviceUUIDs: [CBUUID]?) {
         uninitialized()
     }

@@ -328,9 +328,11 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
                         error: Error?) {
             impl.delegate?.peripheral(impl, didReadRSSI: RSSI, error: error)
         }
-        
+
         func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
-            impl.delegate?.peripheralIsReady(toSendWriteWithoutResponse: impl)
+            if #available(iOS 11.0, *) {
+                impl.delegate?.peripheralIsReady(toSendWriteWithoutResponse: impl)
+            }
         }
         
         @available(iOS 11.0, *)
@@ -463,6 +465,10 @@ public class CBPeripheralNative: CBPeer, CBPeripheralType {
     
     fileprivate init(_ peripheral: CBPeripheral) {
         self.peripheral = peripheral
+    }
+    
+    public func readRSSI() {
+        peripheral.readRSSI()
     }
     
     public func discoverServices(_ serviceUUIDs: [CBUUID]?) {

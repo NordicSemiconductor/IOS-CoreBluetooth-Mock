@@ -38,6 +38,9 @@ public class CBCentralManagerMock: CBCentralManagerType {
     private static var managers: [WeakRef<CBCentralManagerMock>] = []
     /// A list of peripherals known to the system.
     private static var mockPeripherals: [MockPeripheral] = []
+    /// Mock RSSI deviation. Returned RSSI values will be in range
+    /// &lt;base RSSI - deviation, base RSSI + deviation&gt;.
+    fileprivate static let rssiDeviation = 15 // dBm
     
     /// The global state of the Bluetooth adapter on the device.
     internal static var managerState: CBManagerStateType = .poweredOff {
@@ -45,10 +48,11 @@ public class CBCentralManagerMock: CBCentralManagerType {
             // For all existing managers...
             managers.forEach { weakRef in
                 if let manager = weakRef.ref {
-                    // ...stop scanning. If state changed to .poweredOn, scanning
-                    // must have been stopped before.
+                    // ...stop scanning if state changed to any other state
+                    // than `.poweredOn`. Also, forget all peripherals.
                     if managerState != .poweredOn {
                         manager.stopScan()
+                        manager.peripherals.removeAll()
                     }
                     // ...and notify delegate.
                     manager.queue.async {
@@ -64,11 +68,10 @@ public class CBCentralManagerMock: CBCentralManagerType {
     public var state: CBManagerStateType {
         return initialized ? CBCentralManagerMock.managerState : .unknown
     }
-    public fileprivate(set) var isScanning: Bool
+    public private(set) var isScanning: Bool
 
-    private let rssiDeviation = 15 // dBm
     /// The dispatch queue used for all callbacks.
-    fileprivate let queue: DispatchQueue
+    private let queue: DispatchQueue
     /// Active timers reporting scan results.
     private var scanTimers: [Timer] = []
     /// A map of peripherals known to this central manager.
@@ -181,7 +184,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
         }
         // Emulate RSSI based on proximity. Apply some deviation.
         let rssi = mock.proximity.RSSI
-        let deviation = Int.random(in: -rssiDeviation...rssiDeviation)
+        let delta = CBCentralManagerMock.rssiDeviation
+        let deviation = Int.random(in: -delta...delta)
         delegate?.centralManager(self, didDiscover: peripheral,
                                  advertisementData: advertisementData,
                                  rssi: (rssi + deviation) as NSNumber)
@@ -218,7 +222,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
                 // The central manager has scanned a device. Add it the list of known peripherals.
                 if peripherals[mock.identifier] == nil {
                     peripherals[mock.identifier] = CBPeripheralMock(basedOn: mock,
-                                                                    scannedBy: self)
+                                                                    queue: queue)
                 }
                 // If no Service UUID was used, or the device matches at least one service,
                 // report it to the delegate (call will be delayed using a Timer).
@@ -254,9 +258,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
         if let o = options, !o.isEmpty {
             NSLog("Warning: Connection options are not supported when mocking")
         }
-        // Ignore peripherals that are not mocks, or are not in disconnected state.
-        guard let mock = peripheral as? CBPeripheralMock,
-              mock.state == .disconnected else {
+        // Ignore peripherals that are not mocks.
+        guard let mock = peripheral as? CBPeripheralMock else {
             return
         }
         // The peripheral must come from this central manager. Ignore other.
@@ -266,22 +269,13 @@ public class CBCentralManagerMock: CBCentralManagerType {
         guard peripherals.values.contains(mock) else {
             return
         }
-        
-        if let delegate = mock.connectionDelegate,
-           let interval = mock.mock.connectionInterval {
-            mock.state = .connecting
-            switch delegate.peripheralDidReceiveConnectionRequest(mock.mock) {
+        mock.connect { result in
+            switch result {
             case .success:
-                queue.asyncAfter(deadline: .now() + interval) {
-                    mock.state = .connected
-                    self.delegate?.centralManager(self, didConnect: mock)
-                }
+                self.delegate?.centralManager(self, didConnect: mock)
             case .failure(let error):
-                queue.asyncAfter(deadline: .now() + interval) {
-                    mock.state = .connected
-                    self.delegate?.centralManager(self, didFailToConnect: mock,
-                                                  error: error)
-                }
+                self.delegate?.centralManager(self, didFailToConnect: mock,
+                                              error: error)
             }
         }
     }
@@ -291,9 +285,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
         guard state == .poweredOn else {
             return
         }
-        // Ignore peripherals that are not mocks, or are not in disconnected state.
-        guard let mock = peripheral as? CBPeripheralMock,
-              mock.state == .connected || mock.state == .connecting else {
+        // Ignore peripherals that are not mocks.
+        guard let mock = peripheral as? CBPeripheralMock else {
             return
         }
         // It is not possible to cancel connection of a peripheral obtained
@@ -301,14 +294,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
         guard peripherals.values.contains(mock) else {
             return
         }
-        if #available(iOS 9.0, *) {
-            mock.state = .disconnecting
-        }
-        queue.asyncAfter(deadline: .now() + .milliseconds(10)) {
-            mock.state = .disconnected
-            mock.services = nil
-            self.delegate?.centralManager(self,
-                                          didDisconnectPeripheral: mock,
+        mock.disconnect() { _ in
+            self.delegate?.centralManager(self, didDisconnectPeripheral: mock,
                                           error: nil)
         }
     }
@@ -332,7 +319,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
                 CBCentralManagerMock.managers
                     .compactMap { $0.ref?.peripherals[i] }
             }
-            .map { CBPeripheralMock(copy: $0, by: self) }
+            .map { CBPeripheralMock(copy: $0, queue: queue) }
         peripheralsKnownByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
         }
@@ -371,7 +358,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
                 }
             }
             // Create a local copy.
-            .map { CBPeripheralMock(copy: $0, by: self) }
+            .map { CBPeripheralMock(copy: $0, queue: queue) }
         // Add those copies to the local manager.
         connectedPeripheralsKnownByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
@@ -381,7 +368,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     @available(iOS 13.0, *)
     public func registerForConnectionEvents(options: [CBConnectionEventMatchingOption : Any]?) {
-        // Not implemented
+        fatalError("Mock connection events are not implemented")
     }
     
 }
@@ -389,16 +376,27 @@ public class CBCentralManagerMock: CBCentralManagerType {
 // MARK: - CBPeripheralMock implementation
 
 public class CBPeripheralMock: CBPeer, CBPeripheralType {
-    public var delegate: CBPeripheralDelegateType?
     
+    /// The dispatch queue to call delegate methods on.
     private let queue: DispatchQueue
-    fileprivate let mock: MockPeripheral
+    /// The mock peripheral with user-defined implementatino.
+    private let mock: MockPeripheral
+    /// Size of the outgoing buffer. Only this many packets
+    /// can be written without response in a loop, without
+    /// waiting for `canSendWriteWithoutResponse`.
+    private let bufferSize =  20
+    /// The current buffer size.
+    private var availableWriteWithoutResponseBuffer: Int
+    private var _canSendWriteWithoutResponse: Bool = false
     
+    /// A flag set to <i>true</i> when the device was scanned
+    /// at least once.
     fileprivate var wasScanned: Bool   = false
+    /// A flag set to <i>true</i> when the device was connected
+    /// and iOS had chance to read device name.
     fileprivate var wasConnected: Bool = false
-    fileprivate var connectionDelegate: MockPeripheralDelegate? {
-        return mock.connectionDelegate
-    }
+    
+    public var delegate: CBPeripheralDelegateType?
     
     public override var identifier: UUID {
         return mock.identifier
@@ -414,22 +412,63 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                 mock.advertisementData?[CBAdvertisementDataLocalNameKey] as? String :
                 nil
     }
-    public fileprivate(set) var state: CBPeripheralState = .disconnected
-    public fileprivate(set) var services: [CBServiceType]? = nil
-    public fileprivate(set) var canSendWriteWithoutResponse: Bool = false
-    public fileprivate(set) var ancsAuthorized: Bool = false
+    @available(iOS 11.0, *)
+    public var canSendWriteWithoutResponse: Bool {
+        return _canSendWriteWithoutResponse
+    }
+    public private(set) var ancsAuthorized: Bool = false
+    public private(set) var state: CBPeripheralState = .disconnected
+    public private(set) var services: [CBServiceType]? = nil
     
     // MARK: Initializers
     
-    fileprivate init(basedOn mock: MockPeripheral,
-                     scannedBy central: CBCentralManagerMock) {
+    fileprivate init(basedOn mock: MockPeripheral, queue: DispatchQueue) {
         self.mock = mock
-        self.queue = central.queue
+        self.queue = queue
+        self.availableWriteWithoutResponseBuffer = bufferSize
     }
     
-    fileprivate init(copy: CBPeripheralMock, by central: CBCentralManagerMock) {
+    fileprivate init(copy: CBPeripheralMock, queue: DispatchQueue) {
         self.mock = copy.mock
-        self.queue = central.queue
+        self.queue = queue
+        self.availableWriteWithoutResponseBuffer = bufferSize
+    }
+    
+    // MARK: Connection
+    
+    fileprivate func connect(completion: @escaping (Result<Void, Error>) -> ()) {
+        // Ensure the device is connectable and disconnected.
+        guard let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval,
+              state == .disconnected else {
+            return
+        }
+        state = .connecting
+        let result = delegate.peripheralDidReceiveConnectionRequest(mock)
+        queue.asyncAfter(deadline: .now() + interval) {
+            if case .success = result {
+                self.state = .connected
+                self._canSendWriteWithoutResponse = true
+            }
+            completion(result)
+        }
+    }
+    
+    fileprivate func disconnect(withError error: Error? = nil,
+                                completion: @escaping (Error?) -> ()) {
+        // Ensure the device is connected.
+        guard let interval = mock.connectionInterval,
+              state == .connected || state == .connecting else {
+            return
+        }
+        if #available(iOS 9.0, *), case .connected = state {
+            state = .disconnecting
+        }
+        queue.asyncAfter(deadline: .now() + interval) {
+            self.state = .disconnected
+            self._canSendWriteWithoutResponse = false
+            completion(error)
+        }
     }
     
     // MARK: Service discovery
@@ -687,7 +726,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                            type: CBCharacteristicWriteType) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
+              let interval = mock.connectionInterval,
+              let mtu = mock.mtu else {
             return
         }
         guard let services = services,
@@ -700,7 +740,8 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                                        didReceiveWriteRequestFor: characteristic,
                                        data: data) {
             case .success:
-                queue.asyncAfter(deadline: .now() + interval) {
+                let packetsCount = max(1, (data.count + mtu - 2) / (mtu - 3))
+                queue.asyncAfter(deadline: .now() + interval * Double(packetsCount)) {
                     self.delegate?.peripheral(self,
                                               didWriteValueFor: characteristic,
                                               error: nil)
@@ -713,9 +754,25 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                 }
             }
         } else {
+            queue.sync {
+                guard availableWriteWithoutResponseBuffer > 0 else {
+                    return
+                }
+                availableWriteWithoutResponseBuffer -= 1
+                _canSendWriteWithoutResponse = false
+            }
             delegate.peripheral(mock,
                                 didReceiveWriteCommandFor: characteristic,
-                                data: data)
+                                data: data.subdata(in: 0..<mtu - 3))
+            queue.async {
+                self.queue.sync {
+                    self.availableWriteWithoutResponseBuffer += 1
+                    self._canSendWriteWithoutResponse = true
+                }
+                if #available(iOS 11.0, *) {
+                    self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
+                }
+            }
         }
     }
     
@@ -748,9 +805,9 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }
     }
     
+    @available(iOS 9.0, *)
     public func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int {
-        guard state == .connected,
-              let mtu = mock.mtu else {
+        guard state == .connected, let mtu = mock.mtu else {
             return 0
         }
         return type == .withResponse ? 512 : mtu - 3
@@ -794,8 +851,18 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     
     // MARK: Other
     
+    public func readRSSI() {
+        queue.async {
+            let rssi = self.mock.proximity.RSSI
+            let delta = CBCentralManagerMock.rssiDeviation
+            let deviation = Int.random(in: -delta...delta)
+            self.delegate?.peripheral(self, didReadRSSI: (rssi + deviation) as NSNumber,
+                                      error: nil)
+        }
+    }
+    
     public func openL2CAPChannel(_ PSM: CBL2CAPPSM) {
-        // TODO
+        fatalError("L2CAP mock is not implemented")
     }
     
     public override var hash: Int {

@@ -317,8 +317,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegateType, CBCentralManagerDele
             assert(characteristic.service.peripheral.identifier == basePeripheral.identifier)
             assert(characteristic.isNotifying)
             print("Button notifications enabled")
-            delegate?.blinkyDidConnect(ledSupported: ledCharacteristic != nil,
-                                       buttonSupported: buttonCharacteristic != nil)
+            delegate?.blinkyDidConnect(ledSupported: ledCharacteristic != nil, buttonSupported: buttonCharacteristic != nil)
             readButtonValue()
             readLEDValue()
         }
