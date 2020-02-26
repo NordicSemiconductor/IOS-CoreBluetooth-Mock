@@ -73,6 +73,12 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         //        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
         //            CBCentralManagerMock.simulatePowerOff()
         //        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
+            blinky.simulateDisconnection()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(14)) {
+            blinky.simulateDisconnection()
+        }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

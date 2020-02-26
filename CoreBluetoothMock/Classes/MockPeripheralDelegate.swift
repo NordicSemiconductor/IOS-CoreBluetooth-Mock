@@ -36,6 +36,8 @@ public protocol MockPeripheralDelegate {
     func peripheralDidReceiveConnectionRequest(_ peripheral: MockPeripheral)
         -> Result<Void, Error>
     
+    func peripheral(_ peripheral: MockPeripheral, didDisconnect error: Error?)
+    
     func peripheral(_ peripheral: MockPeripheral,
                     didReceiveServiceDiscoveryRequest serviceUUIDs: [CBUUID]?)
         -> Result<Void, Error>
@@ -89,6 +91,11 @@ public extension MockPeripheralDelegate {
             return .success(())
     }
     
+    func peripheral(_ peripheral: MockPeripheral, didDisconnect error: Error?) {
+        // Empty default implementation
+        assert(peripheral.virtualConnections == 0)
+    }
+    
     func peripheral(_ peripheral: MockPeripheral,
                     didReceiveServiceDiscoveryRequest serviceUUIDs: [CBUUID]?)
         -> Result<Void, Error> {
@@ -137,7 +144,7 @@ public extension MockPeripheralDelegate {
     func peripheral(_ peripheral: MockPeripheral,
                     didReceiveWriteCommandFor characteristic: CBCharacteristicType,
                     data: Data) {
-        // empty
+        // Empty default implementation
     }
 
     func peripheral(_ peripheral: MockPeripheral,

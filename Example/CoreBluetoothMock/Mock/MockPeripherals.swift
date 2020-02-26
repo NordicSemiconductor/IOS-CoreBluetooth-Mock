@@ -90,7 +90,7 @@ let blinky = MockPeripheral
         ],
         withInterval: 0.250,
         alsoWhenConnected: false)
-    .connectable(
+    .connected(
         name: "nRF Blinky",
         services: [blinkySerivce],
         delegate: BlinkyMockPeripheralDelegate(),

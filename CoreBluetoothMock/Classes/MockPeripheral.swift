@@ -48,7 +48,7 @@ public enum MockProximity {
     }
 }
 
-public struct MockPeripheral {
+public class MockPeripheral {
     /// The peripheral identifier.
     public let identifier: UUID
     /// The name of the peripheral cached during previous session.
@@ -56,9 +56,6 @@ public struct MockPeripheral {
     public let name: String?
     /// How far the device is.
     public let proximity: MockProximity
-    /// A flag indicating whether the device is initially connected
-    /// to the central (using some other application).
-    public let isInitiallyConnected: Bool
     /// Should the mock peripheral appear in scan results when it's
     /// connected.
     public let isAdvertisingWhenConnected: Bool
@@ -74,12 +71,46 @@ public struct MockPeripheral {
     public let services: [CBServiceMock]?
     /// The connection interval.
     public let connectionInterval: TimeInterval?
-    /// The MTU (Maximul Transfer Unit). Min value is 23, max 517.
+    /// The MTU (Maximum Transfer Unit). Min value is 23, max 517.
     /// The maximum value length for Write Without Response is
     /// MTU - 3 bytes.
     public let mtu: Int?
     /// The delegate that will handle connection requests.
     public let connectionDelegate: MockPeripheralDelegate?
+    /// A flag indicating whether the device is connected.
+    public var isConnected: Bool {
+        return virtualConnections > 0
+    }
+    /// Number of virtual connections to this peripheral. A peripheral
+    /// may be connected using multiple central managers in one or
+    /// multiple apps. When this drops to 0, the device is physically
+    /// disconnected.
+    internal var virtualConnections: Int
+    
+    private init(
+            identifier: UUID,
+            name: String?,
+            proximity: MockProximity,
+            isInitiallyConnected: Bool,
+            isAdvertisingWhenConnected: Bool,
+            advertisementData: [String : Any]?,
+            advertisingInterval: TimeInterval?,
+            services: [CBServiceMock]?,
+            connectionInterval: TimeInterval?,
+            mtu: Int?,
+            connectionDelegate: MockPeripheralDelegate?) {
+        self.identifier = identifier
+        self.name = name
+        self.proximity = proximity
+        self.virtualConnections = isInitiallyConnected ? 1 : 0
+        self.isAdvertisingWhenConnected = isAdvertisingWhenConnected
+        self.advertisementData = advertisementData
+        self.advertisingInterval = advertisingInterval
+        self.services = services
+        self.connectionInterval = connectionInterval
+        self.mtu = mtu
+        self.connectionDelegate = connectionDelegate
+    }
     
     /// Creates a `MockPeripheral.Builder` instance.
     /// Use builder methods to customize your device and call `build()` to
@@ -93,6 +124,15 @@ public struct MockPeripheral {
                                           proximity: MockProximity = .immediate) -> Builder {
         return Builder(identifier: identifier,
                        proximity: proximity)
+    }
+    
+    /// Simulates the peripheral to disconenct from the device.
+    /// All mock central managers will receive `peripheral(:didDisconencted:error)`
+    /// callback.
+    /// - Parameter error: The disconnection reason. Use `CBError` or
+    ///                    `CBATTError` errors.
+    public func simulateDisconnection(withError error: Error = CBError(.peripheralDisconnected)) {
+        CBCentralManagerMock.simulatePeripheralDisconnection(self, withError: error)
     }
     
     public class Builder {

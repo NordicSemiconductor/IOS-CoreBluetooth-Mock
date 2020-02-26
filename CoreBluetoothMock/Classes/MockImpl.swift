@@ -32,18 +32,16 @@ import Foundation
 import CoreBluetooth
 
 public class CBCentralManagerMock: CBCentralManagerType {
-    public var delegate: CBCentralManagerDelegateType?
+    /// Mock RSSI deviation. Returned RSSI values will be in range
+    /// &lt;base RSSI - deviation, base RSSI + deviation&gt;.
+    fileprivate static let rssiDeviation = 15 // dBm
     
     /// A list of all mock managers instantiated by user.
     private static var managers: [WeakRef<CBCentralManagerMock>] = []
     /// A list of peripherals known to the system.
     private static var mockPeripherals: [MockPeripheral] = []
-    /// Mock RSSI deviation. Returned RSSI values will be in range
-    /// &lt;base RSSI - deviation, base RSSI + deviation&gt;.
-    fileprivate static let rssiDeviation = 15 // dBm
-    
     /// The global state of the Bluetooth adapter on the device.
-    internal static var managerState: CBManagerStateType = .poweredOff {
+    private static var managerState: CBManagerStateType = .poweredOff {
         didSet {
             // For all existing managers...
             managers.forEach { weakRef in
@@ -65,6 +63,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
         }
     }
     
+    public var delegate: CBCentralManagerDelegateType?
     public var state: CBManagerStateType {
         return initialized ? CBCentralManagerMock.managerState : .unknown
     }
@@ -94,15 +93,33 @@ public class CBCentralManagerMock: CBCentralManagerType {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
         self.delegate = delegate
+        if delegate != nil {
+            // It's safer to set delegate after central manager was initiated.
+            // This will work in the mock manager and on newer iOS versions,
+            // but older versions of iOS had issues. This is just a hint,
+            // you may ignore it.
+            NSLog("Hint: Setting CBCentralManager delegate in init may not work on all iOS versions")
+        }
         initialize()
     }
     
+    @available(iOS 7.0, *)
     public required init(delegate: CBCentralManagerDelegateType?,
                          queue: DispatchQueue?,
                          options: [String : Any]?) {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
         self.delegate = delegate
+        if delegate != nil {
+            // It's safer to set delegate after central manager was initiated.
+            // This will work in the mock manager and on newer iOS versions,
+            // but older versions of iOS had issues. This is just a hint,
+            // you may ignore it.
+            NSLog("Hint: Setting CBCentralManager delegate in init may not work on all iOS versions")
+        }
+        if options != nil {
+            NSLog("Warning: CBCentralManager options are not supported by mock central manager")
+        }
         initialize()
     }
     
@@ -160,6 +177,41 @@ public class CBCentralManagerMock: CBCentralManagerType {
         }
     }
     
+    /// Simulates the peripheral to disconenct from the device.
+    /// All mock central managers will receive `peripheral(:didDisconencted:error)`
+    /// callback.
+    /// - Parameter peripheral: The peripheral to disconnect.
+    /// - Parameter error: The disconnection reason. Use `CBError` or
+    ///                    `CBATTError` errors.
+    public static func simulatePeripheralDisconnection(_ peripheral: MockPeripheral,
+                                                       withError error: Error =  CBError(.peripheralDisconnected)) {
+        // Is the device connected at all?
+        guard peripheral.virtualConnections > 0 else {
+            return
+        }
+        var found = false
+        managers.forEach {
+            guard let manager = $0.ref else {
+                return
+            }
+            if let target = manager.peripherals[peripheral.identifier] {
+                found = true
+                target.disconnect(withError: error) { error in
+                    manager.delegate?.centralManager(manager,
+                                                     didDisconnectPeripheral: target,
+                                                     error: error)
+                }
+            }
+        }
+        // If the device wasn't connected by any local peripheral, simulate
+        // disconnection.
+        if !found, let interval = peripheral.connectionInterval {
+            DispatchQueue.global().asyncAfter(deadline: .now() + interval) {
+                peripheral.virtualConnections = 0
+            }
+        }
+    }
+    
     // MARK: - CBCentralManager mock methods
     
     @available(iOS 13.0, *)
@@ -177,11 +229,20 @@ public class CBCentralManagerMock: CBCentralManagerType {
     @objc private func notify(timer: Timer) {
         guard let mock = timer.userInfo as? MockPeripheral,
               let advertisementData = mock.advertisementData,
-              let peripheral = peripherals[mock.identifier],
               isScanning else {
             timer.invalidate()
             return
         }
+        guard !mock.isConnected || mock.isAdvertisingWhenConnected else {
+            return
+        }
+        // Get or create local peripheral instance.
+        if peripherals[mock.identifier] == nil {
+            peripherals[mock.identifier] = CBPeripheralMock(basedOn: mock,
+                                                            queue: queue)
+        }
+        let peripheral = peripherals[mock.identifier]!
+        
         // Emulate RSSI based on proximity. Apply some deviation.
         let rssi = mock.proximity.RSSI
         let delta = CBCentralManagerMock.rssiDeviation
@@ -208,22 +269,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
             .filter { $0.advertisementData   != nil
                    && $0.advertisingInterval != nil
                    && $0.advertisingInterval! > 0 }
-            // that are either not conected, or advertise while connected,
-            .filter { mock in
-                mock.isAdvertisingWhenConnected ||
-                (!mock.isInitiallyConnected &&
-                    CBCentralManagerMock.managers.contains {
-                        $0.ref?.peripherals[mock.identifier]?.state != .connected
-                    }
-                )
-            }
-            // do the following:
             .forEach { mock in
-                // The central manager has scanned a device. Add it the list of known peripherals.
-                if peripherals[mock.identifier] == nil {
-                    peripherals[mock.identifier] = CBPeripheralMock(basedOn: mock,
-                                                                    queue: queue)
-                }
                 // If no Service UUID was used, or the device matches at least one service,
                 // report it to the delegate (call will be delayed using a Timer).
                 let services = mock.advertisementData![CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
@@ -241,6 +287,39 @@ public class CBCentralManagerMock: CBCentralManagerType {
                     }
                 }
             }
+            // that are either not connected, or advertise while connected,
+//            .filter { mock in
+//                mock.isAdvertisingWhenConnected ||
+//                (!mock.isConnected &&
+//                    CBCentralManagerMock.managers.contains {
+//                        $0.ref?.peripherals[mock.identifier]?.state != .connected
+//                    }
+//                )
+//            }
+//            // do the following:
+//            .forEach { mock in
+//                // The central manager has scanned a device. Add it the list of known peripherals.
+//                if peripherals[mock.identifier] == nil {
+//                    peripherals[mock.identifier] = CBPeripheralMock(basedOn: mock,
+//                                                                    queue: queue)
+//                }
+//                // If no Service UUID was used, or the device matches at least one service,
+//                // report it to the delegate (call will be delayed using a Timer).
+//                let services = mock.advertisementData![CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
+//                if serviceUUIDs == nil ||
+//                   services?.contains(where: serviceUUIDs!.contains) ?? false {
+//                    // The timer will be called multiple times if option was set.
+//                    let allowDuplicates = options?[CBCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? false as NSNumber
+//                    let timer = Timer.scheduledTimer(timeInterval: mock.advertisingInterval!,
+//                                                     target: self,
+//                                                     selector: #selector(notify(timer:)),
+//                                                     userInfo: mock,
+//                                                     repeats: allowDuplicates.boolValue)
+//                    if allowDuplicates.boolValue {
+//                        scanTimers.append(timer)
+//                    }
+//                }
+//            }
     }
     
     public func stopScan() {
@@ -339,11 +418,11 @@ public class CBCentralManagerMock: CBCentralManagerType {
         }
         // Get the connected peripherals with at least one of the given services
         // that are already known to this central manager.
-        let localConnectedPeripherals = peripherals[serviceUUIDs]
+        let peripheralsConnectedByThisManager = peripherals[serviceUUIDs]
             .filter { $0.state == .connected }
-        // Other central managers also may know some connected peripherals that
+        // Other central managers may know some connected peripherals that
         // are not known to the local one.
-        let connectedPeripheralsKnownByOtherManagers = CBCentralManagerMock.managers
+        let peripheralsConnectedByOtherManagers = CBCentralManagerMock.managers
             // Get only those managers that were not disposed.
             .filter { $0.ref != nil }
             // Look for connected peripherals known to other managers.
@@ -352,18 +431,28 @@ public class CBCentralManagerMock: CBCentralManagerType {
                     .filter { $0.state == .connected }
             }
             // Search for ones that are not known to the local manager.
-            .filter { other in
-                !localConnectedPeripherals.contains { local in
-                    local.identifier == other.identifier
-                }
-            }
+            .filter { peripherals[$0.identifier] == nil }
             // Create a local copy.
             .map { CBPeripheralMock(copy: $0, queue: queue) }
         // Add those copies to the local manager.
-        connectedPeripheralsKnownByOtherManagers.forEach {
+        peripheralsConnectedByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
         }
-        return localConnectedPeripherals + connectedPeripheralsKnownByOtherManagers
+        let peripheralsConnectedByOtherApps = CBCentralManagerMock.mockPeripherals
+            .filter { $0.isConnected }
+            // Search for ones that are not known to the local manager.
+            .filter { peripherals[$0.identifier] == nil }
+            // And only those that match any of given service UUIDs.
+            .filter {
+                $0.services!.contains { service in
+                    serviceUUIDs.contains(service.uuid)
+                }
+            }
+            // Create a local copy.
+            .map { CBPeripheralMock(basedOn: $0, queue: queue) }
+        return peripheralsConnectedByThisManager
+             + peripheralsConnectedByOtherManagers
+             + peripheralsConnectedByOtherApps
     }
     
     @available(iOS 13.0, *)
@@ -445,12 +534,15 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }
         state = .connecting
         let result = delegate.peripheralDidReceiveConnectionRequest(mock)
-        queue.asyncAfter(deadline: .now() + interval) {
-            if case .success = result {
-                self.state = .connected
-                self._canSendWriteWithoutResponse = true
+        queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+            if let self = self {
+                if case .success = result {
+                    self.state = .connected
+                    self._canSendWriteWithoutResponse = true
+                    self.mock.virtualConnections += 1
+                }
+                completion(result)
             }
-            completion(result)
         }
     }
     
@@ -464,10 +556,25 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         if #available(iOS 9.0, *), case .connected = state {
             state = .disconnecting
         }
-        queue.asyncAfter(deadline: .now() + interval) {
-            self.state = .disconnected
-            self._canSendWriteWithoutResponse = false
-            completion(error)
+        queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+            if let self = self {
+                self.state = .disconnected
+                self.services = nil
+                self._canSendWriteWithoutResponse = false
+                // If the disconnection happen with an error, the device
+                // must have disconnected. Make sure this flag is cleared.
+                // If error is nil, that means that the local manager has
+                // disconnected from it, but other managers may still be
+                // connected.
+                if let _ = error {
+                    self.mock.virtualConnections = 0
+                } else {
+                    self.mock.virtualConnections -= 1
+                }
+                self.mock.connectionDelegate?.peripheral(self.mock,
+                                                         didDisconnect: error)
+                completion(error)
+            }
         }
     }
     
@@ -498,12 +605,16 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             let newServicesCount = services!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) {
-                self.delegate?.peripheral(self, didDiscoverServices: nil)
+            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) { [weak self] in
+                if let self = self {
+                            self.delegate?.peripheral(self, didDiscoverServices: nil)
+                }
             }
         case .failure(let error):
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self, didDiscoverServices: error)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self, didDiscoverServices: error)
+                }
             }
         }
     }
@@ -545,16 +656,20 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             let newServicesCount = service._includedServices!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) {
-                self.delegate?.peripheral(self,
-                                          didDiscoverIncludedServicesFor: service,
-                                          error: nil)
+            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didDiscoverIncludedServicesFor: service,
+                                              error: nil)
+                }
             }
         case .failure(let error):
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didDiscoverIncludedServicesFor: service,
-                                          error: error)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didDiscoverIncludedServicesFor: service,
+                                              error: error)
+                }
             }
         }
         
@@ -597,16 +712,20 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             let newCharacteristicsCount = service._characteristics!.count - initialSize
             // Characteristics discovery may takes the more time, the more characteristics
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newCharacteristicsCount)) {
-                self.delegate?.peripheral(self,
-                                          didDiscoverCharacteristicsFor: service,
-                                          error: nil)
+            queue.asyncAfter(deadline: .now() + interval * Double(newCharacteristicsCount)) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didDiscoverCharacteristicsFor: service,
+                                              error: nil)
+                }
             }
         case .failure(let error):
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didDiscoverCharacteristicsFor: service,
-                                          error: error)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didDiscoverCharacteristicsFor: service,
+                                              error: error)
+                }
             }
         }
     }
@@ -647,16 +766,20 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             let newDescriptorsCount = characteristic._descriptors!.count - initialSize
             // Descriptors discovery may takes the more time, the more descriptors
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newDescriptorsCount)) {
-                self.delegate?.peripheral(self,
-                                          didDiscoverDescriptorsFor: characteristic,
-                                          error: nil)
+            queue.asyncAfter(deadline: .now() + interval * Double(newDescriptorsCount)) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didDiscoverDescriptorsFor: characteristic,
+                                              error: nil)
+                }
             }
         case .failure(let error):
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didDiscoverDescriptorsFor: characteristic,
-                                          error: error)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didDiscoverDescriptorsFor: characteristic,
+                                              error: error)
+                }
             }
         }
     }
@@ -677,16 +800,20 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                                    didReceiveReadRequestFor: characteristic) {
         case .success(let data):
             characteristic.value = data
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didUpdateValueFor: characteristic,
-                                          error: nil)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didUpdateValueFor: characteristic,
+                                              error: nil)
+                }
             }
         case .failure(let error):
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didUpdateValueFor: characteristic,
-                                          error: error)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didUpdateValueFor: characteristic,
+                                              error: error)
+                }
             }
         }
     }
@@ -705,16 +832,20 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                                    didReceiveReadRequestFor: descriptor) {
         case .success(let data):
             descriptor.value = data
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didUpdateValueFor: descriptor,
-                                          error: nil)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didUpdateValueFor: descriptor,
+                                              error: nil)
+                }
             }
         case .failure(let error):
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didUpdateValueFor: descriptor,
-                                          error: error)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didUpdateValueFor: descriptor,
+                                              error: error)
+                }
             }
         }
     }
@@ -741,16 +872,20 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                                        data: data) {
             case .success:
                 let packetsCount = max(1, (data.count + mtu - 2) / (mtu - 3))
-                queue.asyncAfter(deadline: .now() + interval * Double(packetsCount)) {
-                    self.delegate?.peripheral(self,
-                                              didWriteValueFor: characteristic,
-                                              error: nil)
+                queue.asyncAfter(deadline: .now() + interval * Double(packetsCount)) { [weak self] in
+                    if let self = self {
+                        self.delegate?.peripheral(self,
+                                                  didWriteValueFor: characteristic,
+                                                  error: nil)
+                    }
                 }
             case .failure(let error):
-                queue.asyncAfter(deadline: .now() + interval) {
-                    self.delegate?.peripheral(self,
-                                              didWriteValueFor: characteristic,
-                                              error: error)
+                queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                    if let self = self {
+                        self.delegate?.peripheral(self,
+                                                  didWriteValueFor: characteristic,
+                                                  error: error)
+                    }
                 }
             }
         } else {
@@ -764,13 +899,15 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             delegate.peripheral(mock,
                                 didReceiveWriteCommandFor: characteristic,
                                 data: data.subdata(in: 0..<mtu - 3))
-            queue.async {
-                self.queue.sync {
-                    self.availableWriteWithoutResponseBuffer += 1
-                    self._canSendWriteWithoutResponse = true
-                }
-                if #available(iOS 11.0, *) {
-                    self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
+            queue.async { [weak self] in
+                if let self = self {
+                    self.queue.sync {
+                        self.availableWriteWithoutResponseBuffer += 1
+                        self._canSendWriteWithoutResponse = true
+                    }
+                    if #available(iOS 11.0, *) {
+                        self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
+                    }
                 }
             }
         }
@@ -791,16 +928,20 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                                    didReceiveWriteRequestFor: descriptor,
                                    data: data) {
         case .success:
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didWriteValueFor: descriptor,
-                                          error: nil)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didWriteValueFor: descriptor,
+                                              error: nil)
+                }
             }
         case .failure(let error):
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didWriteValueFor: descriptor,
-                                          error: error)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didWriteValueFor: descriptor,
+                                              error: error)
+                }
             }
         }
     }
@@ -834,17 +975,21 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                                    didReceiveSetNotifyRequest: enabled,
                                    for: characteristic) {
         case .success:
-            queue.asyncAfter(deadline: .now() + interval) {
-                characteristic.isNotifying = enabled
-                self.delegate?.peripheral(self,
-                                          didUpdateNotificationStateFor: characteristic,
-                                          error: nil)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    characteristic.isNotifying = enabled
+                    self.delegate?.peripheral(self,
+                                              didUpdateNotificationStateFor: characteristic,
+                                              error: nil)
+                }
             }
         case .failure(let error):
-            queue.asyncAfter(deadline: .now() + interval) {
-                self.delegate?.peripheral(self,
-                                          didUpdateNotificationStateFor: characteristic,
-                                          error: error)
+            queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+                if let self = self {
+                    self.delegate?.peripheral(self,
+                                              didUpdateNotificationStateFor: characteristic,
+                                              error: error)
+                }
             }
         }        
     }
@@ -852,12 +997,14 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     // MARK: Other
     
     public func readRSSI() {
-        queue.async {
-            let rssi = self.mock.proximity.RSSI
-            let delta = CBCentralManagerMock.rssiDeviation
-            let deviation = Int.random(in: -delta...delta)
-            self.delegate?.peripheral(self, didReadRSSI: (rssi + deviation) as NSNumber,
-                                      error: nil)
+        queue.async { [weak self] in
+            if let self = self {
+                let rssi = self.mock.proximity.RSSI
+                let delta = CBCentralManagerMock.rssiDeviation
+                let deviation = Int.random(in: -delta...delta)
+                self.delegate?.peripheral(self, didReadRSSI: (rssi + deviation) as NSNumber,
+                                          error: nil)
+            }
         }
     }
     
