@@ -128,6 +128,17 @@ public class CBServiceMock: CBServiceType {
         super.init(type: uuid, primary: isPrimary)
         self.characteristics = characteristics
     }
+    
+    public func contains(_ characteristic: CBCharacteristicMock) -> Bool {
+        return _characteristics?.contains(characteristic) ?? false
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        if let other = object as? CBServiceMock {
+            return identifier == other.identifier
+        }
+        return false
+    }
 }
 
 public class CBCharacteristicType: CBAttribute {
@@ -223,6 +234,17 @@ public class CBCharacteristicMock: CBCharacteristicType {
         super.init(type: uuid, properties: properties)
         self.descriptors = descriptors
     }
+    
+    public func contains(_ descriptor: CBDescriptorType) -> Bool {
+        return _descriptors?.contains(descriptor) ?? false
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        if let other = object as? CBCharacteristicMock {
+            return identifier == other.identifier
+        }
+        return false
+    }
 }
 
 public class CBDescriptorType: CBAttribute {
@@ -281,6 +303,13 @@ public class CBDescriptorMock: CBDescriptorType {
     
     public override init(type uuid: CBUUID) {
         super.init(type: uuid)
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        if let other = object as? CBDescriptorMock {
+            return identifier == other.identifier
+        }
+        return false
     }
 }
 

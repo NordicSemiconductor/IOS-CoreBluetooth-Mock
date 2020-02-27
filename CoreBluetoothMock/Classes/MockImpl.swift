@@ -213,10 +213,11 @@ public class CBCentralManagerMock: CBCentralManagerType {
         guard mockPeripherals.contains(peripheral) else {
             return
         }
+        peripheral.services = newServices
         let existingManagers = managers.compactMap { $0.ref }
         existingManagers.forEach { manager in
             manager.peripherals[peripheral.identifier]?
-                .notifyServicesChanged(newServices: newServices)
+                .notifyServicesChanged()
         }
         // Notify that the name has changed.
         if peripheral.name != newName {
@@ -230,6 +231,26 @@ public class CBCentralManagerMock: CBCentralManagerType {
                     .notifyNameChanged()
             }
         }
+    }
+    
+    /// Simulates a notification sent from the peripheral.
+    ///
+    /// All central managers that have enabled notifications on it
+    /// will receive `peripheral(:didUpdateValueFor:error)`.
+    /// - Parameter characteristic: The characteristic from which
+    ///                             notification is to be sent.
+    internal static func peripheral(_ peripheral: MockPeripheral,
+                                    didUpdateValueFor characteristic: CBCharacteristicMock) {
+        // Is the peripheral simulated?
+        guard mockPeripherals.contains(peripheral) else {
+            return
+        }
+        managers
+            .compactMap { $0.ref }
+            .forEach { manager in
+                manager.peripherals[peripheral.identifier]?
+                    .notifyValueChanged(for: characteristic)
+            }
     }
     
     /// This method simulates a new virtual connection to the given
@@ -662,14 +683,54 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     // MARK: Service modification
     
     fileprivate func notifyNameChanged() {
-        delegate?.peripheralDidUpdateName(self)
+        guard state == .connected,
+              let interval = mock.connectionInterval else {
+            return
+        }
+        queue.asyncAfter(deadline: .now() + interval) {
+            self.delegate?.peripheralDidUpdateName(self)
+        }
     }
     
-    fileprivate func notifyServicesChanged(newServices: [CBServiceMock]) {
-        let oldServices = services
-        services = newServices
-        if let oldServices = oldServices {
-            delegate?.peripheral(self, didModifyServices: oldServices)
+    fileprivate func notifyServicesChanged() {
+        guard state == .connected,
+              let oldServices = services,
+              let interval = mock.connectionInterval else {
+            return
+        }
+        
+        // Keep only services that hadn't changed.
+        services = services!
+            .filter { service in
+                mock.services!.contains(where: {
+                    $0.identifier == service.identifier
+                })
+            }
+        let invalidatedServices = oldServices.filter({ !services!.contains($0) })
+        queue.asyncAfter(deadline: .now() + interval) {
+            self.delegate?.peripheral(self, didModifyServices: invalidatedServices)
+        }
+    }
+    
+    fileprivate func notifyValueChanged(for originalCharacteristic: CBCharacteristicMock) {
+        guard state == .connected,
+              let interval = mock.connectionInterval,
+              let service = services?.first(where: {
+                $0.characteristics?.contains(where: {
+                    $0.identifier == originalCharacteristic.identifier
+                }) ?? false
+              }),
+              let characteristic = service.characteristics?.first(where: {
+                  $0.identifier == originalCharacteristic.identifier
+              }),
+              characteristic.isNotifying else {
+            return
+        }
+        characteristic.value = originalCharacteristic.value
+        queue.asyncAfter(deadline: .now() + interval) {
+            self.delegate?.peripheral(self,
+                                      didUpdateValueFor: characteristic,
+                                      error: nil)
         }
     }
     

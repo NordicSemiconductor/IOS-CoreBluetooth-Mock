@@ -70,17 +70,18 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         CBCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
         centralManager = CBCentralManagerFactory.instance(forceMock: false)
         // This will disconnect mock central manager in 5 seconds.
-        //        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) {
-        //            CBCentralManagerMock.simulatePowerOff()
-        //        }
+        //
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
-            print("Reset!")
-            blinky.simulateReset()
-            //blinky.simulateDisconnection()
+            print("Click!")
+            blinky.simulateValueChange(for: buttonCharacteristic,
+                                       newValue: Data([0x01]))
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(18)) {
-            print("Disconnected!")
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(8)) {
+            print("Disconnected gracefully!")
             blinky.simulateDisconnection()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(15)) {
+            CBCentralManagerMock.simulatePowerOff()
         }
     }
 

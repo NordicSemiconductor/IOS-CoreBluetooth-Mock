@@ -34,18 +34,22 @@ import CoreBluetoothMock
 
 // MARK: - Mock nRF Blinky
 
+let buttonCharacteristic = CBCharacteristicMock(
+    type: BlinkyPeripheral.buttonCharacteristicUUID,
+    properties: [.notify, .read],
+    descriptors: CBClientCharacteristicConfigurationDescriptorMock()
+)
+
+let ledCharacteristic = CBCharacteristicMock(
+    type: BlinkyPeripheral.ledCharacteristicUUID,
+    properties: [.write, .read]
+)
+
 private let blinkySerivce = CBServiceMock(
     type: BlinkyPeripheral.nordicBlinkyServiceUUID, primary: true,
     characteristics:
-        CBCharacteristicMock(
-            type: BlinkyPeripheral.buttonCharacteristicUUID,
-            properties: [.notify, .read],
-            descriptors: CBClientCharacteristicConfigurationDescriptorMock()
-        ),
-        CBCharacteristicMock(
-            type: BlinkyPeripheral.ledCharacteristicUUID,
-            properties: [.write, .read]
-        )
+        buttonCharacteristic,
+        ledCharacteristic
 )
 
 private class BlinkyMockPeripheralDelegate: MockPeripheralDelegate {
@@ -90,7 +94,7 @@ let blinky = MockPeripheral
         ],
         withInterval: 0.250,
         alsoWhenConnected: false)
-    .connected(
+    .connectable(
         name: "nRF Blinky",
         services: [blinkySerivce],
         delegate: BlinkyMockPeripheralDelegate(),

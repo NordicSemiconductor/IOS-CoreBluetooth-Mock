@@ -162,9 +162,15 @@ public class MockPeripheral {
     }
     
     /// Simulates a situation when the device changes its services.
+    /// Only services that were not in the previous list of services
+    /// will be reported as invalidated.
     ///
     /// The device must be connectable, otherwise this method does
     /// nothing.
+    /// - Important: In the mock implementation the order of services
+    ///              is irrelevant. This is in contrary to the physical
+    ///              Bluetooth LE device, where handle numbers depend
+    ///              on order of the services in the attribute database.
     /// - Parameters:
     ///   - newName: The new device name after change.
     ///   - newServices: The new services after change.
@@ -186,6 +192,25 @@ public class MockPeripheral {
     /// - Parameter proximity: The new peripheral proximity.
     public func simulateProximityChange(_ proximity: MockProximity) {
         CBCentralManagerMock.proximity(of: self, didChangeTo: proximity)
+    }
+    
+    /// Simulates a notification/indication sent from the peripheral.
+    ///
+    /// All central managers that have enabled notifications on it
+    /// will receive `peripheral(:didUpdateValueFor:error)`.
+    /// - Parameter characteristic: The characteristic from which a
+    ///                             notification or indication is to be sent.
+    /// - Parameter newValue: The notification/indication data.
+    public func simulateValueChange(for characteristic: CBCharacteristicMock,
+                                    newValue: Data) {
+        guard let services = services, services.contains(where: {
+                  $0.characteristics?.contains(characteristic) ?? false
+              }) else {
+            return
+        }
+        characteristic.value = newValue
+        CBCentralManagerMock.peripheral(self,
+                                        didUpdateValueFor: characteristic)
     }
     
     public class Builder {
