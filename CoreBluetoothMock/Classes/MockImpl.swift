@@ -44,8 +44,9 @@ public class CBCentralManagerMock: CBCentralManagerType {
     private static var managerState: CBManagerStateType = .poweredOff {
         didSet {
             // For all existing managers...
-            managers.forEach { weakRef in
-                if let manager = weakRef.ref {
+            managers
+                .compactMap { $0.ref }
+                .forEach { manager in
                     // ...stop scanning if state changed to any other state
                     // than `.poweredOn`. Also, forget all peripherals.
                     if managerState != .poweredOn {
@@ -57,7 +58,6 @@ public class CBCentralManagerMock: CBCentralManagerType {
                         manager.delegate?.centralManagerDidUpdateState(manager)
                     }
                 }
-            }
             // Compact the list, if any of managers were disposed.
             managers.removeAll { $0.ref == nil }
         }
@@ -68,6 +68,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
         return initialized ? CBCentralManagerMock.managerState : .unknown
     }
     public private(set) var isScanning: Bool
+    private var scanFilter: [CBUUID]?
+    private var scanOptions: [String : Any]?
 
     /// The dispatch queue used for all callbacks.
     private let queue: DispatchQueue
@@ -93,13 +95,6 @@ public class CBCentralManagerMock: CBCentralManagerType {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
         self.delegate = delegate
-        if delegate != nil {
-            // It's safer to set delegate after central manager was initiated.
-            // This will work in the mock manager and on newer iOS versions,
-            // but older versions of iOS had issues. This is just a hint,
-            // you may ignore it.
-            NSLog("Hint: Setting CBCentralManager delegate in init may not work on all iOS versions")
-        }
         initialize()
     }
     
@@ -110,13 +105,6 @@ public class CBCentralManagerMock: CBCentralManagerType {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
         self.delegate = delegate
-        if delegate != nil {
-            // It's safer to set delegate after central manager was initiated.
-            // This will work in the mock manager and on newer iOS versions,
-            // but older versions of iOS had issues. This is just a hint,
-            // you may ignore it.
-            NSLog("Hint: Setting CBCentralManager delegate in init may not work on all iOS versions")
-        }
         if options != nil {
             NSLog("Warning: CBCentralManager options are not supported by mock central manager")
         }
@@ -124,7 +112,10 @@ public class CBCentralManagerMock: CBCentralManagerType {
     }
     
     private func initialize() {
-        // Let's say this takes 10 ms. Less or more.
+        if CBCentralManagerMock.mockPeripherals.isEmpty {
+            NSLog("Warning: No simulated peripherals. Call simulatePeripherals(:) before creating central manager")
+        }
+        // Let's say initialization takes 10 ms. Less or more.
         queue.asyncAfter(deadline: .now() + .milliseconds(10)) { [weak self] in
             if let self = self {
                 CBCentralManagerMock.managers.append(WeakRef(self))
@@ -168,48 +159,134 @@ public class CBCentralManagerMock: CBCentralManagerType {
         managerState = state
     }
     
-    /// Sets the given peripherals for simulation. This method may only
-    /// by called once, before any `CBCentralManagerMock` is created.
-    /// - Parameter peripherals: Simulated peripherals.
+    /// This method sets a list of simulated peripherals.
+    ///
+    /// Peripherals added using this method will be available for scanning
+    /// and connecting, depending on their proximity. Use
+    /// periperal's `simulateProximity(of:didChangeTo:)` to modify proximity.
+    ///
+    /// This method may only be called once, before any manager was created.
+    /// - Parameter peripherals: Peripherals that are not connected.
     public static func simulatePeripherals(_ peripherals: [MockPeripheral]) {
-        if mockPeripherals.isEmpty {
-            mockPeripherals = peripherals
+        guard managers.isEmpty, mockPeripherals.isEmpty else {
+            NSLog("Warning: Peripherals can be added to simulation only once, and not after any central manager was initiated")
+            return
+        }
+        mockPeripherals = peripherals
+    }
+    
+    // MARK: - Peripheral simulation methods
+    
+    /// Simulates a situation when the given peripheral was moved closer
+    /// or away from the phone.
+    ///
+    /// If the proximity is changed to `.outOfRange`, the peripheral will
+    /// be disconnected and will not appear on scan results.
+    /// - Parameter peripheral: The peripheral that was repositioned.
+    /// - Parameter proximity: The new peripheral proximity.
+    internal static func proximity(of peripheral: MockPeripheral,
+                                   didChangeTo proximity: MockProximity) {
+        guard peripheral.proximity != proximity else {
+            return
+        }
+        // Is the peripheral simulated?
+        guard mockPeripherals.contains(peripheral) else {
+            return
+        }
+        peripheral.proximity = proximity
+        
+        if proximity == .outOfRange {
+            self.peripheral(peripheral,
+                            didDisconnectWithError: CBError(.connectionTimeout))
         }
     }
     
+    /// Simulates a sitution when the device changes its services.
+    /// - Parameters:
+    ///   - peripheral: The peripheral that changed services.
+    ///   - newName: New device name.
+    ///   - newServices: New list of device services.
+    internal static func peripheral(_ peripheral: MockPeripheral,
+                                    didUpdateName newName: String?,
+                                    andServices newServices: [CBServiceMock]) {
+        // Is the peripheral simulated?
+        guard mockPeripherals.contains(peripheral) else {
+            return
+        }
+        let existingManagers = managers.compactMap { $0.ref }
+        existingManagers.forEach { manager in
+            manager.peripherals[peripheral.identifier]?
+                .notifyServicesChanged(newServices: newServices)
+        }
+        // Notify that the name has changed.
+        if peripheral.name != newName {
+            peripheral.name = newName
+            existingManagers.forEach { manager in
+                // TODO: This needs to be verified.
+                //       Should a local peripheral copy be created if no such?
+                //       Are all central managers notified about any device
+                //       changing name?
+                manager.peripherals[peripheral.identifier]?
+                    .notifyNameChanged()
+            }
+        }
+    }
+    
+    /// This method simulates a new virtual connection to the given
+    /// peripheral, as if some other application connected to it.
+    ///
+    /// Central managers will not be notified about the state change unless
+    /// they registered for connection events using
+    /// `registerForConnectionEvents(options:)`.
+    /// Even without registering (which is available since iOS 13), they
+    /// can retrieve the connected peripheral using
+    /// `retrieveConnectedPeripherals(withServices:)`.
+    ///
+    /// The peripheral does not need to be registered before.
+    /// - Parameter peripheral: The peripheral that has connected.
+    internal static func peripheralDidConnect(_ peripheral: MockPeripheral) {
+        // Is the peripheral simulated?
+        guard mockPeripherals.contains(peripheral) else {
+            return
+        }
+        peripheral.virtualConnections += 1
+        
+        // TODO: notify a user registered for connection events
+    }
+    
     /// Simulates the peripheral to disconenct from the device.
-    /// All mock central managers will receive `peripheral(:didDisconencted:error)`
-    /// callback.
+    /// All connected mock central managers will receive
+    /// `peripheral(:didDisconencted:error)` callback.
     /// - Parameter peripheral: The peripheral to disconnect.
     /// - Parameter error: The disconnection reason. Use `CBError` or
     ///                    `CBATTError` errors.
-    public static func simulatePeripheralDisconnection(_ peripheral: MockPeripheral,
-                                                       withError error: Error =  CBError(.peripheralDisconnected)) {
+    internal static func peripheral(_ peripheral: MockPeripheral,
+                                    didDisconnectWithError error: Error =  CBError(.peripheralDisconnected)) {
         // Is the device connected at all?
-        guard peripheral.virtualConnections > 0 else {
+        guard peripheral.isConnected else {
             return
         }
-        var found = false
-        managers.forEach {
-            guard let manager = $0.ref else {
-                return
-            }
-            if let target = manager.peripherals[peripheral.identifier] {
-                found = true
-                target.disconnect(withError: error) { error in
-                    manager.delegate?.centralManager(manager,
-                                                     didDisconnectPeripheral: target,
-                                                     error: error)
+        // Is the peripheral simulated?
+        guard mockPeripherals.contains(peripheral) else {
+            return
+        }
+        // The device has disconnected, so it can start advertising
+        // immediately.
+        peripheral.virtualConnections = 0
+        // Notify all central managers.
+        managers
+            .compactMap { $0.ref }
+            .forEach { manager in
+                if let target = manager.peripherals[peripheral.identifier],
+                    target.state == .connected {
+                    target.disconnected(withError: error) { error in
+                        manager.delegate?.centralManager(manager,
+                                                         didDisconnectPeripheral: target,
+                                                         error: error)
+                    }
                 }
             }
-        }
-        // If the device wasn't connected by any local peripheral, simulate
-        // disconnection.
-        if !found, let interval = peripheral.connectionInterval {
-            DispatchQueue.global().asyncAfter(deadline: .now() + interval) {
-                peripheral.virtualConnections = 0
-            }
-        }
+        // TODO: notify a user registered for connection events
     }
     
     // MARK: - CBCentralManager mock methods
@@ -231,6 +308,9 @@ public class CBCentralManagerMock: CBCentralManagerType {
               let advertisementData = mock.advertisementData,
               isScanning else {
             timer.invalidate()
+            return
+        }
+        guard mock.proximity != .outOfRange else {
             return
         }
         guard !mock.isConnected || mock.isAdvertisingWhenConnected else {
@@ -263,6 +343,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
             stopScan()
         }
         isScanning = true
+        scanFilter = serviceUUIDs
+        scanOptions = options
 
         CBCentralManagerMock.mockPeripherals
             // For all advertising peripherals,
@@ -287,45 +369,21 @@ public class CBCentralManagerMock: CBCentralManagerType {
                     }
                 }
             }
-            // that are either not connected, or advertise while connected,
-//            .filter { mock in
-//                mock.isAdvertisingWhenConnected ||
-//                (!mock.isConnected &&
-//                    CBCentralManagerMock.managers.contains {
-//                        $0.ref?.peripherals[mock.identifier]?.state != .connected
-//                    }
-//                )
-//            }
-//            // do the following:
-//            .forEach { mock in
-//                // The central manager has scanned a device. Add it the list of known peripherals.
-//                if peripherals[mock.identifier] == nil {
-//                    peripherals[mock.identifier] = CBPeripheralMock(basedOn: mock,
-//                                                                    queue: queue)
-//                }
-//                // If no Service UUID was used, or the device matches at least one service,
-//                // report it to the delegate (call will be delayed using a Timer).
-//                let services = mock.advertisementData![CBAdvertisementDataServiceUUIDsKey] as? [CBUUID]
-//                if serviceUUIDs == nil ||
-//                   services?.contains(where: serviceUUIDs!.contains) ?? false {
-//                    // The timer will be called multiple times if option was set.
-//                    let allowDuplicates = options?[CBCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? false as NSNumber
-//                    let timer = Timer.scheduledTimer(timeInterval: mock.advertisingInterval!,
-//                                                     target: self,
-//                                                     selector: #selector(notify(timer:)),
-//                                                     userInfo: mock,
-//                                                     repeats: allowDuplicates.boolValue)
-//                    if allowDuplicates.boolValue {
-//                        scanTimers.append(timer)
-//                    }
-//                }
-//            }
     }
     
     public func stopScan() {
         isScanning = false
+        scanFilter = nil
+        scanOptions = nil
         scanTimers.forEach { $0.invalidate() }
         scanTimers.removeAll()
+    }
+    
+    private func restartScanningIfStarted() {
+        guard isScanning else {
+            return
+        }
+        scanForPeripherals(withServices: scanFilter, options: scanOptions)
     }
     
     public func connect(_ peripheral: CBPeripheralType,
@@ -373,7 +431,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
         guard peripherals.values.contains(mock) else {
             return
         }
-        mock.disconnect() { _ in
+        mock.disconnect() {
             self.delegate?.centralManager(self, didDisconnectPeripheral: mock,
                                           error: nil)
         }
@@ -474,6 +532,10 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     /// can be written without response in a loop, without
     /// waiting for `canSendWriteWithoutResponse`.
     private let bufferSize =  20
+    /// The supervision timeout is a time after which a device realizes
+    /// that a connected peer has disconnected, had there been no signal
+    /// from it.
+    private let supervisionTimeout = 4.0
     /// The current buffer size.
     private var availableWriteWithoutResponseBuffer: Int
     private var _canSendWriteWithoutResponse: Bool = false
@@ -546,8 +608,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }
     }
     
-    fileprivate func disconnect(withError error: Error? = nil,
-                                completion: @escaping (Error?) -> ()) {
+    fileprivate func disconnect(completion: @escaping () -> ()) {
         // Ensure the device is connected.
         guard let interval = mock.connectionInterval,
               state == .connected || state == .connecting else {
@@ -561,20 +622,54 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                 self.state = .disconnected
                 self.services = nil
                 self._canSendWriteWithoutResponse = false
-                // If the disconnection happen with an error, the device
-                // must have disconnected. Make sure this flag is cleared.
-                // If error is nil, that means that the local manager has
-                // disconnected from it, but other managers may still be
-                // connected.
-                if let _ = error {
-                    self.mock.virtualConnections = 0
-                } else {
-                    self.mock.virtualConnections -= 1
-                }
+                self.mock.virtualConnections -= 1
+                self.mock.connectionDelegate?.peripheral(self.mock,
+                                                         didDisconnect: nil)
+                completion()
+            }
+        }
+    }
+    
+    fileprivate func disconnected(withError error: Error,
+                                  completion: @escaping (Error?) -> ()) {
+        // Ensure the device is connected.
+        guard var interval = mock.connectionInterval,
+              state == .connected else {
+            return
+        }
+        // If a device disconnected with a timeout, the central waits
+        // for the duration of supervision timeout before accepting
+        // disconnection.
+        if let error = error as? CBError, error.code == .connectionTimeout {
+            interval = supervisionTimeout
+        }
+        queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+            if let self = self {
+                self.state = .disconnected
+                self.services = nil
+                self._canSendWriteWithoutResponse = false
+                // If the disconnection happen without an error, the device
+                // must have been disconnected disconnected from central
+                // manager.
+                self.mock.virtualConnections = 0
                 self.mock.connectionDelegate?.peripheral(self.mock,
                                                          didDisconnect: error)
                 completion(error)
             }
+        }
+    }
+    
+    // MARK: Service modification
+    
+    fileprivate func notifyNameChanged() {
+        delegate?.peripheralDidUpdateName(self)
+    }
+    
+    fileprivate func notifyServicesChanged(newServices: [CBServiceMock]) {
+        let oldServices = services
+        services = newServices
+        if let oldServices = oldServices {
+            delegate?.peripheral(self, didModifyServices: oldServices)
         }
     }
     

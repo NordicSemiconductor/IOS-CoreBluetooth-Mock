@@ -38,12 +38,15 @@ public enum MockProximity {
     case immediate
     /// The device is far, will have RSSI values around -100 dBm.
     case far
+    /// The device is out of range.
+    case outOfRange
     
     internal var RSSI: Int {
         switch self {
-        case .near:      return -40
-        case .immediate: return -70
-        case .far:       return -100
+        case .near:       return -40
+        case .immediate:  return -70
+        case .far:        return -100
+        case .outOfRange: return -128
         }
     }
 }
@@ -53,9 +56,9 @@ public class MockPeripheral {
     public let identifier: UUID
     /// The name of the peripheral cached during previous session.
     /// This may be <i>nil<i/> to simulate a newly discovered devices.
-    public let name: String?
+    public internal(set) var name: String?
     /// How far the device is.
-    public let proximity: MockProximity
+    public internal(set) var proximity: MockProximity
     /// Should the mock peripheral appear in scan results when it's
     /// connected.
     public let isAdvertisingWhenConnected: Bool
@@ -68,7 +71,7 @@ public class MockPeripheral {
     public let advertisingInterval: TimeInterval?
     
     /// List of services with implementation.
-    public let services: [CBServiceMock]?
+    public internal(set) var services: [CBServiceMock]?
     /// The connection interval.
     public let connectionInterval: TimeInterval?
     /// The MTU (Maximum Transfer Unit). Min value is 23, max 517.
@@ -126,13 +129,63 @@ public class MockPeripheral {
                        proximity: proximity)
     }
     
-    /// Simulates the peripheral to disconenct from the device.
-    /// All mock central managers will receive `peripheral(:didDisconencted:error)`
-    /// callback.
+    /// Simulates the situation when another application on the device
+    /// connects to the device.
+    ///
+    /// If `isAdvertisingWhenConnected` flag is set to <i>false</i>, the
+    /// device will stop showing up on scan results.
+    ///
+    /// A manager registered for connection event will receive an event.
+    ///
+    /// Connected devices are be available for managers using
+    /// `retrieveConnectedPeripherals(withServices:)`.
+    public func simulateConnection() {
+        CBCentralManagerMock.peripheralDidConnect(self)
+    }
+    
+    /// Simulates a situation when the peripheral disconnection from
+    /// the device.
+    ///
+    /// All connected mock central managers will receive
+    /// `peripheral(:didDisconnected:error)` callback.
     /// - Parameter error: The disconnection reason. Use `CBError` or
     ///                    `CBATTError` errors.
     public func simulateDisconnection(withError error: Error = CBError(.peripheralDisconnected)) {
-        CBCentralManagerMock.simulatePeripheralDisconnection(self, withError: error)
+        CBCentralManagerMock.peripheral(self, didDisconnectWithError: error)
+    }
+    
+    /// Simulates a reset of the peripheral. It will make it advertising
+    /// again (if advertising was enabled) immediately. Connected central
+    /// managers will be notified after the supervision timeout is over.
+    public func simulateReset() {
+        simulateDisconnection(withError: CBError(.connectionTimeout))
+    }
+    
+    /// Simulates a situation when the device changes its services.
+    ///
+    /// The device must be connectable, otherwise this method does
+    /// nothing.
+    /// - Parameters:
+    ///   - newName: The new device name after change.
+    ///   - newServices: The new services after change.
+    public func simulateServiceChange(newName: String?,
+                                      newServices: [CBServiceMock]) {
+        guard let _ = connectionDelegate else {
+            return
+        }
+        CBCentralManagerMock.peripheral(self, didUpdateName: newName,
+                                        andServices: newServices)
+    }
+    
+    /// Simulates a situation when the peripheral was moved closer
+    /// or away from the phone.
+    ///
+    /// If the proximity is changed to `.outOfRange`, the peripheral will
+    /// be disconnected and will not appear on scan results.
+    /// - Parameter peripheral: The peripheral that
+    /// - Parameter proximity: The new peripheral proximity.
+    public func simulateProximityChange(_ proximity: MockProximity) {
+        CBCentralManagerMock.proximity(of: self, didChangeTo: proximity)
     }
     
     public class Builder {
@@ -265,4 +318,12 @@ public class MockPeripheral {
             )
         }
     }
+}
+
+extension MockPeripheral: Equatable {
+    
+    public static func == (lhs: MockPeripheral, rhs: MockPeripheral) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+    
 }

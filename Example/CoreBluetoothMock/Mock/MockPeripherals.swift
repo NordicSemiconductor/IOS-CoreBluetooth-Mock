@@ -81,7 +81,7 @@ private class BlinkyMockPeripheralDelegate: MockPeripheralDelegate {
 }
 
 let blinky = MockPeripheral
-    .simulatePeripheral(proximity: .near)
+    .simulatePeripheral(proximity: .immediate)
     .advertising(
         advertisementData: [
             CBAdvertisementDataLocalNameKey : "nRF Blinky",

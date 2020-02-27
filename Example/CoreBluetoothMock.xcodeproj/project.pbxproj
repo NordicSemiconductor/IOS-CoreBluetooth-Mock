@@ -98,7 +98,7 @@
 		A9B3B30C7C00185E61A80C15 /* libPods-nRFBlinky_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nRFBlinky_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB06A790EC544BF11ACFF346 /* Pods-CoreBluetoothMock_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreBluetoothMock_Tests.debug.xcconfig"; path = "Target Support Files/Pods-CoreBluetoothMock_Tests/Pods-CoreBluetoothMock_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		BBB2EC0A5DB2F6BC9FEB136B /* Pods-CoreBluetoothMock_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CoreBluetoothMock_Example.release.xcconfig"; path = "Target Support Files/Pods-CoreBluetoothMock_Example/Pods-CoreBluetoothMock_Example.release.xcconfig"; sourceTree = "<group>"; };
-		DF2A391A629B418AF377967D /* CoreBluetoothMock.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CoreBluetoothMock.podspec; path = ../CoreBluetoothMock.podspec; sourceTree = "<group>"; };
+		DF2A391A629B418AF377967D /* CoreBluetoothMock.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CoreBluetoothMock.podspec; path = ../CoreBluetoothMock.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

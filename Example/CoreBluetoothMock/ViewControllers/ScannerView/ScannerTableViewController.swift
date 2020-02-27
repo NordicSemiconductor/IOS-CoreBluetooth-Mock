@@ -74,9 +74,12 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         //            CBCentralManagerMock.simulatePowerOff()
         //        }
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
-            blinky.simulateDisconnection()
+            print("Reset!")
+            blinky.simulateReset()
+            //blinky.simulateDisconnection()
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(14)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(18)) {
+            print("Disconnected!")
             blinky.simulateDisconnection()
         }
     }
@@ -144,6 +147,7 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         let newPeripheral = BlinkyPeripheral(withPeripheral: peripheral,
                                              advertisementData: advertisementData,
                                              andRSSI: RSSI, using: centralManager)
+        print("Scanned with RSSI: \(RSSI)")
         if !discoveredPeripherals.contains(newPeripheral) {
             discoveredPeripherals.append(newPeripheral)
             tableView.beginUpdates()
