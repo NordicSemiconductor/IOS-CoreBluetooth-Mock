@@ -31,31 +31,13 @@
 import Foundation
 import CoreBluetooth
 
-public protocol CBCentralManagerMockDelegate: class {
-    
-    /// This simulation method is called when a mock central manager was
-    /// created with an option to restore the state
-    /// (`CBCentralManagerOptionRestoreIdentifierKey`).
-    ///
-    /// The returned map, if not <i>nil</i>, will be passed to
-    /// `centralManager(:willRestoreState:)`.
-    /// - Parameter forIdentifierKey: The restoration key.
-    /// - Returns: A map with restored states or <i>nil</i> if the state wasn't
-    ///            saved before.
-    /// - SeeAlso: CBCentralManagerRestoredStatePeripheralsKey
-    /// - SeeAlso: CBCentralManagerRestoredStateScanServicesKey
-    /// - SeeAlso: CBCentralManagerRestoredStateScanOptionsKey
-    func simulateStateRestoration(forIdentifierKey: String) -> [String : Any]?
-    
-}
-
 public class CBCentralManagerMock: CBCentralManagerType {
-    /// Mock RSSI deviation. Returned RSSI values will be in range
-    /// &lt;base RSSI - deviation, base RSSI + deviation&gt;.
+    /// Mock RSSI deviation.
+    ///
+    /// Returned RSSI values will be in range
+    /// `(base RSSI - deviation)...(base RSSI + deviation)`.
     fileprivate static let rssiDeviation = 15 // dBm
     
-    /// A mock delegate is an object supporting creating central manager objects.
-    public static weak var mockDelegate: CBCentralManagerMockDelegate?
     /// A list of all mock managers instantiated by user.
     private static var managers: [WeakRef<CBCentralManagerMock>] = []
     /// A list of peripherals known to the system.
@@ -126,8 +108,8 @@ public class CBCentralManagerMock: CBCentralManagerType {
         self.delegate = delegate
         if let options = options,
            let identifierKey = options[CBCentralManagerOptionRestoreIdentifierKey] as? String,
-           let dict = CBCentralManagerMock.mockDelegate?
-               .simulateStateRestoration(forIdentifierKey: identifierKey) {
+           let dict = CBCentralManagerFactory
+               .simulateStateRestoration?(identifierKey) {
             var state: [String : Any] = [:]
             if let peripheralKeys = dict[CBCentralManagerRestoredStatePeripheralsKey] {
                 state[CBCentralManagerRestoredStatePeripheralsKey] = peripheralKeys
@@ -159,34 +141,11 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     // MARK: - Central manager simulation methods
     
-    /// Simulates turning the Bluetooth adapter on.
-    /// The process will take the given amount of time.
-    /// - Parameter duration: The transition interval. By default 100 ms.
-    public static func simulatePowerOn(duration: TimeInterval = 0.1) {
-        guard managerState != .poweredOn else {
-            return
-        }
-        DispatchQueue.global().asyncAfter(deadline: .now() + duration) {
-            managerState = .poweredOn
-        }
-    }
-    
-    /// Simulate turns the Bluetooth adapter off.
-    /// The process will take the given amount of time.
-    /// - Parameter duration: The transition interval. By default 100 ms.
-    public static func simulatePowerOff(duration: TimeInterval = 0.1) {
-        guard managerState != .poweredOff else {
-            return
-        }
-        DispatchQueue.global().asyncAfter(deadline: .now() + duration) {
-            managerState = .poweredOff
-        }
-    }
-    
-    /// Sets the initial state of the Bluetooth adapter. This method
-    /// should only be called ones, before any `CBCentralManagerMock` is
-    /// created. By defult, the initial state is `.poweredOff`.
-    /// - Parameter state: The initial state of the Bluetooth adapter.
+    /// Sets the initial state of the Bluetooth central manager.
+    ///
+    /// This method should only be called ones, before any `CBCentralManagerMock`
+    /// is created. By defult, the initial state is `.poweredOff`.
+    /// - Parameter state: The initial state of the central manager.
     public static func simulateInitialState(_ state: CBManagerStateType) {
         managerState = state
     }
@@ -205,6 +164,30 @@ public class CBCentralManagerMock: CBCentralManagerType {
             return
         }
         mockPeripherals = peripherals
+    }
+    
+    /// Simulates turning the Bluetooth adapter on.
+    /// The process will take the given amount of time.
+    /// - Parameter deadline: Time when the state should changed.
+    public static func simulatePowerOn(deadline: DispatchTime = .now()) {
+        guard managerState != .poweredOn else {
+            return
+        }
+        DispatchQueue.global().asyncAfter(deadline: deadline) {
+            managerState = .poweredOn
+        }
+    }
+    
+    /// Simulate turns the Bluetooth adapter off.
+    /// The process will take the given amount of time.
+    /// - Parameter deadline: Time when the state should changed.
+    public static func simulatePowerOff(deadline: DispatchTime = .now()) {
+        guard managerState != .poweredOff else {
+            return
+        }
+        DispatchQueue.global().asyncAfter(deadline: deadline) {
+            managerState = .poweredOff
+        }
     }
     
     // MARK: - Peripheral simulation methods
@@ -346,7 +329,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     @available(iOS 13.0, *)
     public static func supports(_ features: CBCentralManager.Feature) -> Bool {
-        return features.isSubset(of: .extendedScanAndConnect)
+        return CBCentralManagerFactory.simulateFeaturesSupport?(features) ?? false
     }
     
     /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
