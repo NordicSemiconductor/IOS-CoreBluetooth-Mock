@@ -30,7 +30,7 @@
 
 import Foundation
 
-public enum CBManagerStateType: Int {
+public enum CBMManagerState: Int {
 
     case unknown
 

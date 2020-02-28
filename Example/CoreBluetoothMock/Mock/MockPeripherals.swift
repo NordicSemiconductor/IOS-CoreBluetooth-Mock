@@ -34,25 +34,25 @@ import CoreBluetoothMock
 
 // MARK: - Mock nRF Blinky
 
-let buttonCharacteristic = CBCharacteristicMock(
+let buttonCharacteristic = CBMCharacteristicMock(
     type: BlinkyPeripheral.buttonCharacteristicUUID,
     properties: [.notify, .read],
     descriptors: CBClientCharacteristicConfigurationDescriptorMock()
 )
 
-let ledCharacteristic = CBCharacteristicMock(
+let ledCharacteristic = CBMCharacteristicMock(
     type: BlinkyPeripheral.ledCharacteristicUUID,
     properties: [.write, .read]
 )
 
-private let blinkySerivce = CBServiceMock(
+private let blinkySerivce = CBMServiceMock(
     type: BlinkyPeripheral.nordicBlinkyServiceUUID, primary: true,
     characteristics:
         buttonCharacteristic,
         ledCharacteristic
 )
 
-private class BlinkyMockPeripheralDelegate: MockPeripheralDelegate {
+private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     private var ledState: Bool = false
     private var buttonState: Bool = false
     
@@ -64,8 +64,8 @@ private class BlinkyMockPeripheralDelegate: MockPeripheralDelegate {
         return buttonState ? Data([0x01]) : Data([0x00])
     }
     
-    func peripheral(_ peripheral: MockPeripheral,
-                    didReceiveReadRequestFor characteristic: CBCharacteristicType)
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveReadRequestFor characteristic: CBMCharacteristic)
         -> Result<Data, Error> {
             if characteristic.uuid == BlinkyPeripheral.ledCharacteristicUUID {
                 return .success(ledData)
@@ -74,8 +74,8 @@ private class BlinkyMockPeripheralDelegate: MockPeripheralDelegate {
             }
     }
     
-    func peripheral(_ peripheral: MockPeripheral,
-                    didReceiveWriteRequestFor characteristic: CBCharacteristicType,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveWriteRequestFor characteristic: CBMCharacteristic,
                     data: Data) -> Result<Void, Error> {
         if data.count > 0 {
             ledState = data[0] != 0x00
@@ -89,7 +89,7 @@ private class BlinkyMockPeripheralDelegate: MockPeripheralDelegate {
     }
 }
 
-let blinky = MockPeripheral
+let blinky = CBMPeripheralSpec
     .simulatePeripheral(proximity: .immediate)
     .advertising(
         advertisementData: [
@@ -102,28 +102,28 @@ let blinky = MockPeripheral
     .connectable(
         name: "nRF Blinky",
         services: [blinkySerivce],
-        delegate: BlinkyMockPeripheralDelegate(),
+        delegate: BlinkyCBMPeripheralSpecDelegate(),
         connectionInterval: 0.150,
         mtu: 23)
     .build()
 
 // MARK: - Mock Nordic HRM
 
-private let hrmSerivce = CBServiceMock(
+private let hrmSerivce = CBMServiceMock(
     type: CBUUID(string: "180D"), primary: true,
     characteristics:
-        CBCharacteristicMock(
+        CBMCharacteristicMock(
             type: CBUUID(string: "2A37"), // Heart Rate Measurement
             properties: [.notify],
             descriptors: CBClientCharacteristicConfigurationDescriptorMock()
         ),
-        CBCharacteristicMock(
+        CBMCharacteristicMock(
             type: CBUUID(string: "2A38"), // Body Sensor Location
             properties: [.read]
         )
 )
 
-private struct DummyMockPeripheralDelegate: MockPeripheralDelegate {
+private struct DummyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     // Let's use default implementation.
     // The HRM will not show up in the scan result, as it
     // doesn't advertise with Nordic LED Button service.
@@ -131,7 +131,7 @@ private struct DummyMockPeripheralDelegate: MockPeripheralDelegate {
     // connection will fail on "Device not supported" error.
 }
 
-let hrm = MockPeripheral
+let hrm = CBMPeripheralSpec
     .simulatePeripheral(proximity: .far)
     .advertising(
         advertisementData: [
@@ -147,14 +147,14 @@ let hrm = MockPeripheral
     .connectable(
         name: "NordicHRM",
         services: [hrmSerivce],
-        delegate: DummyMockPeripheralDelegate(),
+        delegate: DummyCBMPeripheralSpecDelegate(),
         connectionInterval: 0.250,
         mtu: 251)
     .build()
 
 // MARK: - Physical Web Beacon
 
-let thingy = MockPeripheral
+let thingy = CBMPeripheralSpec
     .simulatePeripheral()
     .advertising(
         advertisementData: [

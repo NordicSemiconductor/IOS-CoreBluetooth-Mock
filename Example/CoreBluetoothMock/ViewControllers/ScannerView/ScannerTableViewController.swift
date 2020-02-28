@@ -32,7 +32,7 @@ import UIKit
 import CoreBluetooth
 import CoreBluetoothMock
 
-class ScannerTableViewController: UITableViewController, CBCentralManagerDelegateType {
+class ScannerTableViewController: UITableViewController, CBMCentralManagerDelegate {
     
     // MARK: - Outlets and Actions
     
@@ -41,7 +41,7 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
     
     // MARK: - Properties
     
-    private var centralManager: CBCentralManagerType!
+    private var centralManager: CBMCentralManager!
     private var discoveredPeripherals = [BlinkyPeripheral]()
     
     // MARK: - UIViewController
@@ -69,9 +69,14 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        CBCentralManagerMock.simulateInitialState(.poweredOn)
-        CBCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
-        centralManager = CBCentralManagerFactory.instance(
+        if #available(iOS 13.0, *) {
+            CBMCentralManagerFactory.simulateFeaturesSupport = { features in
+                return features.isSubset(of: .extendedScanAndConnect)
+            }
+        }
+        CBMCentralManagerMock.simulateInitialState(.poweredOn)
+        CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
+        centralManager = CBMCentralManagerFactory.instance(
             delegate: self,
             queue: nil,
             options: [CBCentralManagerOptionShowPowerAlertKey : true],
@@ -86,7 +91,7 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
             blinky.simulateDisconnection()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
-            CBCentralManagerMock.simulatePowerOff()
+            CBMCentralManagerMock.simulatePowerOff()
         }
     }
 
@@ -155,13 +160,13 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
     
     // MARK: - CBCentralManagerDelegate
     
-    func centralManager(_ central: CBCentralManagerType,
+    func centralManager(_ central: CBMCentralManager,
                         willRestoreState dict: [String : Any]) {
         print("Restoring state")
     }
     
-    func centralManager(_ central: CBCentralManagerType,
-                        didDiscover peripheral: CBPeripheralType,
+    func centralManager(_ central: CBMCentralManager,
+                        didDiscover peripheral: CBMPeripheral,
                         advertisementData: [String : Any],
                         rssi RSSI: NSNumber) {
         let newPeripheral = BlinkyPeripheral(withPeripheral: peripheral,
@@ -187,7 +192,7 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         }
     }
 
-    func centralManagerDidUpdateState(_ central: CBCentralManagerType) {
+    func centralManagerDidUpdateState(_ central: CBMCentralManager) {
         if central.state != .poweredOn {
             print("Central is not powered on")
             activityIndicator.stopAnimating()

@@ -31,7 +31,7 @@
 import Foundation
 import CoreBluetooth
 
-public class CBCentralManagerMock: CBCentralManagerType {
+public class CBMCentralManagerMock: CBMCentralManager {
     /// Mock RSSI deviation.
     ///
     /// Returned RSSI values will be in range
@@ -39,11 +39,11 @@ public class CBCentralManagerMock: CBCentralManagerType {
     fileprivate static let rssiDeviation = 15 // dBm
     
     /// A list of all mock managers instantiated by user.
-    private static var managers: [WeakRef<CBCentralManagerMock>] = []
+    private static var managers: [WeakRef<CBMCentralManagerMock>] = []
     /// A list of peripherals known to the system.
-    private static var mockPeripherals: [MockPeripheral] = []
+    private static var peripherals: [CBMPeripheralSpec] = []
     /// The global state of the Bluetooth adapter on the device.
-    fileprivate private(set) static var managerState: CBManagerStateType = .poweredOff {
+    fileprivate private(set) static var managerState: CBMManagerState = .poweredOff {
         didSet {
             // For all existing managers...
             managers
@@ -66,9 +66,9 @@ public class CBCentralManagerMock: CBCentralManagerType {
         }
     }
     
-    public weak var delegate: CBCentralManagerDelegateType?
-    public var state: CBManagerStateType {
-        return initialized ? CBCentralManagerMock.managerState : .unknown
+    public weak var delegate: CBMCentralManagerDelegate?
+    public var state: CBMManagerState {
+        return initialized ? CBMCentralManagerMock.managerState : .unknown
     }
     public private(set) var isScanning: Bool
     private var scanFilter: [CBUUID]?
@@ -77,7 +77,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     /// The dispatch queue used for all callbacks.
     private let queue: DispatchQueue
     /// A map of peripherals known to this central manager.
-    private var peripherals: [UUID : CBPeripheralMock] = [:]
+    private var peripherals: [UUID : CBMPeripheralMock] = [:]
     /// A flag set to true few milliseconds after the manager is created.
     /// Some features, like the state or retrieving peripherals are not
     /// available when manager hasn't been initialized yet.
@@ -91,7 +91,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
         initialize()
     }
     
-    public required init(delegate: CBCentralManagerDelegateType?,
+    public required init(delegate: CBMCentralManagerDelegate?,
                          queue: DispatchQueue?) {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
@@ -100,7 +100,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     }
     
     @available(iOS 7.0, *)
-    public required init(delegate: CBCentralManagerDelegateType?,
+    public required init(delegate: CBMCentralManagerDelegate?,
                          queue: DispatchQueue?,
                          options: [String : Any]?) {
         self.isScanning = false
@@ -108,7 +108,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
         self.delegate = delegate
         if let options = options,
            let identifierKey = options[CBCentralManagerOptionRestoreIdentifierKey] as? String,
-           let dict = CBCentralManagerFactory
+           let dict = CBMCentralManagerFactory
                .simulateStateRestoration?(identifierKey) {
             var state: [String : Any] = [:]
             if let peripheralKeys = dict[CBCentralManagerRestoredStatePeripheralsKey] {
@@ -126,13 +126,13 @@ public class CBCentralManagerMock: CBCentralManagerType {
     }
     
     private func initialize() {
-        if CBCentralManagerMock.mockPeripherals.isEmpty {
+        if CBMCentralManagerMock.peripherals.isEmpty {
             NSLog("Warning: No simulated peripherals. Call simulatePeripherals(:) before creating central manager")
         }
         // Let's say initialization takes 10 ms. Less or more.
         queue.asyncAfter(deadline: .now() + .milliseconds(10)) { [weak self] in
             if let self = self {
-                CBCentralManagerMock.managers.append(WeakRef(self))
+                CBMCentralManagerMock.managers.append(WeakRef(self))
                 self.initialized = true
                 self.delegate?.centralManagerDidUpdateState(self)
             }
@@ -143,10 +143,10 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     /// Sets the initial state of the Bluetooth central manager.
     ///
-    /// This method should only be called ones, before any `CBCentralManagerMock`
+    /// This method should only be called ones, before any `CBMCentralManagerMock`
     /// is created. By defult, the initial state is `.poweredOff`.
     /// - Parameter state: The initial state of the central manager.
-    public static func simulateInitialState(_ state: CBManagerStateType) {
+    public static func simulateInitialState(_ state: CBMManagerState) {
         managerState = state
     }
     
@@ -158,16 +158,15 @@ public class CBCentralManagerMock: CBCentralManagerType {
     ///
     /// This method may only be called once, before any manager was created.
     /// - Parameter peripherals: Peripherals that are not connected.
-    public static func simulatePeripherals(_ peripherals: [MockPeripheral]) {
-        guard managers.isEmpty, mockPeripherals.isEmpty else {
+    public static func simulatePeripherals(_ peripherals: [CBMPeripheralSpec]) {
+        guard managers.isEmpty, CBMCentralManagerMock.peripherals.isEmpty else {
             NSLog("Warning: Peripherals can be added to simulation only once, and not after any central manager was initiated")
             return
         }
-        mockPeripherals = peripherals
+        CBMCentralManagerMock.peripherals = peripherals
     }
     
     /// Simulates turning the Bluetooth adapter on.
-    /// The process will take the given amount of time.
     /// - Parameter deadline: Time when the state should changed.
     public static func simulatePowerOn(deadline: DispatchTime = .now()) {
         guard managerState != .poweredOn else {
@@ -179,7 +178,6 @@ public class CBCentralManagerMock: CBCentralManagerType {
     }
     
     /// Simulate turns the Bluetooth adapter off.
-    /// The process will take the given amount of time.
     /// - Parameter deadline: Time when the state should changed.
     public static func simulatePowerOff(deadline: DispatchTime = .now()) {
         guard managerState != .poweredOff else {
@@ -199,13 +197,13 @@ public class CBCentralManagerMock: CBCentralManagerType {
     /// be disconnected and will not appear on scan results.
     /// - Parameter peripheral: The peripheral that was repositioned.
     /// - Parameter proximity: The new peripheral proximity.
-    internal static func proximity(of peripheral: MockPeripheral,
-                                   didChangeTo proximity: MockProximity) {
+    internal static func proximity(of peripheral: CBMPeripheralSpec,
+                                   didChangeTo proximity: CBMProximity) {
         guard peripheral.proximity != proximity else {
             return
         }
         // Is the peripheral simulated?
-        guard mockPeripherals.contains(peripheral) else {
+        guard peripherals.contains(peripheral) else {
             return
         }
         peripheral.proximity = proximity
@@ -221,11 +219,11 @@ public class CBCentralManagerMock: CBCentralManagerType {
     ///   - peripheral: The peripheral that changed services.
     ///   - newName: New device name.
     ///   - newServices: New list of device services.
-    internal static func peripheral(_ peripheral: MockPeripheral,
+    internal static func peripheral(_ peripheral: CBMPeripheralSpec,
                                     didUpdateName newName: String?,
-                                    andServices newServices: [CBServiceMock]) {
+                                    andServices newServices: [CBMServiceMock]) {
         // Is the peripheral simulated?
-        guard mockPeripherals.contains(peripheral) else {
+        guard peripherals.contains(peripheral) else {
             return
         }
         peripheral.services = newServices
@@ -254,10 +252,10 @@ public class CBCentralManagerMock: CBCentralManagerType {
     /// will receive `peripheral(:didUpdateValueFor:error)`.
     /// - Parameter characteristic: The characteristic from which
     ///                             notification is to be sent.
-    internal static func peripheral(_ peripheral: MockPeripheral,
-                                    didUpdateValueFor characteristic: CBCharacteristicMock) {
+    internal static func peripheral(_ peripheral: CBMPeripheralSpec,
+                                    didUpdateValueFor characteristic: CBMCharacteristicMock) {
         // Is the peripheral simulated?
-        guard mockPeripherals.contains(peripheral) else {
+        guard peripherals.contains(peripheral) else {
             return
         }
         managers
@@ -280,9 +278,9 @@ public class CBCentralManagerMock: CBCentralManagerType {
     ///
     /// The peripheral does not need to be registered before.
     /// - Parameter peripheral: The peripheral that has connected.
-    internal static func peripheralDidConnect(_ peripheral: MockPeripheral) {
+    internal static func peripheralDidConnect(_ peripheral: CBMPeripheralSpec) {
         // Is the peripheral simulated?
-        guard mockPeripherals.contains(peripheral) else {
+        guard peripherals.contains(peripheral) else {
             return
         }
         peripheral.virtualConnections += 1
@@ -296,14 +294,14 @@ public class CBCentralManagerMock: CBCentralManagerType {
     /// - Parameter peripheral: The peripheral to disconnect.
     /// - Parameter error: The disconnection reason. Use `CBError` or
     ///                    `CBATTError` errors.
-    internal static func peripheral(_ peripheral: MockPeripheral,
+    internal static func peripheral(_ peripheral: CBMPeripheralSpec,
                                     didDisconnectWithError error: Error =  CBError(.peripheralDisconnected)) {
         // Is the device connected at all?
         guard peripheral.isConnected else {
             return
         }
         // Is the peripheral simulated?
-        guard mockPeripherals.contains(peripheral) else {
+        guard peripherals.contains(peripheral) else {
             return
         }
         // The device has disconnected, so it can start advertising
@@ -329,7 +327,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     
     @available(iOS 13.0, *)
     public static func supports(_ features: CBCentralManager.Feature) -> Bool {
-        return CBCentralManagerFactory.simulateFeaturesSupport?(features) ?? false
+        return CBMCentralManagerFactory.simulateFeaturesSupport?(features) ?? false
     }
     
     /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
@@ -340,7 +338,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
     /// The scanned peripheral is set as `userInfo`.
     /// - Parameter timer: The timer that is fired.
     @objc private func notify(timer: Timer) {
-        guard let mock = timer.userInfo as? MockPeripheral,
+        guard let mock = timer.userInfo as? CBMPeripheralSpec,
               let advertisementData = mock.advertisementData,
               isScanning else {
             timer.invalidate()
@@ -354,14 +352,14 @@ public class CBCentralManagerMock: CBCentralManagerType {
         }
         // Get or create local peripheral instance.
         if peripherals[mock.identifier] == nil {
-            peripherals[mock.identifier] = CBPeripheralMock(basedOn: mock,
+            peripherals[mock.identifier] = CBMPeripheralMock(basedOn: mock,
                                                             queue: queue)
         }
         let peripheral = peripherals[mock.identifier]!
         
         // Emulate RSSI based on proximity. Apply some deviation.
         let rssi = mock.proximity.RSSI
-        let delta = CBCentralManagerMock.rssiDeviation
+        let delta = CBMCentralManagerMock.rssiDeviation
         let deviation = Int.random(in: -delta...delta)
         delegate?.centralManager(self, didDiscover: peripheral,
                                  advertisementData: advertisementData,
@@ -387,7 +385,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
         scanFilter = serviceUUIDs
         scanOptions = options
 
-        CBCentralManagerMock.mockPeripherals
+        CBMCentralManagerMock.peripherals
             // For all advertising peripherals,
             .filter { $0.advertisementData   != nil
                    && $0.advertisingInterval != nil
@@ -423,7 +421,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
         scanOptions = nil
     }
     
-    public func connect(_ peripheral: CBPeripheralType,
+    public func connect(_ peripheral: CBMPeripheral,
                         options: [String : Any]?) {
         // Central manager must be in powered on state.
         guard state == .poweredOn else {
@@ -433,7 +431,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
             NSLog("Warning: Connection options are not supported in mock central manager")
         }
         // Ignore peripherals that are not mocks.
-        guard let mock = peripheral as? CBPeripheralMock else {
+        guard let mock = peripheral as? CBMPeripheralMock else {
             return
         }
         // The peripheral must come from this central manager. Ignore other.
@@ -454,13 +452,13 @@ public class CBCentralManagerMock: CBCentralManagerType {
         }
     }
     
-    public func cancelPeripheralConnection(_ peripheral: CBPeripheralType) {
+    public func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
         // Central manager must be in powered on state.
         guard state == .poweredOn else {
             return
         }
         // Ignore peripherals that are not mocks.
-        guard let mock = peripheral as? CBPeripheralMock else {
+        guard let mock = peripheral as? CBMPeripheralMock else {
             return
         }
         // It is not possible to cancel connection of a peripheral obtained
@@ -474,7 +472,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
         }
     }
     
-    public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralType] {
+    public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
         // Starting from iOS 13, this method returns peripherals only in ON state.
         guard state == .poweredOn else {
             return []
@@ -490,10 +488,10 @@ public class CBCentralManagerMock: CBCentralManagerType {
         // copy them to the local manager.
         let peripheralsKnownByOtherManagers = missingIdentifiers
             .flatMap { i in
-                CBCentralManagerMock.managers
+                CBMCentralManagerMock.managers
                     .compactMap { $0.ref?.peripherals[i] }
             }
-            .map { CBPeripheralMock(copy: $0, queue: queue) }
+            .map { CBMPeripheralMock(copy: $0, queue: queue) }
         peripheralsKnownByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
         }
@@ -506,7 +504,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
             }
     }
     
-    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralType] {
+    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBMPeripheral] {
         guard state == .poweredOn else {
             // Starting from iOS 13, this method returns peripherals only in ON state.
             return []
@@ -517,7 +515,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
             .filter { $0.state == .connected }
         // Other central managers may know some connected peripherals that
         // are not known to the local one.
-        let peripheralsConnectedByOtherManagers = CBCentralManagerMock.managers
+        let peripheralsConnectedByOtherManagers = CBMCentralManagerMock.managers
             // Get only those managers that were not disposed.
             .filter { $0.ref != nil }
             // Look for connected peripherals known to other managers.
@@ -528,12 +526,12 @@ public class CBCentralManagerMock: CBCentralManagerType {
             // Search for ones that are not known to the local manager.
             .filter { peripherals[$0.identifier] == nil }
             // Create a local copy.
-            .map { CBPeripheralMock(copy: $0, queue: queue) }
+            .map { CBMPeripheralMock(copy: $0, queue: queue) }
         // Add those copies to the local manager.
         peripheralsConnectedByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
         }
-        let peripheralsConnectedByOtherApps = CBCentralManagerMock.mockPeripherals
+        let peripheralsConnectedByOtherApps = CBMCentralManagerMock.peripherals
             .filter { $0.isConnected }
             // Search for ones that are not known to the local manager.
             .filter { peripherals[$0.identifier] == nil }
@@ -544,7 +542,7 @@ public class CBCentralManagerMock: CBCentralManagerType {
                 }
             }
             // Create a local copy.
-            .map { CBPeripheralMock(basedOn: $0, queue: queue) }
+            .map { CBMPeripheralMock(basedOn: $0, queue: queue) }
         return peripheralsConnectedByThisManager
              + peripheralsConnectedByOtherManagers
              + peripheralsConnectedByOtherApps
@@ -559,12 +557,12 @@ public class CBCentralManagerMock: CBCentralManagerType {
 
 // MARK: - CBPeripheralMock implementation
 
-public class CBPeripheralMock: CBPeer, CBPeripheralType {
+public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     
     /// The dispatch queue to call delegate methods on.
     private let queue: DispatchQueue
     /// The mock peripheral with user-defined implementatino.
-    private let mock: MockPeripheral
+    private let mock: CBMPeripheralSpec
     /// Size of the outgoing buffer. Only this many packets
     /// can be written without response in a loop, without
     /// waiting for `canSendWriteWithoutResponse`.
@@ -584,7 +582,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     /// and iOS had chance to read device name.
     fileprivate var wasConnected: Bool = false
     
-    public var delegate: CBPeripheralDelegateType?
+    public var delegate: CBMPeripheralDelegate?
     
     public override var identifier: UUID {
         return mock.identifier
@@ -606,17 +604,17 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     }
     public private(set) var ancsAuthorized: Bool = false
     public private(set) var state: CBPeripheralState = .disconnected
-    public private(set) var services: [CBServiceType]? = nil
+    public private(set) var services: [CBMService]? = nil
     
     // MARK: Initializers
     
-    fileprivate init(basedOn mock: MockPeripheral, queue: DispatchQueue) {
+    fileprivate init(basedOn mock: CBMPeripheralSpec, queue: DispatchQueue) {
         self.mock = mock
         self.queue = queue
         self.availableWriteWithoutResponseBuffer = bufferSize
     }
     
-    fileprivate init(copy: CBPeripheralMock, queue: DispatchQueue) {
+    fileprivate init(copy: CBMPeripheralMock, queue: DispatchQueue) {
         self.mock = copy.mock
         self.queue = queue
         self.availableWriteWithoutResponseBuffer = bufferSize
@@ -655,7 +653,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             state = .disconnecting
         }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
-            if let self = self, CBCentralManagerMock.managerState == .poweredOn {
+            if let self = self, CBMCentralManagerMock.managerState == .poweredOn {
                 self.state = .disconnected
                 self.services = nil
                 self._canSendWriteWithoutResponse = false
@@ -681,7 +679,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
             interval = supervisionTimeout
         }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
-            if let self = self, CBCentralManagerMock.managerState == .poweredOn {
+            if let self = self, CBMCentralManagerMock.managerState == .poweredOn {
                 self.state = .disconnected
                 self.services = nil
                 self._canSendWriteWithoutResponse = false
@@ -728,7 +726,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }
     }
     
-    fileprivate func notifyValueChanged(for originalCharacteristic: CBCharacteristicMock) {
+    fileprivate func notifyValueChanged(for originalCharacteristic: CBMCharacteristicMock) {
         guard state == .connected,
               let interval = mock.connectionInterval,
               let service = services?.first(where: {
@@ -780,7 +778,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                     .contains(where: { ds in s.identifier == ds.identifier })
                 }
                 // Copy the service info, without included services or characteristics.
-                .map { CBServiceType(shallowCopy: $0, for: self) }
+                .map { CBMService(shallowCopy: $0, for: self) }
             let newServicesCount = services!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
@@ -799,7 +797,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     }
     
     public func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
-                                         for service: CBServiceType) {
+                                         for service: CBMService) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
@@ -818,7 +816,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         
         switch delegate.peripheral(mock,
                                    didReceiveIncludedServiceDiscoveryRequest: includedServiceUUIDs,
-                                   for: service as! CBServiceMock) {
+                                   for: service as! CBMServiceMock) {
         case .success:
             service._includedServices = service._includedServices ?? []
             let initialSize = service._includedServices!.count
@@ -831,7 +829,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                         .contains(where: { ds in s.identifier == ds.identifier })
                     }
                     // Copy the service info, without included characterisitics.
-                    .map { CBServiceType(shallowCopy: $0, for: self) }
+                    .map { CBMService(shallowCopy: $0, for: self) }
             let newServicesCount = service._includedServices!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
@@ -855,7 +853,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     }
     
     public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
-                                        for service: CBServiceType) {
+                                        for service: CBMService) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
@@ -887,7 +885,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                         .contains(where: { dc in c.identifier == dc.identifier })
                     }
                     // Copy the characteristic info, without included descriptors or value.
-                    .map { CBCharacteristicType(shallowCopy: $0, in: service) }
+                    .map { CBMCharacteristic(shallowCopy: $0, in: service) }
             let newCharacteristicsCount = service._characteristics!.count - initialSize
             // Characteristics discovery may takes the more time, the more characteristics
             // are discovered.
@@ -909,7 +907,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }
     }
     
-    public func discoverDescriptors(for characteristic: CBCharacteristicType) {
+    public func discoverDescriptors(for characteristic: CBMCharacteristic) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
@@ -941,7 +939,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
                         .contains(where: { dd in d.identifier == dd.identifier })
                     }
                     // Copy the descriptors info, without the value.
-                    .map { CBDescriptorType(shallowCopy: $0, in: characteristic) }
+                    .map { CBMDescriptor(shallowCopy: $0, in: characteristic) }
             let newDescriptorsCount = characteristic._descriptors!.count - initialSize
             // Descriptors discovery may takes the more time, the more descriptors
             // are discovered.
@@ -965,7 +963,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     
     // MARK: Read requests
     
-    public func readValue(for characteristic: CBCharacteristicType) {
+    public func readValue(for characteristic: CBMCharacteristic) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval else {
@@ -997,7 +995,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }
     }
     
-    public func readValue(for descriptor: CBDescriptorType) {
+    public func readValue(for descriptor: CBMDescriptor) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval else {
@@ -1032,7 +1030,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     // MARK: Write requests
     
     public func writeValue(_ data: Data,
-                           for characteristic: CBCharacteristicType,
+                           for characteristic: CBMCharacteristic,
                            type: CBCharacteristicWriteType) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
@@ -1092,7 +1090,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         }
     }
     
-    public func writeValue(_ data: Data, for descriptor: CBDescriptorType) {
+    public func writeValue(_ data: Data, for descriptor: CBMDescriptor) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval else {
@@ -1136,7 +1134,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
     // MARK: Enabling notifications and indications
     
     public func setNotifyValue(_ enabled: Bool,
-                               for characteristic: CBCharacteristicType) {
+                               for characteristic: CBMCharacteristic) {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval else {
@@ -1179,7 +1177,7 @@ public class CBPeripheralMock: CBPeer, CBPeripheralType {
         queue.async { [weak self] in
             if let self = self, self.state == .connected {
                 let rssi = self.mock.proximity.RSSI
-                let delta = CBCentralManagerMock.rssiDeviation
+                let delta = CBMCentralManagerMock.rssiDeviation
                 let deviation = Int.random(in: -delta...delta)
                 self.delegate?.peripheral(self, didReadRSSI: (rssi + deviation) as NSNumber,
                                           error: nil)
@@ -1206,13 +1204,13 @@ private class WeakRef<T: AnyObject> {
     }
 }
 
-private extension Dictionary where Key == UUID, Value == CBPeripheralMock {
+private extension Dictionary where Key == UUID, Value == CBMPeripheralMock {
     
-    subscript(identifiers: [UUID]) -> [CBPeripheralMock] {
+    subscript(identifiers: [UUID]) -> [CBMPeripheralMock] {
         return identifiers.compactMap { self[$0] }
     }
     
-    subscript(serviceUUIDs: [CBUUID]) -> [CBPeripheralMock] {
+    subscript(serviceUUIDs: [CBUUID]) -> [CBMPeripheralMock] {
         return filter { (_, peripheral) in
             peripheral.services?
                 .contains(where: { service in

@@ -31,12 +31,12 @@
 import Foundation
 import CoreBluetooth
 
-/// The factory that instantiates the CBCentralManagerType object.
+/// The factory that instantiates the CBMCentralManager object.
 /// The factory may be used to automatically instantiate either a native
 /// or mock implementation based on the environment. You may also
-/// instantiate the `CBCentralManagerMock` or `CBCentralManagerNative` without
+/// instantiate the `CBMCentralManagerMock` or `CBMCentralManagerNative` without
 /// using this factory.
-public class CBCentralManagerFactory {
+public class CBMCentralManagerFactory {
     
     /// This simulation method is called when a mock central manager was
     /// created with an option to restore the state
@@ -61,13 +61,13 @@ public class CBCentralManagerFactory {
     /// - Parameters:
     ///   - forceMock: A flag to force mocking also on physical device.
     /// - Returns: The implementation of CBCentralManager.
-    public static func instance(forceMock: Bool = false) -> CBCentralManagerType {
+    public static func instance(forceMock: Bool = false) -> CBMCentralManager {
         #if targetEnvironment(simulator)
-            return CBCentralManagerMock()
+            return CBMCentralManagerMock()
         #else
             return forceMock ?
-                CBCentralManagerMock() :
-                CBCentralManagerNative()
+                CBMCentralManagerMock() :
+                CBMCentralManagerNative()
         #endif
     }
     
@@ -80,15 +80,15 @@ public class CBCentralManagerFactory {
     ///            If <i>nil</i>, the main queue will be used.
     ///   - forceMock: A flag to force mocking also on a physical device.
     /// - Returns: The implementation of CBCentralManager.
-    public static func instance(delegate: CBCentralManagerDelegateType?,
+    public static func instance(delegate: CBMCentralManagerDelegate?,
                                 queue: DispatchQueue?,
-                                forceMock: Bool = false) -> CBCentralManagerType {
+                                forceMock: Bool = false) -> CBMCentralManager {
         #if targetEnvironment(simulator)
-            return CBCentralManagerMock(delegate: delegate, queue: queue)
+            return CBMCentralManagerMock(delegate: delegate, queue: queue)
         #else
             return forceMock ?
-                CBCentralManagerMock(delegate: delegate, queue: queue) :
-                CBCentralManagerNative(delegate: delegate, queue: queue)
+                CBMCentralManagerMock(delegate: delegate, queue: queue) :
+                CBMCentralManagerNative(delegate: delegate, queue: queue)
         #endif
     }
     
@@ -102,16 +102,16 @@ public class CBCentralManagerFactory {
     ///   - options: An optional dictionary specifying options for the manager.
     ///   - forceMock: A flag to force mocking also on a physical device.
     /// - Returns: The implementation of CBCentralManager.
-    public static func instance(delegate: CBCentralManagerDelegateType?,
+    public static func instance(delegate: CBMCentralManagerDelegate?,
                                 queue: DispatchQueue?,
                                 options: [String : Any]?,
-                                forceMock: Bool = false) -> CBCentralManagerType {
+                                forceMock: Bool = false) -> CBMCentralManager {
         #if targetEnvironment(simulator)
-            return CBCentralManagerMock(delegate: delegate, queue: queue, options: options)
+            return CBMCentralManagerMock(delegate: delegate, queue: queue, options: options)
         #else
             return forceMock ?
-                CBCentralManagerMock(delegate: delegate, queue: queue, options: options) :
-                CBCentralManagerNative(delegate: delegate, queue: queue, options: options)
+                CBMCentralManagerMock(delegate: delegate, queue: queue, options: options) :
+                CBMCentralManagerNative(delegate: delegate, queue: queue, options: options)
         #endif
     }
     

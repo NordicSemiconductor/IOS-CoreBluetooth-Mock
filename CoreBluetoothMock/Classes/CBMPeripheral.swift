@@ -31,13 +31,13 @@
 import Foundation
 import CoreBluetooth
 
-public protocol CBPeripheralType: class {
+public protocol CBMPeripheral: class {
     
     /// The unique, persistent identifier associated with the peer.
     var identifier: UUID { get }
     
     /// The delegate object that will receive peripheral events.
-    var delegate: CBPeripheralDelegateType? { get set }
+    var delegate: CBMPeripheralDelegate? { get set }
     
     /// The name of the peripheral.
     var name: String? { get }
@@ -45,9 +45,9 @@ public protocol CBPeripheralType: class {
     /// The current connection state of the peripheral.
     var state: CBPeripheralState { get }
     
-    /// A list of <code>CBServiceMock</code> objects that have been
+    /// A list of `CBMServiceMock` objects that have been
     /// discovered on the peripheral.
-    var services: [CBServiceType]? { get }
+    var services: [CBMService]? { get }
     
     /// True if the remote device has space to send a write without
     /// response. If this value is false, the value will be set to
@@ -68,77 +68,77 @@ public protocol CBPeripheralType: class {
     func readRSSI()
     
     /// Discovers available service(s) on the peripheral.
-    /// - Parameter serviceUUIDs: A list of <code>CBUUID</code> objects
+    /// - Parameter serviceUUIDs: A list of `CBUUID` objects
     ///                           representing the service types to be
-    ///                           discovered. If <i>nil</i>, all services
+    ///                           discovered. If `nil`, all services
     ///                           will be discovered.
     func discoverServices(_ serviceUUIDs: [CBUUID]?)
     
-    /// Discovers the specified included service(s) of <i>service</i>.
+    /// Discovers the specified included service(s) of service.
     /// - Parameters:
-    ///   - includedServiceUUIDs: A list of <code>CBUUID</code> objects
+    ///   - includedServiceUUIDs: A list of `CBUUID` objects
     ///                           representing the included service types
-    ///                           to be discovered. If <i>nil</i>, all
-    ///                           of <i>service</i>s included services will
+    ///                           to be discovered. If `nil`, all
+    ///                           of services included services will
     ///                           be discovered, which is considerably
     ///                           slower and not recommended.
     ///   - service: A GATT service.
     func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
-                                  for service: CBServiceType)
+                                  for service: CBMService)
     
-    /// Discovers the specified characteristic(s) of <i>service</i>.
+    /// Discovers the specified characteristic(s) of service.
     /// - Parameters:
-    ///   - characteristicUUIDs: A list of <code>CBUUID</code> objects
+    ///   - characteristicUUIDs: A list of `CBUUID` objects
     ///                          representing the characteristic types
-    ///                          to be discovered. If <i>nil</i>, all
-    ///                          characteristics of <i>service</i> will
+    ///                          to be discovered. If `nil`, all
+    ///                          characteristics of service will
     ///                          be discovered.
     ///   - service: A GATT service.
     func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
-                                 for service: CBServiceType)
+                                 for service: CBMService)
     
-    /// Discovers the characteristic descriptor(s) of <i>characteristic</i>.
+    /// Discovers the characteristic descriptor(s) of characteristic.
     /// - Parameter characteristic: A GATT characteristic.
-    func discoverDescriptors(for characteristic: CBCharacteristicType)
+    func discoverDescriptors(for characteristic: CBMCharacteristic)
     
-    /// Reads the characteristic value for <i>characteristic</i>.
+    /// Reads the characteristic value for characteristic.
     /// - Parameter characteristic: A GATT characteristic.
-    func readValue(for characteristic: CBCharacteristicType)
+    func readValue(for characteristic: CBMCharacteristic)
     
-    /// Reads the descriptor value for <i>descriptor</i>.
+    /// Reads the descriptor value for descriptor.
     /// - Parameter descriptor: A GATT descriptor.
-    func readValue(for descriptor: CBDescriptorType)
+    func readValue(for descriptor: CBMDescriptor)
 
     /// The maximum amount of data, in bytes, that can be sent to a
     /// characteristic in a single write type.
     @available(iOS 9.0, *)
     func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int
     
-    /// Writes <i>value</i> to <i>characteristic</i>'s characteristic value.
-    /// If the <code>CBCharacteristicWriteWithResponse</code> type is specified,
+    /// Writes value to characteristic's characteristic value.
+    /// If the `.withResponse` type is specified,
     /// `peripheral(_:didWriteValueForCharacteristic:error:)` is called with the
     /// result of the write request.
-    /// If the <code>CBCharacteristicWriteWithoutResponse</code> type is
-    /// specified, and `canSendWriteWithoutResponse` is false, the delivery
-    /// of the data is best-effort and may not be guaranteed.
+    /// If the `.withoutResponse` type is specified, and
+    /// `canSendWriteWithoutResponse` is false, the delivery of the data is
+    /// best-effort and may not be guaranteed.
     /// - Parameters:
     ///   - data: The value to write.
     ///   - characteristic: The characteristic whose characteristic value will
     ///                     be written.
     ///   - type: The type of write to be executed.
-    func writeValue(_ data: Data, for characteristic: CBCharacteristicType,
+    func writeValue(_ data: Data, for characteristic: CBMCharacteristic,
                     type: CBCharacteristicWriteType)
     
-    /// Writes <i>data</i> to <i>descriptor</i>'s value. Client characteristic
+    /// Writes data to descriptor's value. Client characteristic
     /// configuration descriptors cannot be written using this method, and
-    /// should instead use `setNotifyValue(:forCharacteristic:).
+    /// should instead use `setNotifyValue(:forCharacteristic:)`.
     /// - Parameters:
     ///   - data: The value to write.
     ///   - descriptor: A GATT characteristic descriptor.
-    func writeValue(_ data: Data, for descriptor: CBDescriptorType)
+    func writeValue(_ data: Data, for descriptor: CBMDescriptor)
 
     /// Enables or disables notifications/indications for the characteristic
-    /// value of <i>characteristic</i>. If <i>characteristic</i> allows both,
+    /// value of characteristic. If characteristic allows both,
     /// notifications will be used. When notifications/indications are enabled,
     /// updates to the characteristic value will be received via delegate method
     /// `peripheral(:didUpdateValueForCharacteristic:error:)`. Since it is the
@@ -149,8 +149,10 @@ public protocol CBPeripheralType: class {
     ///   - enabled: Whether or not notifications/indications should be enabled.
     ///   - characteristic: The characteristic containing the client
     ///                     characteristic configuration descriptor.
-    func setNotifyValue(_ enabled: Bool, for characteristic: CBCharacteristicType)
+    func setNotifyValue(_ enabled: Bool, for characteristic: CBMCharacteristic)
 
+    /// Attempt to open an L2CAP channel to the peripheral using the supplied PSM.
+    /// - Parameter PSM: The PSM of the channel to open.
     @available(iOS 11.0, *)
     func openL2CAPChannel(_ PSM: CBL2CAPPSM)
 }

@@ -31,15 +31,15 @@
 import Foundation
 import CoreBluetooth
 
-public protocol CBCentralManagerType: class {
+public protocol CBMCentralManager: class {
     
     /// The delegate object that will receive central events.
-    var delegate: CBCentralManagerDelegateType? { get set }
+    var delegate: CBMCentralManagerDelegate? { get set }
     
     /// The current state of the manager, initially set to
     /// <code>CBManagerStateUnknown</code>. Updates are provided by required delegate
     /// method `centralManagerDidUpdateState(_:)`.
-    var state: CBManagerStateType { get }
+    var state: CBMManagerState { get }
     
     /// Whether or not the central is currently scanning.
     @available(iOS 9.0, *)
@@ -74,30 +74,30 @@ public protocol CBCentralManagerType: class {
     /// Pending attempts are cancelled automatically upon deallocation of <i>peripheral</i>,
     /// and explicitly via `cancelPeripheralConnection(_:)`.
     /// - Parameters:
-    ///   - peripheral: The <code>CBPeripheralType</code> to be connected.
+    ///   - peripheral: The <code>CBMPeripheral</code> to be connected.
     ///   - options: An optional dictionary specifying connection behavior options.
-    func connect(_ peripheral: CBPeripheralType, options: [String : Any]?)
+    func connect(_ peripheral: CBMPeripheral, options: [String : Any]?)
     
     /// Cancels an active or pending connection to <i>peripheral</i>. Note that this
-    /// is non-blocking, and any <code>CBPeripheralType</code> commands that are still
+    /// is non-blocking, and any <code>CBMPeripheral</code> commands that are still
     /// pending to <i>peripheral</i> may or may not complete.
-    /// - Parameter peripheral: A <code>CBPeripheralType</code>.
-    func cancelPeripheralConnection(_ peripheral: CBPeripheralType)
+    /// - Parameter peripheral: A <code>CBMPeripheral</code>.
+    func cancelPeripheralConnection(_ peripheral: CBMPeripheral)
     
-    /// Attempts to retrieve the <code>CBPeripheralType</code> object(s) with the
+    /// Attempts to retrieve the <code>CBMPeripheral</code> object(s) with the
     /// corresponding <i>identifiers</i>.
     /// - Parameter identifiers: A list of <code>UUID</code> objects.
     @available(iOS 7.0, *)
-    func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBPeripheralType]
+    func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral]
     
     /// Retrieves all peripherals that are connected to the system and implement
     /// any of the services listed in <i>serviceUUIDs</i>.
     /// Note that this set can include peripherals which were connected by other
     /// applications, which will need to be connected locally via
     /// `connect(peripheral:options:)` before they can be used.
-    /// - Returns: A list of <code>CBPeripheralType</code> objects.
+    /// - Returns: A list of <code>CBMPeripheral</code> objects.
     @available(iOS 7.0, *)
-    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBPeripheralType]
+    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBMPeripheral]
     
     @available(iOS 13.0, *)
     func registerForConnectionEvents(options: [CBConnectionEventMatchingOption : Any]?)

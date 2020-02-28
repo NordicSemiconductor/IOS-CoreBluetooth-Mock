@@ -31,7 +31,8 @@
 import Foundation
 import CoreBluetooth
 
-public enum MockProximity {
+/// The approximate mock device proximity.
+public enum CBMProximity {
     /// The device will have RSSI values around -40 dBm.
     case near
     /// The device will have RSSI values around -70 dBm.
@@ -51,27 +52,28 @@ public enum MockProximity {
     }
 }
 
-public class MockPeripheral {
+/// The peripheral instance specification.
+public class CBMPeripheralSpec {
     /// The peripheral identifier.
     public let identifier: UUID
-    /// The name of the peripheral cached during previous session.
-    /// This may be <i>nil<i/> to simulate a newly discovered devices.
+    /// The name of the peripheral usually returned by Device Name
+    /// characteristic.
     public internal(set) var name: String?
     /// How far the device is.
-    public internal(set) var proximity: MockProximity
+    public internal(set) var proximity: CBMProximity
     /// Should the mock peripheral appear in scan results when it's
     /// connected.
     public let isAdvertisingWhenConnected: Bool
     
     /// The device's advertising data.
-    /// Make sure to include `CBAdvertisementDataIsConnectable` if the
-    /// device is connectable.
+    /// Make sure to include `CBAdvertisementDataIsConnectable` if
+    /// the device is connectable.
     public let advertisementData: [String : Any]?
     /// The advertising interval.
     public let advertisingInterval: TimeInterval?
     
     /// List of services with implementation.
-    public internal(set) var services: [CBServiceMock]?
+    public internal(set) var services: [CBMServiceMock]?
     /// The connection interval.
     public let connectionInterval: TimeInterval?
     /// The MTU (Maximum Transfer Unit). Min value is 23, max 517.
@@ -79,7 +81,7 @@ public class MockPeripheral {
     /// MTU - 3 bytes.
     public let mtu: Int?
     /// The delegate that will handle connection requests.
-    public let connectionDelegate: MockPeripheralDelegate?
+    public let connectionDelegate: CBMPeripheralSpecDelegate?
     /// A flag indicating whether the device is connected.
     public var isConnected: Bool {
         return virtualConnections > 0
@@ -93,15 +95,15 @@ public class MockPeripheral {
     private init(
             identifier: UUID,
             name: String?,
-            proximity: MockProximity,
+            proximity: CBMProximity,
             isInitiallyConnected: Bool,
             isAdvertisingWhenConnected: Bool,
             advertisementData: [String : Any]?,
             advertisingInterval: TimeInterval?,
-            services: [CBServiceMock]?,
+            services: [CBMServiceMock]?,
             connectionInterval: TimeInterval?,
             mtu: Int?,
-            connectionDelegate: MockPeripheralDelegate?) {
+            connectionDelegate: CBMPeripheralSpecDelegate?) {
         self.identifier = identifier
         self.name = name
         self.proximity = proximity
@@ -124,7 +126,7 @@ public class MockPeripheral {
     ///   - proximity: Approximate distance to the device. By default set
     ///                to `.immediate`.
     public static func simulatePeripheral(identifier: UUID = UUID(),
-                                          proximity: MockProximity = .immediate) -> Builder {
+                                          proximity: CBMProximity = .immediate) -> Builder {
         return Builder(identifier: identifier,
                        proximity: proximity)
     }
@@ -140,7 +142,7 @@ public class MockPeripheral {
     /// Connected devices are be available for managers using
     /// `retrieveConnectedPeripherals(withServices:)`.
     public func simulateConnection() {
-        CBCentralManagerMock.peripheralDidConnect(self)
+        CBMCentralManagerMock.peripheralDidConnect(self)
     }
     
     /// Simulates a situation when the peripheral disconnection from
@@ -151,7 +153,7 @@ public class MockPeripheral {
     /// - Parameter error: The disconnection reason. Use `CBError` or
     ///                    `CBATTError` errors.
     public func simulateDisconnection(withError error: Error = CBError(.peripheralDisconnected)) {
-        CBCentralManagerMock.peripheral(self, didDisconnectWithError: error)
+        CBMCentralManagerMock.peripheral(self, didDisconnectWithError: error)
     }
     
     /// Simulates a reset of the peripheral. It will make it advertising
@@ -175,11 +177,11 @@ public class MockPeripheral {
     ///   - newName: The new device name after change.
     ///   - newServices: The new services after change.
     public func simulateServiceChange(newName: String?,
-                                      newServices: [CBServiceMock]) {
+                                      newServices: [CBMServiceMock]) {
         guard let _ = connectionDelegate else {
             return
         }
-        CBCentralManagerMock.peripheral(self, didUpdateName: newName,
+        CBMCentralManagerMock.peripheral(self, didUpdateName: newName,
                                         andServices: newServices)
     }
     
@@ -190,8 +192,8 @@ public class MockPeripheral {
     /// be disconnected and will not appear on scan results.
     /// - Parameter peripheral: The peripheral that
     /// - Parameter proximity: The new peripheral proximity.
-    public func simulateProximityChange(_ proximity: MockProximity) {
-        CBCentralManagerMock.proximity(of: self, didChangeTo: proximity)
+    public func simulateProximityChange(_ proximity: CBMProximity) {
+        CBMCentralManagerMock.proximity(of: self, didChangeTo: proximity)
     }
     
     /// Simulates a notification/indication sent from the peripheral.
@@ -202,14 +204,14 @@ public class MockPeripheral {
     /// - Parameter characteristic: The characteristic from which a
     ///                             notification or indication is to be sent.
     public func simulateValueUpdate(_ data: Data,
-                                    for characteristic: CBCharacteristicMock) {
+                                    for characteristic: CBMCharacteristicMock) {
         guard let services = services, services.contains(where: {
                   $0.characteristics?.contains(characteristic) ?? false
               }) else {
             return
         }
         characteristic.value = data
-        CBCentralManagerMock.peripheral(self,
+        CBMCentralManagerMock.peripheral(self,
                                         didUpdateValueFor: characteristic)
     }
     
@@ -220,7 +222,7 @@ public class MockPeripheral {
         /// This may be <i>nil<i/> to simulate a newly discovered devices.
         private var name: String?
         /// How far the device is.
-        private var proximity: MockProximity
+        private var proximity: CBMProximity
              
         /// The device's advertising data.
         /// Make sure to include `CBAdvertisementDataIsConnectable` with
@@ -237,7 +239,7 @@ public class MockPeripheral {
         private var isInitiallyConnected: Bool = false
         
         /// List of services with implementation.
-        private var services: [CBServiceMock]? = nil
+        private var services: [CBMServiceMock]? = nil
         /// The connection interval, in seconds.
         private var connectionInterval: TimeInterval? = nil
         /// The MTU (Maximul Transfer Unit). Min value is 23, max 517.
@@ -245,9 +247,9 @@ public class MockPeripheral {
         /// MTU - 3 bytes.
         private var mtu: Int? = nil
         /// The delegate that will handle connection requests.
-        private var connectionDelegate: MockPeripheralDelegate?
+        private var connectionDelegate: CBMPeripheralSpecDelegate?
         
-        fileprivate init(identifier: UUID, proximity: MockProximity) {
+        fileprivate init(identifier: UUID, proximity: CBMProximity) {
             self.identifier = identifier
             self.proximity = proximity
         }
@@ -285,8 +287,8 @@ public class MockPeripheral {
         ///          MTU - 3 bytes (3 bytes are used by GATT for handle and
         ///          command).
         public func connectable(name: String,
-                                services: [CBServiceMock],
-                                delegate: MockPeripheralDelegate?,
+                                services: [CBMServiceMock],
+                                delegate: CBMPeripheralSpecDelegate?,
                                 connectionInterval: TimeInterval = 0.045,
                                 mtu: Int = 23) -> Builder {
             self.name = name
@@ -313,8 +315,8 @@ public class MockPeripheral {
         ///          MTU - 3 bytes (3 bytes are used by GATT for handle and
         ///          command).
         public func connected(name: String,
-                              services: [CBServiceMock],
-                              delegate: MockPeripheralDelegate?,
+                              services: [CBMServiceMock],
+                              delegate: CBMPeripheralSpecDelegate?,
                               connectionInterval: TimeInterval = 0.045,
                               mtu: Int = 23)-> Builder {
             self.name = name
@@ -327,8 +329,8 @@ public class MockPeripheral {
         }
         
         /// Builds the `MockPeripheral` object.
-        public func build() -> MockPeripheral {
-            return MockPeripheral(
+        public func build() -> CBMPeripheralSpec {
+            return CBMPeripheralSpec(
                 identifier: identifier,
                 name: name,
                 proximity: proximity,
@@ -345,9 +347,9 @@ public class MockPeripheral {
     }
 }
 
-extension MockPeripheral: Equatable {
+extension CBMPeripheralSpec: Equatable {
     
-    public static func == (lhs: MockPeripheral, rhs: MockPeripheral) -> Bool {
+    public static func == (lhs: CBMPeripheralSpec, rhs: CBMPeripheralSpec) -> Bool {
         return lhs.identifier == rhs.identifier
     }
     
