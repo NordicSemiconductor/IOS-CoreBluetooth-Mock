@@ -108,8 +108,10 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegateType, CBCentralManagerDele
     
     /// Cancels existing or pending connection.
     public func disconnect() {
-        print("Cancelling connection...")
-        centralManager.cancelPeripheralConnection(basePeripheral)
+        if basePeripheral.state != .disconnected {
+            print("Cancelling connection...")
+            centralManager.cancelPeripheralConnection(basePeripheral)
+        }
     }
     
     // MARK: - Blinky API

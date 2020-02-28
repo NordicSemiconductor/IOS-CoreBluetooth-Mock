@@ -32,11 +32,14 @@ import Foundation
 import CoreBluetooth
 
 public class CBCentralManagerNative: CBCentralManagerType {
-    private let manager: CBCentralManager
+    public weak var delegate: CBCentralManagerDelegateType?
+    
+    private var manager: CBCentralManager!
+    private var wrapper: CBCentralManagerDelegate!
     private var peripherals: [UUID : CBPeripheralNative] = [:]
     
     private class CBCentralManagerDelegateWrapper: NSObject, CBCentralManagerDelegate {
-        private var manager: CBCentralManagerNative
+        fileprivate var manager: CBCentralManagerNative
         
         init(_ manager: CBCentralManagerNative) {
             self.manager = manager
@@ -46,10 +49,14 @@ public class CBCentralManagerNative: CBCentralManagerType {
             manager.delegate?.centralManagerDidUpdateState(manager)
         }
         
-        func centralManager(_ central: CBCentralManager,
-                            willRestoreState dict: [String : Any]) {
-            manager.delegate?.centralManager(manager, willRestoreState: dict)
-        }
+        // This methods is moved to a separate class below. Otherwise a warning
+        // is generated when setting delegate to the CBCentralManager when
+        // restoration was not enabled.
+        //
+        // func centralManager(_ central: CBCentralManager,
+        //                     willRestoreState dict: [String : Any]) {
+        //     manager.delegate?.centralManager(manager, willRestoreState: dict)
+        // }
         
         func centralManager(_ central: CBCentralManager,
                             didDiscover peripheral: CBPeripheral,
@@ -63,7 +70,8 @@ public class CBCentralManagerNative: CBCentralManagerType {
         
         func centralManager(_ central: CBCentralManager,
                             didConnect peripheral: CBPeripheral) {
-            manager.delegate?.centralManager(manager, didConnect: getPeripheral(peripheral))
+            manager.delegate?.centralManager(manager,
+                                             didConnect: getPeripheral(peripheral))
         }
         
         func centralManager(_ central: CBCentralManager,
@@ -109,18 +117,15 @@ public class CBCentralManagerNative: CBCentralManagerType {
         }
     }
     
-    private var wrapper: CBCentralManagerDelegate?
-    public weak var delegate: CBCentralManagerDelegateType? {
-        didSet {
-            if let _ = delegate {
-                // We need to hold a strong reference to the wrapper, otherwise
-                // it would be immediately deallocated.
-                wrapper = CBCentralManagerDelegateWrapper(self)
-                manager.delegate = wrapper
-            } else {
-                wrapper = nil
-                manager.delegate = nil
-            }
+    private class CBCentralManagerDelegateWrapperWithRestoration: CBCentralManagerDelegateWrapper {
+        
+        override init(_ manager: CBCentralManagerNative) {
+            super.init(manager)
+        }
+        
+        func centralManager(_ central: CBCentralManager,
+                            willRestoreState dict: [String : Any]) {
+            manager.delegate?.centralManager(manager, willRestoreState: dict)
         }
     }
     
@@ -139,18 +144,25 @@ public class CBCentralManagerNative: CBCentralManagerType {
     }
     
     public init() {
+        self.wrapper = CBCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager()
+        self.manager.delegate = wrapper
     }
     
     public init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?) {
-        self.manager = CBCentralManager(delegate: nil, queue: queue)
+        self.wrapper = CBCentralManagerDelegateWrapper(self)
+        self.manager = CBCentralManager(delegate: wrapper, queue: queue)
         self.delegate = delegate
     }
     
     @available(iOS 7.0, *)
     public init(delegate: CBCentralManagerDelegateType?, queue: DispatchQueue?,
                 options: [String : Any]?) {
-        self.manager = CBCentralManager(delegate: nil, queue: queue, options: options)
+        let restoration = options?[CBCentralManagerOptionRestoreIdentifierKey] != nil
+        self.wrapper = restoration ?
+            CBCentralManagerDelegateWrapperWithRestoration(self) :
+            CBCentralManagerDelegateWrapper(self)
+        self.manager = CBCentralManager(delegate: wrapper, queue: queue, options: options)
         self.delegate = delegate
     }
     

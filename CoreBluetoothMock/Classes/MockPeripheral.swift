@@ -46,7 +46,7 @@ public enum MockProximity {
         case .near:       return -40
         case .immediate:  return -70
         case .far:        return -100
-        case .outOfRange: return -128
+        case .outOfRange: return 127
         }
     }
 }
@@ -198,17 +198,17 @@ public class MockPeripheral {
     ///
     /// All central managers that have enabled notifications on it
     /// will receive `peripheral(:didUpdateValueFor:error)`.
+    /// - Parameter data: The notification/indication data.
     /// - Parameter characteristic: The characteristic from which a
     ///                             notification or indication is to be sent.
-    /// - Parameter newValue: The notification/indication data.
-    public func simulateValueChange(for characteristic: CBCharacteristicMock,
-                                    newValue: Data) {
+    public func simulateValueUpdate(_ data: Data,
+                                    for characteristic: CBCharacteristicMock) {
         guard let services = services, services.contains(where: {
                   $0.characteristics?.contains(characteristic) ?? false
               }) else {
             return
         }
-        characteristic.value = newValue
+        characteristic.value = data
         CBCentralManagerMock.peripheral(self,
                                         didUpdateValueFor: characteristic)
     }

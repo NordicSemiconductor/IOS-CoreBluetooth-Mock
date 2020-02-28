@@ -80,6 +80,11 @@ private class BlinkyMockPeripheralDelegate: MockPeripheralDelegate {
         if data.count > 0 {
             ledState = data[0] != 0x00
         }
+        // Let's simulate a button press every time LED was enabled
+        if ledState {
+            buttonState = !buttonState
+            peripheral.simulateValueUpdate(buttonData, for: buttonCharacteristic)
+        }
         return .success(())
     }
 }

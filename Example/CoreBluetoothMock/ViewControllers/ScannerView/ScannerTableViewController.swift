@@ -57,10 +57,13 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         super.viewDidAppear(animated)
         
         centralManager.delegate = self
-        if centralManager.state == .poweredOn {
+        if centralManager.state == .poweredOn,
+           centralManager.isScanning == false {
             activityIndicator.startAnimating()
-            centralManager.scanForPeripherals(withServices: [BlinkyPeripheral.nordicBlinkyServiceUUID],
-                                              options: [CBCentralManagerScanOptionAllowDuplicatesKey : true])
+            centralManager.scanForPeripherals(
+                withServices: [BlinkyPeripheral.nordicBlinkyServiceUUID],
+                options: [CBCentralManagerScanOptionAllowDuplicatesKey : true]
+            )
         }
     }
 
@@ -68,39 +71,42 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         super.viewDidLoad()
         CBCentralManagerMock.simulateInitialState(.poweredOn)
         CBCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
-        centralManager = CBCentralManagerFactory.instance(forceMock: false)
-        // This will disconnect mock central manager in 5 seconds.
-        //
+        centralManager = CBCentralManagerFactory.instance(
+            delegate: self,
+            queue: nil,
+            options: [CBCentralManagerOptionShowPowerAlertKey : true],
+            forceMock: false
+        )
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
-            print("Click!")
-            blinky.simulateValueChange(for: buttonCharacteristic,
-                                       newValue: Data([0x01]))
+            print("Button Click!")
+            blinky.simulateValueUpdate(Data([0x01]), for: buttonCharacteristic)
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(8)) {
-            print("Disconnected gracefully!")
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(6)) {
+            print("Blilnky disconnected gracefully!")
             blinky.simulateDisconnection()
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(15)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
             CBCentralManagerMock.simulatePowerOff()
         }
     }
 
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize,
+                                     with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         if view.subviews.contains(emptyPeripheralsView) {
             coordinator.animate(alongsideTransition: { (context) in
                 let width = self.emptyPeripheralsView.frame.width
                 let height = self.emptyPeripheralsView.frame.height
                 if context.containerView.frame.height > context.containerView.frame.width {
-                    self.emptyPeripheralsView.frame = CGRect(x: 0,
-                                                             y: (context.containerView.frame.height / 2) - 180,
-                                                             width: width,
-                                                             height: height)
+                    self.emptyPeripheralsView.frame = CGRect(
+                        x: 0,         y: (context.containerView.frame.height / 2) - 180,
+                        width: width, height: height
+                    )
                 } else {
-                    self.emptyPeripheralsView.frame = CGRect(x: 0,
-                                                             y: 16,
-                                                             width: width,
-                                                             height: height)
+                    self.emptyPeripheralsView.frame = CGRect(
+                        x: 0,         y: 16,
+                        width: width, height: height
+                    )
                 }
             })
         }
@@ -117,29 +123,42 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         return discoveredPeripherals.count > 0 ? 1 : 0
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    override func tableView(_ tableView: UITableView,
+                            titleForHeaderInSection section: Int) -> String? {
         return "Nearby devices"
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView,
+                            numberOfRowsInSection section: Int) -> Int {
         return discoveredPeripherals.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let aCell = tableView.dequeueReusableCell(withIdentifier: BlinkyTableViewCell.reuseIdentifier, for: indexPath) as! BlinkyTableViewCell
+    override func tableView(_ tableView: UITableView,
+                            cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let aCell = tableView.dequeueReusableCell(
+                        withIdentifier: BlinkyTableViewCell.reuseIdentifier,
+                        for: indexPath
+                    ) as! BlinkyTableViewCell
         let peripheral = discoveredPeripherals[indexPath.row]
         aCell.setupView(withPeripheral: peripheral)
         return aCell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView,
+                            didSelectRowAt indexPath: IndexPath) {
         centralManager.stopScan()
         activityIndicator.stopAnimating()
         tableView.deselectRow(at: indexPath, animated: true)
-        performSegue(withIdentifier: "PushBlinkyView", sender: discoveredPeripherals[indexPath.row])
+        performSegue(withIdentifier: "PushBlinkyView",
+                     sender: discoveredPeripherals[indexPath.row])
     }
     
     // MARK: - CBCentralManagerDelegate
+    
+    func centralManager(_ central: CBCentralManagerType,
+                        willRestoreState dict: [String : Any]) {
+        print("Restoring state")
+    }
     
     func centralManager(_ central: CBCentralManagerType,
                         didDiscover peripheral: CBPeripheralType,
@@ -148,14 +167,16 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
         let newPeripheral = BlinkyPeripheral(withPeripheral: peripheral,
                                              advertisementData: advertisementData,
                                              andRSSI: RSSI, using: centralManager)
-        print("Scanned with RSSI: \(RSSI)")
         if !discoveredPeripherals.contains(newPeripheral) {
             discoveredPeripherals.append(newPeripheral)
             tableView.beginUpdates()
             if discoveredPeripherals.count == 1 {
                 tableView.insertSections(IndexSet(integer: 0), with: .fade)
             }
-            tableView.insertRows(at: [IndexPath(row: discoveredPeripherals.count - 1, section: 0)], with: .fade)
+            tableView.insertRows(
+                at: [IndexPath(row: discoveredPeripherals.count - 1, section: 0)],
+                with: .fade
+            )
             tableView.endUpdates()
         } else {
             if let index = discoveredPeripherals.firstIndex(of: newPeripheral) {
@@ -172,8 +193,10 @@ class ScannerTableViewController: UITableViewController, CBCentralManagerDelegat
             activityIndicator.stopAnimating()
         } else {
             activityIndicator.startAnimating()
-            centralManager.scanForPeripherals(withServices: [BlinkyPeripheral.nordicBlinkyServiceUUID],
-                                              options: [CBCentralManagerScanOptionAllowDuplicatesKey : true])
+            centralManager.scanForPeripherals(
+                withServices: [BlinkyPeripheral.nordicBlinkyServiceUUID],
+                options: [CBCentralManagerScanOptionAllowDuplicatesKey : true]
+            )
         }
     }
     
