@@ -101,6 +101,10 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
     
     /// Connects to the Blinky device.
     public func connect() {
+        guard centralManager.state == .poweredOn else {
+            delegate?.blinkyDidDisconnect()
+            return
+        }
         centralManager.delegate = self
         print("Connecting to Blinky device...")
         centralManager.connect(basePeripheral, options: nil)
