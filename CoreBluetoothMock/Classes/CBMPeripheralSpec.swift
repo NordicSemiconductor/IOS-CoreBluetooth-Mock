@@ -190,7 +190,6 @@ public class CBMPeripheralSpec {
     ///
     /// If the proximity is changed to `.outOfRange`, the peripheral will
     /// be disconnected and will not appear on scan results.
-    /// - Parameter peripheral: The peripheral that
     /// - Parameter proximity: The new peripheral proximity.
     public func simulateProximityChange(_ proximity: CBMProximity) {
         CBMCentralManagerMock.proximity(of: self, didChangeTo: proximity)
@@ -200,9 +199,10 @@ public class CBMPeripheralSpec {
     ///
     /// All central managers that have enabled notifications on it
     /// will receive `peripheral(:didUpdateValueFor:error)`.
-    /// - Parameter data: The notification/indication data.
-    /// - Parameter characteristic: The characteristic from which a
-    ///                             notification or indication is to be sent.
+    /// - Parameters:
+    ///   - data: The notification/indication data.
+    ///   - characteristic: The characteristic from which a
+    ///                     notification or indication is to be sent.
     public func simulateValueUpdate(_ data: Data,
                                     for characteristic: CBMCharacteristicMock) {
         guard let services = services, services.contains(where: {
