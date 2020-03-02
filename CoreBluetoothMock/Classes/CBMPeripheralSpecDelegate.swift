@@ -158,6 +158,10 @@ public extension CBMPeripheralSpecDelegate {
                     didReceiveSetNotifyRequest enabled: Bool,
                     for characteristic: CBMCharacteristic)
         -> Result<Void, Error> {
-            return .success(())
+            if !characteristic.properties.isDisjoint(with: [.notify, .indicate, .notifyEncryptionRequired, .indicateEncryptionRequired]) {
+                return .success(())
+            } else {
+                return .failure(CBError(.invalidHandle))
+            }
     }
 }
