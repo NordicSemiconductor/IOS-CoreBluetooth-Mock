@@ -21,7 +21,7 @@ pod 'CoreBluetoothMock'
 
 Add `import CoreBluetoothMock` to your classes.
 
-Replace all instances of `CBCentralManager` and `CBPeripheral` to their counterparts from this library.
+Replace all instances of `CBCentralManager` and `CBPeripheral` to their counterparts from this library: `CBMCentralManager` and `CBMPeripheral`. Do the same with other CoreBluetooth classes and constants.
 
 ## nRF BLINKY
 

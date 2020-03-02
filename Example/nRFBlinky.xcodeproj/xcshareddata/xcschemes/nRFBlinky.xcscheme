@@ -17,7 +17,7 @@
                BlueprintIdentifier = "607FACCF1AFB9204008FA782"
                BuildableName = "nRF Blinky.app"
                BlueprintName = "nRFBlinky"
-               ReferencedContainer = "container:CoreBluetoothMock.xcodeproj">
+               ReferencedContainer = "container:nRFBlinky.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,7 +47,7 @@
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
             BuildableName = "nRF Blinky.app"
             BlueprintName = "nRFBlinky"
-            ReferencedContainer = "container:CoreBluetoothMock.xcodeproj">
+            ReferencedContainer = "container:nRFBlinky.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -64,7 +64,7 @@
             BlueprintIdentifier = "607FACCF1AFB9204008FA782"
             BuildableName = "nRF Blinky.app"
             BlueprintName = "nRFBlinky"
-            ReferencedContainer = "container:CoreBluetoothMock.xcodeproj">
+            ReferencedContainer = "container:nRFBlinky.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
