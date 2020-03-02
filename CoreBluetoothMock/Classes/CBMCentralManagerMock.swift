@@ -701,8 +701,10 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
               let interval = mock.connectionInterval else {
             return
         }
-        queue.asyncAfter(deadline: .now() + interval) {
-            self.delegate?.peripheralDidUpdateName(self)
+        queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+            if let self = self, self.state == .connected {
+                self.delegate?.peripheralDidUpdateName(self)
+            }
         }
     }
     
@@ -721,8 +723,10 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
                 })
             }
         let invalidatedServices = oldServices.filter({ !services!.contains($0) })
-        queue.asyncAfter(deadline: .now() + interval) {
-            self.delegate?.peripheral(self, didModifyServices: invalidatedServices)
+        queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+            if let self = self, self.state == .connected {
+                self.delegate?.peripheral(self, didModifyServices: invalidatedServices)
+            }
         }
     }
     
@@ -741,10 +745,12 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
             return
         }
         characteristic.value = originalCharacteristic.value
-        queue.asyncAfter(deadline: .now() + interval) {
-            self.delegate?.peripheral(self,
-                                      didUpdateValueFor: characteristic,
-                                      error: nil)
+        queue.asyncAfter(deadline: .now() + interval) { [weak self] in
+            if let self = self, self.state == .connected {
+                self.delegate?.peripheral(self,
+                                          didUpdateValueFor: characteristic,
+                                          error: nil)
+            }
         }
     }
     
