@@ -1,6 +1,6 @@
 {
   "name": "CoreBluetoothMock",
-  "version": "0.1.0",
+  "version": "0.7.0",
   "summary": "Mocking library for CoreBluetooth.",
   "description": "This is a mocking library for CoreBluetooth framework. Allows to mock a Bluetooth Low Energy\ndevice and test the app on simulator.",
   "homepage": "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock",
@@ -13,11 +13,16 @@
   },
   "source": {
     "git": "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git",
-    "tag": "0.1.0"
+    "tag": "0.7.0"
   },
   "social_media_url": "https://twitter.com/nordictweets",
   "platforms": {
     "ios": "8.0"
   },
-  "source_files": "CoreBluetoothMock/Classes/**/*"
+  "swift_versions": [
+    "4.2",
+    "5.0"
+  ],
+  "source_files": "CoreBluetoothMock/Classes/**/*",
+  "swift_version": "5.0"
 }
