@@ -216,7 +216,7 @@
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
 			name = "nRF Blinky Example";
-			path = CoreBluetoothMock;
+			path = nRFBlinky;
 			sourceTree = "<group>";
 		};
 		607FACD31AFB9204008FA782 /* Supporting Files */ = {
@@ -654,7 +654,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
-				INFOPLIST_FILE = CoreBluetoothMock/Info.plist;
+				INFOPLIST_FILE = nRFBlinky/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.2.0;
@@ -673,7 +673,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
-				INFOPLIST_FILE = CoreBluetoothMock/Info.plist;
+				INFOPLIST_FILE = nRFBlinky/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.2.0;
