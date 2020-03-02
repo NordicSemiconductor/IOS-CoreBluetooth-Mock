@@ -87,10 +87,11 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
             blinky.simulateValueUpdate(Data([0x01]), for: buttonCharacteristic)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(6)) {
-            print("Blilnky disconnected gracefully!")
+            print("Blinky disconnected gracefully!")
             blinky.simulateDisconnection()
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
+            print("Powering central off")
             CBMCentralManagerMock.simulatePowerOff()
         }
     }
