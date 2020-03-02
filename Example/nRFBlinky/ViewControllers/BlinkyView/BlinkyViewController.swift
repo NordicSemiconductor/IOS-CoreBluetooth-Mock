@@ -58,6 +58,13 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
     
     // MARK: - UIViewController
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        tableView.isAccessibilityElement = true
+        tableView.accessibilityLabel = "Control"
+        tableView.accessibilityIdentifier = "Control"
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         guard !blinkyPeripheral.isConnected else {

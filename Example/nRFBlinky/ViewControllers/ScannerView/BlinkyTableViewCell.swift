@@ -46,6 +46,7 @@ class BlinkyTableViewCell: UITableViewCell {
     // MARK: - Implementation
 
     public func setupView(withPeripheral aPeripheral: BlinkyPeripheral) {
+        accessibilityLabel = aPeripheral.advertisedName
         peripheralName.text = aPeripheral.advertisedName
 
         if aPeripheral.RSSI.decimalValue < -60 {

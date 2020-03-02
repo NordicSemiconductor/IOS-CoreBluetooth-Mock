@@ -66,7 +66,7 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
     
     private let centralManager                : CBMCentralManager
     private let basePeripheral                : CBMPeripheral
-    public private(set) var advertisedName    : String?
+    public private(set) var advertisedName    : String!
     public private(set) var RSSI              : NSNumber
     
     public var delegate: BlinkyDelegate?

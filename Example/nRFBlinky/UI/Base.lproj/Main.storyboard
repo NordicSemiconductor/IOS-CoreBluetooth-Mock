@@ -11,7 +11,7 @@
         <!--Root View Controller-->
         <scene sceneID="fsd-T6-weY">
             <objects>
-                <navigationController id="PGS-Qc-QX1" customClass="RootViewController" customModule="nRFBlinky" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController id="PGS-Qc-QX1" customClass="RootViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="kFD-cB-vKu">
                         <rect key="frame" x="0.0" y="44" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -35,13 +35,13 @@
         <!--nRF Blinky-->
         <scene sceneID="5G4-bL-xgJ">
             <objects>
-                <tableViewController id="CiD-oR-yqB" customClass="ScannerTableViewController" customModule="nRFBlinky" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="CiD-oR-yqB" customClass="ScannerTableViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="50" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="KMv-Sr-wl8">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="724"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="blinkyPeripheralCell" id="mag-9E-0Rv" userLabel="Table View Cell" customClass="BlinkyTableViewCell" customModule="nRFBlinky" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="∂" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="blinkyPeripheralCell" id="mag-9E-0Rv" userLabel="Table View Cell" customClass="BlinkyTableViewCell" customModule="nRF_Blinky" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.333332061767578" width="375" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" tableViewCell="mag-9E-0Rv" id="md2-Pu-VGj">
@@ -57,7 +57,7 @@
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Nordic Blinky" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ufl-Iw-mhn">
                                             <rect key="frame" x="16" y="14.666666666666664" width="101" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -72,6 +72,9 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
+                                <accessibility key="accessibilityConfiguration">
+                                    <bool key="isElement" value="YES"/>
+                                </accessibility>
                                 <viewLayoutGuide key="safeArea" id="rx1-Y8-wbQ"/>
                                 <connections>
                                     <outlet property="peripheralName" destination="ufl-Iw-mhn" id="oTp-gb-zMr"/>
@@ -186,7 +189,7 @@
         <!--nRF Blinky-->
         <scene sceneID="Csp-ZW-f5R">
             <objects>
-                <tableViewController title="nRF Blinky" id="pK8-7d-htc" customClass="BlinkyViewController" customModule="nRFBlinky" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="nRF Blinky" id="pK8-7d-htc" customClass="BlinkyViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="OWj-h6-vmu">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="672"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -209,13 +212,17 @@
                                                         <constraint firstAttribute="width" constant="24" id="tZj-gq-7Hp"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNKNOWN" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sXe-8K-21Q">
-                                                    <rect key="frame" x="48.000000000000007" y="19" width="80.666666666666686" height="18"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNKNOWN" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sXe-8K-21Q">
+                                                    <rect key="frame" x="48" y="18.333333333333336" width="88" height="19.333333333333336"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="ledState"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ug3-O5-D3G">
                                                     <rect key="frame" x="310" y="12.666666666666664" width="51" height="31"/>
+                                                    <accessibility key="accessibilityConfiguration" hint="Tap to toggle the LED" identifier="ledSwitch" label="LED Switch">
+                                                        <bool key="isElement" value="YES"/>
+                                                    </accessibility>
                                                     <color key="onTintColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                                                     <connections>
                                                         <action selector="ledToggleSwitchDidChange:" destination="pK8-7d-htc" eventType="valueChanged" id="LAy-So-9v3"/>
@@ -232,6 +239,9 @@
                                                 <constraint firstItem="sXe-8K-21Q" firstAttribute="leading" secondItem="fWV-Uh-cs6" secondAttribute="trailing" constant="8" id="osk-Ms-vnY"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -252,9 +262,10 @@
                                                         <constraint firstAttribute="width" constant="24" id="eFo-h9-BEb"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNKNOWN" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oaQ-Ex-coH">
-                                                    <rect key="frame" x="48.000000000000007" y="19" width="80.666666666666686" height="18"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="UNKNOWN" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oaQ-Ex-coH">
+                                                    <rect key="frame" x="48" y="18" width="88" height="20.333333333333329"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="buttonState"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -266,6 +277,9 @@
                                                 <constraint firstItem="oaQ-Ex-coH" firstAttribute="leading" secondItem="xUH-nx-YIX" secondAttribute="trailing" constant="8" id="vxV-we-5ui"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <accessibility key="accessibilityConfiguration">
+                                            <bool key="isElement" value="YES"/>
+                                        </accessibility>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>

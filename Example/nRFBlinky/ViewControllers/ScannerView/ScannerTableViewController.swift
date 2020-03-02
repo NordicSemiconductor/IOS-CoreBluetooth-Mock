@@ -69,6 +69,15 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.isAccessibilityElement = true
+        tableView.accessibilityLabel = "ScanResults"
+        tableView.accessibilityIdentifier = "Scan results"
+        
+        #if DEBUG
+        let debug = true
+        #else
+        let debug = false
+        #endif
         if #available(iOS 13.0, *) {
             CBMCentralManagerFactory.simulateFeaturesSupport = { features in
                 return features.isSubset(of: .extendedScanAndConnect)
@@ -80,20 +89,8 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
             delegate: self,
             queue: nil,
             options: [CBCentralManagerOptionShowPowerAlertKey : true],
-            forceMock: false
+            forceMock: debug
         )
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
-            print("Button Click!")
-            blinky.simulateValueUpdate(Data([0x01]), for: buttonCharacteristic)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(6)) {
-            print("Blinky disconnected gracefully!")
-            blinky.simulateDisconnection()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(10)) {
-            print("Powering central off")
-            CBMCentralManagerMock.simulatePowerOff()
-        }
     }
 
     override func viewWillTransition(to size: CGSize,
