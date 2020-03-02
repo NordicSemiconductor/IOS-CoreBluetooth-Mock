@@ -31,7 +31,7 @@
 import Foundation
 import CoreBluetooth
 
-public class CBMCentralManagerNative: CBMCentralManager {
+public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     public weak var delegate: CBMCentralManagerDelegate?
     
     private var manager: CBCentralManager!
@@ -143,13 +143,15 @@ public class CBMCentralManagerNative: CBMCentralManager {
         return CBCentralManager.supports(features)
     }
     
-    public init() {
+    public override init() {
+        super.init()
         self.wrapper = CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager()
         self.manager.delegate = wrapper
     }
     
     public init(delegate: CBMCentralManagerDelegate?, queue: DispatchQueue?) {
+        super.init()
         self.wrapper = CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager(delegate: wrapper, queue: queue)
         self.delegate = delegate
@@ -158,6 +160,7 @@ public class CBMCentralManagerNative: CBMCentralManager {
     @available(iOS 7.0, *)
     public init(delegate: CBMCentralManagerDelegate?, queue: DispatchQueue?,
                 options: [String : Any]?) {
+        super.init()
         let restoration = options?[CBCentralManagerOptionRestoreIdentifierKey] != nil
         self.wrapper = restoration ?
             CBMCentralManagerDelegateWrapperWithRestoration(self) :

@@ -31,7 +31,7 @@
 import Foundation
 import CoreBluetooth
 
-public class CBMCentralManagerMock: CBMCentralManager {
+public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     /// Mock RSSI deviation.
     ///
     /// Returned RSSI values will be in range
@@ -52,7 +52,9 @@ public class CBMCentralManagerMock: CBMCentralManager {
                     // ...stop scanning if state changed to any other state
                     // than `.poweredOn`. Also, forget all peripherals.
                     if managerState != .poweredOn {
-                        manager.stopScan()
+                        manager.isScanning = false
+                        manager.scanFilter = nil
+                        manager.scanOptions = nil
                         manager.peripherals.values.forEach { $0.managerPoweredOff() }
                         manager.peripherals.removeAll()
                     }
@@ -75,7 +77,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
     private var scanOptions: [String : Any]?
 
     /// The dispatch queue used for all callbacks.
-    private let queue: DispatchQueue
+    fileprivate let queue: DispatchQueue
     /// A map of peripherals known to this central manager.
     private var peripherals: [UUID : CBMPeripheralMock] = [:]
     /// A flag set to true few milliseconds after the manager is created.
@@ -85,9 +87,10 @@ public class CBMCentralManagerMock: CBMCentralManager {
     
     // MARK: - Initializers
     
-    public required init() {
+    public required override init() {
         self.isScanning = false
         self.queue = DispatchQueue.main
+        super.init()
         initialize()
     }
     
@@ -96,6 +99,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
         self.delegate = delegate
+        super.init()
         initialize()
     }
     
@@ -106,6 +110,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
         self.isScanning = false
         self.queue = queue ?? DispatchQueue.main
         self.delegate = delegate
+        super.init()
         if let options = options,
            let identifierKey = options[CBCentralManagerOptionRestoreIdentifierKey] as? String,
            let dict = CBMCentralManagerFactory
@@ -353,7 +358,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
         // Get or create local peripheral instance.
         if peripherals[mock.identifier] == nil {
             peripherals[mock.identifier] = CBMPeripheralMock(basedOn: mock,
-                                                            queue: queue)
+                                                             by: self)
         }
         let peripheral = peripherals[mock.identifier]!
         
@@ -378,6 +383,8 @@ public class CBMCentralManagerMock: CBMCentralManager {
     
     public func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?,
                                    options: [String : Any]?) {
+        // Central manager must be in powered on state.
+        guard ensurePoweredOn() else { return }
         if isScanning {
             stopScan()
         }
@@ -416,6 +423,8 @@ public class CBMCentralManagerMock: CBMCentralManager {
     }
     
     public func stopScan() {
+        // Central manager must be in powered on state.
+        guard ensurePoweredOn() else { return }
         isScanning = false
         scanFilter = nil
         scanOptions = nil
@@ -424,9 +433,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
     public func connect(_ peripheral: CBMPeripheral,
                         options: [String : Any]?) {
         // Central manager must be in powered on state.
-        guard state == .poweredOn else {
-            return
-        }
+        guard ensurePoweredOn() else { return }
         if let o = options, !o.isEmpty {
             NSLog("Warning: Connection options are not supported in mock central manager")
         }
@@ -454,9 +461,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
     
     public func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
         // Central manager must be in powered on state.
-        guard state == .poweredOn else {
-            return
-        }
+        guard ensurePoweredOn() else { return }
         // Ignore peripherals that are not mocks.
         guard let mock = peripheral as? CBMPeripheralMock else {
             return
@@ -474,9 +479,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
     
     public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
         // Starting from iOS 13, this method returns peripherals only in ON state.
-        guard state == .poweredOn else {
-            return []
-        }
+        guard ensurePoweredOn() else { return [] }
         // Get the peripherals already known to this central manager.
         let localPeripherals = peripherals[identifiers]
         // If all were found, return them.
@@ -491,7 +494,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
                 CBMCentralManagerMock.managers
                     .compactMap { $0.ref?.peripherals[i] }
             }
-            .map { CBMPeripheralMock(copy: $0, queue: queue) }
+            .map { CBMPeripheralMock(copy: $0, by: self) }
         peripheralsKnownByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
         }
@@ -505,10 +508,8 @@ public class CBMCentralManagerMock: CBMCentralManager {
     }
     
     public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBMPeripheral] {
-        guard state == .poweredOn else {
-            // Starting from iOS 13, this method returns peripherals only in ON state.
-            return []
-        }
+        // Starting from iOS 13, this method returns peripherals only in ON state.
+        guard ensurePoweredOn() else { return [] }
         // Get the connected peripherals with at least one of the given services
         // that are already known to this central manager.
         let peripheralsConnectedByThisManager = peripherals[serviceUUIDs]
@@ -526,7 +527,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
             // Search for ones that are not known to the local manager.
             .filter { peripherals[$0.identifier] == nil }
             // Create a local copy.
-            .map { CBMPeripheralMock(copy: $0, queue: queue) }
+            .map { CBMPeripheralMock(copy: $0, by: self) }
         // Add those copies to the local manager.
         peripheralsConnectedByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
@@ -542,7 +543,7 @@ public class CBMCentralManagerMock: CBMCentralManager {
                 }
             }
             // Create a local copy.
-            .map { CBMPeripheralMock(basedOn: $0, queue: queue) }
+            .map { CBMPeripheralMock(basedOn: $0, by: self) }
         return peripheralsConnectedByThisManager
              + peripheralsConnectedByOtherManagers
              + peripheralsConnectedByOtherApps
@@ -553,14 +554,26 @@ public class CBMCentralManagerMock: CBMCentralManager {
         fatalError("Mock connection events are not implemented")
     }
     
+    fileprivate func ensurePoweredOn() -> Bool {
+        guard state == .poweredOn else {
+            NSLog("[CoreBluetoothMock] API MISUSE: \(self) can only accept this command while in the powered on state")
+            return false
+        }
+        return true
+    }
+    
 }
 
 // MARK: - CBPeripheralMock implementation
 
 public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     
+    /// The parent central manager.
+    private let manager: CBMCentralManagerMock
     /// The dispatch queue to call delegate methods on.
-    private let queue: DispatchQueue
+    private var queue: DispatchQueue {
+        return manager.queue
+    }
     /// The mock peripheral with user-defined implementatino.
     private let mock: CBMPeripheralSpec
     /// Size of the outgoing buffer. Only this many packets
@@ -608,15 +621,17 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     
     // MARK: Initializers
     
-    fileprivate init(basedOn mock: CBMPeripheralSpec, queue: DispatchQueue) {
+    fileprivate init(basedOn mock: CBMPeripheralSpec,
+                     by manager: CBMCentralManagerMock) {
         self.mock = mock
-        self.queue = queue
+        self.manager = manager
         self.availableWriteWithoutResponseBuffer = bufferSize
     }
     
-    fileprivate init(copy: CBMPeripheralMock, queue: DispatchQueue) {
+    fileprivate init(copy: CBMPeripheralMock,
+                     by manager: CBMCentralManagerMock) {
         self.mock = copy.mock
-        self.queue = queue
+        self.manager = manager
         self.availableWriteWithoutResponseBuffer = bufferSize
     }
     
@@ -764,6 +779,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     // MARK: Service discovery
     
     public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
@@ -804,6 +821,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     
     public func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
                                          for service: CBMService) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
@@ -860,6 +879,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     
     public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
                                         for service: CBMService) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
@@ -914,6 +935,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     }
     
     public func discoverDescriptors(for characteristic: CBMCharacteristic) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
@@ -970,6 +993,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     // MARK: Read requests
     
     public func readValue(for characteristic: CBMCharacteristic) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval else {
@@ -1002,6 +1027,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     }
     
     public func readValue(for descriptor: CBMDescriptor) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval else {
@@ -1038,6 +1065,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     public func writeValue(_ data: Data,
                            for characteristic: CBMCharacteristic,
                            type: CBCharacteristicWriteType) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
@@ -1097,6 +1126,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     }
     
     public func writeValue(_ data: Data, for descriptor: CBMDescriptor) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval else {
@@ -1131,6 +1162,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     
     @available(iOS 9.0, *)
     public func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return 0 }
         guard state == .connected, let mtu = mock.mtu else {
             return 0
         }
@@ -1141,6 +1174,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     
     public func setNotifyValue(_ enabled: Bool,
                                for characteristic: CBMCharacteristic) {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval else {
@@ -1180,6 +1215,8 @@ public class CBMPeripheralMock: CBPeer, CBMPeripheral {
     // MARK: Other
     
     public func readRSSI() {
+        // Central manager must be in powered on state.
+        guard manager.ensurePoweredOn() else { return }
         queue.async { [weak self] in
             if let self = self, self.state == .connected {
                 let rssi = self.mock.proximity.RSSI
