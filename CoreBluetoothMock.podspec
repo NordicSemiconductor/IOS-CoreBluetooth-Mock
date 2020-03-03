@@ -15,7 +15,7 @@ device and test the app on simulator.
   s.social_media_url = 'https://twitter.com/nordictweets'
 
   s.ios.deployment_target = '8.0'
-  s.swift_versions = ['4.2', '5.0']
+  s.swift_versions = ['4.2', '5.0', '5.1']
 
   s.source_files = 'CoreBluetoothMock/Classes/**/*'
 end
