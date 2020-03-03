@@ -7,11 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0CB9E36E94B734F23E078DC3 /* libPods-nRFBlinky_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A9B3B30C7C00185E61A80C15 /* libPods-nRFBlinky_Tests.a */; };
-		526EA530240D1B9000BF70B2 /* Pods-nRFBlinky.debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 526EA52E240D1B9000BF70B2 /* Pods-nRFBlinky.debug.xcconfig */; };
-		526EA531240D1B9000BF70B2 /* Pods-nRFBlinky.release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 526EA52F240D1B9000BF70B2 /* Pods-nRFBlinky.release.xcconfig */; };
+		12EB792A927B7E76694CFCA4 /* libPods-nRFBlinky_UITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8485F486EB17AEF8380FD7F /* libPods-nRFBlinky_UITests.a */; };
+		443C46A99211A546CF53A0AF /* libPods-nRFBlinky.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ECFACC911DF92A82403558A /* libPods-nRFBlinky.a */; };
+		526EA530240D1B9000BF70B2 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		526EA531240D1B9000BF70B2 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
 		526EA53D240D2F8100BF70B2 /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA53C240D2F8100BF70B2 /* UITests.swift */; };
-		52A648DF240E716F00817F2F /* MockPeripherals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537D723FC129400372948 /* MockPeripherals.swift */; };
+		52A648F1240E83F000817F2F /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A648F0240E83F000817F2F /* Tests.swift */; };
+		52A648F9240E95F700817F2F /* MockPeripherals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537D723FC129400372948 /* MockPeripherals.swift */; };
 		52B537A423FBE84900372948 /* String+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B5377023FBE84900372948 /* String+Localization.swift */; };
 		52B537A523FBE84900372948 /* UIColor+Nordic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B5377123FBE84900372948 /* UIColor+Nordic.swift */; };
 		52B537A723FBE84900372948 /* BlinkyPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B5377423FBE84900372948 /* BlinkyPeripheral.swift */; };
@@ -25,9 +27,7 @@
 		52B537B023FBE84900372948 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 52B5379423FBE84900372948 /* Main.storyboard */; };
 		52B537B223FBE85100372948 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537B123FBE85100372948 /* AppDelegate.swift */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
-		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
-		6BAAFD478C6450E2951E69BD /* libPods-nRFBlinky_UITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 71ACCCCC39D35B85DBF635F0 /* libPods-nRFBlinky_UITests.a */; };
-		EA1E241F1A9CD0E2110330D2 /* libPods-nRFBlinky.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E17323EF114A3CE4110FBE0 /* libPods-nRFBlinky.a */; };
+		6322B83B7D97BFCC3B82A7A2 /* libPods-nRFBlinky_Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F0E3EA0E43FEDD6E5988F6 /* libPods-nRFBlinky_Tests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,24 +38,26 @@
 			remoteGlobalIDString = 607FACCF1AFB9204008FA782;
 			remoteInfo = nRFBlinky;
 		};
-		607FACE61AFB9204008FA782 /* PBXContainerItemProxy */ = {
+		52A648F3240E83F000817F2F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 607FACC81AFB9204008FA782 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 607FACCF1AFB9204008FA782;
-			remoteInfo = CoreBluetoothMock;
+			remoteInfo = nRFBlinky;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0E17323EF114A3CE4110FBE0 /* libPods-nRFBlinky.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nRFBlinky.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2B7F15AF6D6BEFD64D38C749 /* Pods-nRFBlinky_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_Tests.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		27F0E3EA0E43FEDD6E5988F6 /* libPods-nRFBlinky_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nRFBlinky_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2ECFACC911DF92A82403558A /* libPods-nRFBlinky.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nRFBlinky.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		453BB604F04AB8D6B8030CE1 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		526EA52E240D1B9000BF70B2 /* Pods-nRFBlinky.debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.debug.xcconfig"; sourceTree = "<group>"; };
-		526EA52F240D1B9000BF70B2 /* Pods-nRFBlinky.release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.release.xcconfig"; sourceTree = "<group>"; };
 		526EA53A240D2F8100BF70B2 /* nRFBlinky_UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nRFBlinky_UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		526EA53C240D2F8100BF70B2 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
 		526EA53E240D2F8100BF70B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		52A648E0240E7BDF00817F2F /* CoreBluetoothMock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CoreBluetoothMock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		52A648EE240E83F000817F2F /* nRFBlinky_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nRFBlinky_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		52A648F0240E83F000817F2F /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
+		52A648F2240E83F000817F2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		52B5377023FBE84900372948 /* String+Localization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Localization.swift"; sourceTree = "<group>"; };
 		52B5377123FBE84900372948 /* UIColor+Nordic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Nordic.swift"; sourceTree = "<group>"; };
 		52B5377423FBE84900372948 /* BlinkyPeripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlinkyPeripheral.swift; sourceTree = "<group>"; };
@@ -99,19 +101,18 @@
 		52B537A323FBE84900372948 /* ro */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ro; path = ro.lproj/Localizable.strings; sourceTree = "<group>"; };
 		52B537B123FBE85100372948 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		52B537D723FC129400372948 /* MockPeripherals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPeripherals.swift; sourceTree = "<group>"; };
+		593E9FFC1917DE0521FBC97F /* Pods-nRFBlinky_UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_UITests.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_UITests/Pods-nRFBlinky_UITests.debug.xcconfig"; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* nRF Blinky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "nRF Blinky.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		607FACE51AFB9204008FA782 /* nRFBlinky_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nRFBlinky_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		607FACEA1AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
-		71ACCCCC39D35B85DBF635F0 /* libPods-nRFBlinky_UITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nRFBlinky_UITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6894406D31B247BE53A383BD /* Pods-nRFBlinky_UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_UITests.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_UITests/Pods-nRFBlinky_UITests.release.xcconfig"; sourceTree = "<group>"; };
+		8B0AB27CFE9E1B11962D6240 /* Pods-nRFBlinky_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_Tests.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		9723757454CD65FC25E163A5 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		9955C412D189D3C137306E00 /* Pods-nRFBlinky_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_Tests.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		9B456C3AA490C50DF9F2BB69 /* Pods-nRFBlinky_UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_UITests.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_UITests/Pods-nRFBlinky_UITests.debug.xcconfig"; sourceTree = "<group>"; };
-		A9B3B30C7C00185E61A80C15 /* libPods-nRFBlinky_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nRFBlinky_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		AC567BD507C3C93D3C2851EE /* Pods-nRFBlinky_UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_UITests.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_UITests/Pods-nRFBlinky_UITests.release.xcconfig"; sourceTree = "<group>"; };
+		9E8150E67F16BF0FD2A96B9F /* Pods-nRFBlinky_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_Tests.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		B8485F486EB17AEF8380FD7F /* libPods-nRFBlinky_UITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-nRFBlinky_UITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF2A391A629B418AF377967D /* CoreBluetoothMock.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CoreBluetoothMock.podspec; path = ../CoreBluetoothMock.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		E20CFB7929AACA783363B9F4 /* Pods-nRFBlinky.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.release.xcconfig"; sourceTree = "<group>"; };
+		FDD05DB6B9B51CA381BE6886 /* Pods-nRFBlinky.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,7 +120,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6BAAFD478C6450E2951E69BD /* libPods-nRFBlinky_UITests.a in Frameworks */,
+				12EB792A927B7E76694CFCA4 /* libPods-nRFBlinky_UITests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		52A648EB240E83F000817F2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6322B83B7D97BFCC3B82A7A2 /* libPods-nRFBlinky_Tests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,15 +136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA1E241F1A9CD0E2110330D2 /* libPods-nRFBlinky.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		607FACE21AFB9204008FA782 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0CB9E36E94B734F23E078DC3 /* libPods-nRFBlinky_Tests.a in Frameworks */,
+				443C46A99211A546CF53A0AF /* libPods-nRFBlinky.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,7 +146,6 @@
 		526EA53B240D2F8100BF70B2 /* UI Tests */ = {
 			isa = PBXGroup;
 			children = (
-				52B537D723FC129400372948 /* MockPeripherals.swift */,
 				526EA53C240D2F8100BF70B2 /* UITests.swift */,
 				526EA569240E625F00BF70B2 /* Supporting Files */,
 			);
@@ -156,6 +156,23 @@
 			isa = PBXGroup;
 			children = (
 				526EA53E240D2F8100BF70B2 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		52A648EF240E83F000817F2F /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				52A648F0240E83F000817F2F /* Tests.swift */,
+				52A648F8240E844700817F2F /* Supporting Files */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		52A648F8240E844700817F2F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				52A648F2240E83F000817F2F /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -220,11 +237,11 @@
 			children = (
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* nRF Blinky Example */,
-				607FACE81AFB9204008FA782 /* Tests */,
+				52A648EF240E83F000817F2F /* Tests */,
 				526EA53B240D2F8100BF70B2 /* UI Tests */,
 				607FACD11AFB9204008FA782 /* Products */,
 				6262ACCEC43C304B3122CE88 /* Pods */,
-				AF1BDBF164A12BEDF4EA2908 /* Frameworks */,
+				6A5CE8F83B32383FF81B5DD7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -232,8 +249,8 @@
 			isa = PBXGroup;
 			children = (
 				607FACD01AFB9204008FA782 /* nRF Blinky.app */,
-				607FACE51AFB9204008FA782 /* nRFBlinky_Tests.xctest */,
 				526EA53A240D2F8100BF70B2 /* nRFBlinky_UITests.xctest */,
+				52A648EE240E83F000817F2F /* nRFBlinky_Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -242,6 +259,7 @@
 			isa = PBXGroup;
 			children = (
 				52B537B123FBE85100372948 /* AppDelegate.swift */,
+				52B537D723FC129400372948 /* MockPeripherals.swift */,
 				52B5377223FBE84900372948 /* Models */,
 				52B5377623FBE84900372948 /* ViewControllers */,
 				52B5376F23FBE84900372948 /* Utils */,
@@ -261,23 +279,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		607FACE81AFB9204008FA782 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				607FACEB1AFB9204008FA782 /* Tests.swift */,
-				607FACE91AFB9204008FA782 /* Supporting Files */,
-			);
-			path = Tests;
-			sourceTree = "<group>";
-		};
-		607FACE91AFB9204008FA782 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				607FACEA1AFB9204008FA782 /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		607FACF51AFB993E008FA782 /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
@@ -291,22 +292,23 @@
 		6262ACCEC43C304B3122CE88 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				526EA52E240D1B9000BF70B2 /* Pods-nRFBlinky.debug.xcconfig */,
-				526EA52F240D1B9000BF70B2 /* Pods-nRFBlinky.release.xcconfig */,
-				2B7F15AF6D6BEFD64D38C749 /* Pods-nRFBlinky_Tests.debug.xcconfig */,
-				9955C412D189D3C137306E00 /* Pods-nRFBlinky_Tests.release.xcconfig */,
-				9B456C3AA490C50DF9F2BB69 /* Pods-nRFBlinky_UITests.debug.xcconfig */,
-				AC567BD507C3C93D3C2851EE /* Pods-nRFBlinky_UITests.release.xcconfig */,
+				FDD05DB6B9B51CA381BE6886 /* Pods-nRFBlinky.debug.xcconfig */,
+				E20CFB7929AACA783363B9F4 /* Pods-nRFBlinky.release.xcconfig */,
+				9E8150E67F16BF0FD2A96B9F /* Pods-nRFBlinky_Tests.debug.xcconfig */,
+				8B0AB27CFE9E1B11962D6240 /* Pods-nRFBlinky_Tests.release.xcconfig */,
+				593E9FFC1917DE0521FBC97F /* Pods-nRFBlinky_UITests.debug.xcconfig */,
+				6894406D31B247BE53A383BD /* Pods-nRFBlinky_UITests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		AF1BDBF164A12BEDF4EA2908 /* Frameworks */ = {
+		6A5CE8F83B32383FF81B5DD7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0E17323EF114A3CE4110FBE0 /* libPods-nRFBlinky.a */,
-				A9B3B30C7C00185E61A80C15 /* libPods-nRFBlinky_Tests.a */,
-				71ACCCCC39D35B85DBF635F0 /* libPods-nRFBlinky_UITests.a */,
+				52A648E0240E7BDF00817F2F /* CoreBluetoothMock.framework */,
+				2ECFACC911DF92A82403558A /* libPods-nRFBlinky.a */,
+				27F0E3EA0E43FEDD6E5988F6 /* libPods-nRFBlinky_Tests.a */,
+				B8485F486EB17AEF8380FD7F /* libPods-nRFBlinky_UITests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -318,7 +320,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 526EA541240D2F8100BF70B2 /* Build configuration list for PBXNativeTarget "nRFBlinky_UITests" */;
 			buildPhases = (
-				2514897F4BBC0E4EC8C73F5A /* [CP] Check Pods Manifest.lock */,
+				55D544051FACD410276594E0 /* [CP] Check Pods Manifest.lock */,
 				526EA536240D2F8100BF70B2 /* Sources */,
 				526EA537240D2F8100BF70B2 /* Frameworks */,
 				526EA538240D2F8100BF70B2 /* Resources */,
@@ -333,11 +335,30 @@
 			productReference = 526EA53A240D2F8100BF70B2 /* nRFBlinky_UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		52A648ED240E83F000817F2F /* nRFBlinky_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 52A648F5240E83F000817F2F /* Build configuration list for PBXNativeTarget "nRFBlinky_Tests" */;
+			buildPhases = (
+				5BD9761B465B44829AD6AFC4 /* [CP] Check Pods Manifest.lock */,
+				52A648EA240E83F000817F2F /* Sources */,
+				52A648EB240E83F000817F2F /* Frameworks */,
+				52A648EC240E83F000817F2F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				52A648F4240E83F000817F2F /* PBXTargetDependency */,
+			);
+			name = nRFBlinky_Tests;
+			productName = nRFBlinky_Tests;
+			productReference = 52A648EE240E83F000817F2F /* nRFBlinky_Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		607FACCF1AFB9204008FA782 /* nRFBlinky */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 607FACEF1AFB9204008FA782 /* Build configuration list for PBXNativeTarget "nRFBlinky" */;
 			buildPhases = (
-				611D261F0E08106342CB7E45 /* [CP] Check Pods Manifest.lock */,
+				AA41AEE73E3680FA71876833 /* [CP] Check Pods Manifest.lock */,
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
@@ -350,25 +371,6 @@
 			productName = CoreBluetoothMock;
 			productReference = 607FACD01AFB9204008FA782 /* nRF Blinky.app */;
 			productType = "com.apple.product-type.application";
-		};
-		607FACE41AFB9204008FA782 /* nRFBlinky_Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "nRFBlinky_Tests" */;
-			buildPhases = (
-				9A12FFFAD61461C0AD2A4B38 /* [CP] Check Pods Manifest.lock */,
-				607FACE11AFB9204008FA782 /* Sources */,
-				607FACE21AFB9204008FA782 /* Frameworks */,
-				607FACE31AFB9204008FA782 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				607FACE71AFB9204008FA782 /* PBXTargetDependency */,
-			);
-			name = nRFBlinky_Tests;
-			productName = Tests;
-			productReference = 607FACE51AFB9204008FA782 /* nRFBlinky_Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -386,16 +388,16 @@
 						ProvisioningStyle = Automatic;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
+					52A648ED240E83F000817F2F = {
+						CreatedOnToolsVersion = 11.3.1;
+						DevelopmentTeam = P3R8YQEV4L;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 607FACCF1AFB9204008FA782;
+					};
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = P3R8YQEV4L;
 						LastSwiftMigration = 0900;
-					};
-					607FACE41AFB9204008FA782 = {
-						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = P3R8YQEV4L;
-						LastSwiftMigration = 0900;
-						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
 				};
 			};
@@ -428,7 +430,7 @@
 			projectRoot = "";
 			targets = (
 				607FACCF1AFB9204008FA782 /* nRFBlinky */,
-				607FACE41AFB9204008FA782 /* nRFBlinky_Tests */,
+				52A648ED240E83F000817F2F /* nRFBlinky_Tests */,
 				526EA539240D2F8100BF70B2 /* nRFBlinky_UITests */,
 			);
 		};
@@ -442,31 +444,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		52A648EC240E83F000817F2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		607FACCE1AFB9204008FA782 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				526EA531240D1B9000BF70B2 /* Pods-nRFBlinky.release.xcconfig in Resources */,
+				526EA531240D1B9000BF70B2 /* BuildFile in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 				52B537B023FBE84900372948 /* Main.storyboard in Resources */,
 				52B537AF23FBE84900372948 /* LaunchScreen.storyboard in Resources */,
-				526EA530240D1B9000BF70B2 /* Pods-nRFBlinky.debug.xcconfig in Resources */,
+				526EA530240D1B9000BF70B2 /* BuildFile in Resources */,
 				52B537AE23FBE84900372948 /* Localizable.strings in Resources */,
 				52B537AD23FBE84900372948 /* Main.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		607FACE31AFB9204008FA782 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2514897F4BBC0E4EC8C73F5A /* [CP] Check Pods Manifest.lock */ = {
+		55D544051FACD410276594E0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -488,29 +490,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		611D261F0E08106342CB7E45 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-nRFBlinky-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9A12FFFAD61461C0AD2A4B38 /* [CP] Check Pods Manifest.lock */ = {
+		5BD9761B465B44829AD6AFC4 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -532,6 +512,28 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		AA41AEE73E3680FA71876833 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-nRFBlinky-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -540,7 +542,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				526EA53D240D2F8100BF70B2 /* UITests.swift in Sources */,
-				52A648DF240E716F00817F2F /* MockPeripherals.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		52A648EA240E83F000817F2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52A648F1240E83F000817F2F /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,19 +560,12 @@
 				52B537AA23FBE84900372948 /* ScannerTableViewController.swift in Sources */,
 				52B537A923FBE84900372948 /* BlinkyTableViewCell.swift in Sources */,
 				52B537A523FBE84900372948 /* UIColor+Nordic.swift in Sources */,
+				52A648F9240E95F700817F2F /* MockPeripherals.swift in Sources */,
 				52B537A423FBE84900372948 /* String+Localization.swift in Sources */,
 				52B537AC23FBE84900372948 /* BlinkyViewController.swift in Sources */,
 				52B537A723FBE84900372948 /* BlinkyPeripheral.swift in Sources */,
 				52B537AB23FBE84900372948 /* RootViewController.swift in Sources */,
 				52B537B223FBE85100372948 /* AppDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		607FACE11AFB9204008FA782 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,10 +577,10 @@
 			target = 607FACCF1AFB9204008FA782 /* nRFBlinky */;
 			targetProxy = 526EA53F240D2F8100BF70B2 /* PBXContainerItemProxy */;
 		};
-		607FACE71AFB9204008FA782 /* PBXTargetDependency */ = {
+		52A648F4240E83F000817F2F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* nRFBlinky */;
-			targetProxy = 607FACE61AFB9204008FA782 /* PBXContainerItemProxy */;
+			targetProxy = 52A648F3240E83F000817F2F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -650,8 +652,10 @@
 /* Begin XCBuildConfiguration section */
 		526EA542240D2F8100BF70B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9B456C3AA490C50DF9F2BB69 /* Pods-nRFBlinky_UITests.debug.xcconfig */;
+			baseConfigurationReference = 593E9FFC1917DE0521FBC97F /* Pods-nRFBlinky_UITests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				BUNDLE_LOADER = "";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -670,6 +674,7 @@
 				OTHER_SWIFT_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.nordicsemi.nRFBlinky-UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -679,8 +684,10 @@
 		};
 		526EA543240D2F8100BF70B2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AC567BD507C3C93D3C2851EE /* Pods-nRFBlinky_UITests.release.xcconfig */;
+			baseConfigurationReference = 6894406D31B247BE53A383BD /* Pods-nRFBlinky_UITests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				BUNDLE_LOADER = "";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -697,9 +704,65 @@
 				OTHER_SWIFT_FLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.nordicsemi.nRFBlinky-UITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = nRFBlinky;
+			};
+			name = Release;
+		};
+		52A648F6240E83F000817F2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9E8150E67F16BF0FD2A96B9F /* Pods-nRFBlinky_Tests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = P3R8YQEV4L;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.nordicsemi.nRFBlinky-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/nRF Blinky.app/nRF Blinky";
+			};
+			name = Debug;
+		};
+		52A648F7240E83F000817F2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8B0AB27CFE9E1B11962D6240 /* Pods-nRFBlinky_Tests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = P3R8YQEV4L;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				INFOPLIST_FILE = nRFBlinky_Tests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.nordicsemi.nRFBlinky-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/nRF Blinky.app/nRF Blinky";
 			};
 			name = Release;
 		};
@@ -811,7 +874,7 @@
 		};
 		607FACF01AFB9204008FA782 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 526EA52E240D1B9000BF70B2 /* Pods-nRFBlinky.debug.xcconfig */;
+			baseConfigurationReference = FDD05DB6B9B51CA381BE6886 /* Pods-nRFBlinky.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
@@ -831,7 +894,7 @@
 		};
 		607FACF11AFB9204008FA782 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 526EA52F240D1B9000BF70B2 /* Pods-nRFBlinky.release.xcconfig */;
+			baseConfigurationReference = E20CFB7929AACA783363B9F4 /* Pods-nRFBlinky.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
@@ -848,50 +911,6 @@
 			};
 			name = Release;
 		};
-		607FACF31AFB9204008FA782 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B7F15AF6D6BEFD64D38C749 /* Pods-nRFBlinky_Tests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xcc -fmodule-map-file=\"${PODS_CONFIGURATION_BUILD_DIR}/CoreBluetoothMock/CoreBluetoothMock.modulemap\"";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/nRF Blinky.app/nRF Blinky";
-			};
-			name = Debug;
-		};
-		607FACF41AFB9204008FA782 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9955C412D189D3C137306E00 /* Pods-nRFBlinky_Tests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = P3R8YQEV4L;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/nRF Blinky.app/nRF Blinky";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -900,6 +919,15 @@
 			buildConfigurations = (
 				526EA542240D2F8100BF70B2 /* Debug */,
 				526EA543240D2F8100BF70B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		52A648F5240E83F000817F2F /* Build configuration list for PBXNativeTarget "nRFBlinky_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				52A648F6240E83F000817F2F /* Debug */,
+				52A648F7240E83F000817F2F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -918,15 +946,6 @@
 			buildConfigurations = (
 				607FACF01AFB9204008FA782 /* Debug */,
 				607FACF11AFB9204008FA782 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		607FACF21AFB9204008FA782 /* Build configuration list for PBXNativeTarget "nRFBlinky_Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				607FACF31AFB9204008FA782 /* Debug */,
-				607FACF41AFB9204008FA782 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

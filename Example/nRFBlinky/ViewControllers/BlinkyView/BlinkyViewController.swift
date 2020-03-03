@@ -62,7 +62,7 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
         super.viewDidLoad()
         tableView.isAccessibilityElement = true
         tableView.accessibilityLabel = "Control"
-        tableView.accessibilityIdentifier = "Control"
+        tableView.accessibilityIdentifier = "control"
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -99,8 +99,8 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
         }
     }
 
-    /// This will run on iOS 10 or above
-    /// and will generate a tap feedback when the button is tapped on the Dev kit.
+    /// This will run on iOS 10 or above and will generate a tap feedback
+    /// when the button is tapped on the Dev kit.
     private func prepareHaptics() {
         if #available(iOS 10.0, *) {
             hapticGenerator = UIImpactFeedbackGenerator(style: .heavy)

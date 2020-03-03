@@ -16,7 +16,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "607FACE41AFB9204008FA782"
+               BlueprintIdentifier = "52A648ED240E83F000817F2F"
                BuildableName = "nRFBlinky_Tests.xctest"
                BlueprintName = "nRFBlinky_Tests"
                ReferencedContainer = "container:nRFBlinky.xcodeproj">

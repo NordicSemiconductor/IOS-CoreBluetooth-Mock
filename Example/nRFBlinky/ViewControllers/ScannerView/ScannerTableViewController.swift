@@ -70,19 +70,14 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.isAccessibilityElement = true
-        tableView.accessibilityLabel = "ScanResults"
-        tableView.accessibilityIdentifier = "Scan results"
+        tableView.accessibilityLabel = "Scan Results"
+        tableView.accessibilityIdentifier = "scanResults"
         
-        #if DEBUG
-        let debug = true
-        #else
-        let debug = false
-        #endif
         centralManager = CBMCentralManagerFactory.instance(
             delegate: self,
             queue: nil,
             options: [CBCentralManagerOptionShowPowerAlertKey : true],
-            forceMock: debug
+            forceMock: (UIApplication.shared.delegate as! AppDelegate).mockingEnabled
         )
     }
 

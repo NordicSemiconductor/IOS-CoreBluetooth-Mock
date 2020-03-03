@@ -67,15 +67,15 @@ extension CBMServiceMock {
 }
 
 private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
-    private var ledState: Bool = false
-    private var buttonState: Bool = false
+    private var ledEnabled: Bool = false
+    private var buttonPressed: Bool = false
     
     private var ledData: Data {
-        return ledState ? Data([0x01]) : Data([0x00])
+        return ledEnabled ? Data([0x01]) : Data([0x00])
     }
     
     private var buttonData: Data {
-        return buttonState ? Data([0x01]) : Data([0x00])
+        return buttonPressed ? Data([0x01]) : Data([0x00])
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -92,7 +92,12 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
                     didReceiveWriteRequestFor characteristic: CBMCharacteristic,
                     data: Data) -> Result<Void, Error> {
         if data.count > 0 {
-            ledState = data[0] != 0x00
+            ledEnabled = data[0] != 0x00
+        }
+        // Simulate a button click when the LED has been turned on.
+        if ledEnabled {
+            buttonPressed = true
+            blinky.simulateValueUpdate(buttonData, for: .buttonCharacteristic)
         }
         return .success(())
     }

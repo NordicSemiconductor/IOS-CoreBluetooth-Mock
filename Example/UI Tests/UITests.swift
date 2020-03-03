@@ -29,36 +29,28 @@
 */
 
 import XCTest
-import CoreBluetoothMock
 
 class nRFBlinky_UITests: XCTestCase {
 
     override func setUp() {
         continueAfterFailure = false
-
-        if #available(iOS 13.0, *) {
-            CBMCentralManagerFactory.simulateFeaturesSupport = { features in
-                return features.isSubset(of: .extendedScanAndConnect)
-            }
-        }
-        CBMCentralManagerMock.simulateInitialState(.poweredOn)
-        CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
     }
 
     func testConnection() {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
+        app.launchArguments = ["mocking-enabled"]
         app.launch()
-
+        
         // Start scanning
-        let scanner = app.tables["Scan results"]
-        XCTAssert(scanner.cells["nRF Blinky"].waitForExistence(timeout: 2.0))
+        let scanner = app.tables["scanResults"]
+        XCTAssert(scanner.cells["nRF Blinky"].waitForExistence(timeout: 0.5))
         
         // Wait for device to appear and tap it.
         XCTAssertEqual(scanner.cells.count, 1)
         scanner.cells["nRF Blinky"].tap()
         
-        let control = app.tables["Control"]
+        let control = app.tables["control"]
         let ledState = control.staticTexts["ledState"]
         let buttonState = control.staticTexts["buttonState"]
         let ledSwitch = control.switches["ledSwitch"]

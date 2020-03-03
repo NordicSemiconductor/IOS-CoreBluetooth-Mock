@@ -29,7 +29,7 @@
 */
 
 import UIKit
-import CoreBluetooth
+import CoreBluetoothMock
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -37,9 +37,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Required for the Storyboard to show up.
     var window: UIWindow?
     
+    var mockingEnabled: Bool = false
+    
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-       return true
+        #if DEBUG
+        if CommandLine.arguments.contains("mocking-enabled") {
+            mockingEnabled = true
+            
+            // Setup the CoreBluetoothMock in debug mode. The mock central manager
+            // will be used by UI tests.
+            if #available(iOS 13.0, *) {
+                CBMCentralManagerFactory.simulateFeaturesSupport = { features in
+                    return features.isSubset(of: .extendedScanAndConnect)
+                }
+            }
+            CBMCentralManagerMock.simulateInitialState(.poweredOn)
+            CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
+        }
+        #endif
+        
+        return true
     }
 
 }
