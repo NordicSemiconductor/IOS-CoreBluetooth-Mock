@@ -34,23 +34,37 @@ import CoreBluetoothMock
 
 // MARK: - Mock nRF Blinky
 
-let buttonCharacteristic = CBMCharacteristicMock(
-    type: BlinkyPeripheral.buttonCharacteristicUUID,
-    properties: [.notify, .read],
-    descriptors: CBClientCharacteristicConfigurationDescriptorMock()
-)
+extension CBUUID {
+    static let nordicBlinkyService  = CBUUID(string: "00001523-1212-EFDE-1523-785FEABCD123")
+    static let buttonCharacteristic = CBUUID(string: "00001524-1212-EFDE-1523-785FEABCD123")
+    static let ledCharacteristic    = CBUUID(string: "00001525-1212-EFDE-1523-785FEABCD123")
+}
 
-let ledCharacteristic = CBMCharacteristicMock(
-    type: BlinkyPeripheral.ledCharacteristicUUID,
-    properties: [.write, .read]
-)
+extension CBMCharacteristicMock {
+    
+    static let buttonCharacteristic = CBMCharacteristicMock(
+        type: .buttonCharacteristic,
+        properties: [.notify, .read],
+        descriptors: CBClientCharacteristicConfigurationDescriptorMock()
+    )
 
-private let blinkySerivce = CBMServiceMock(
-    type: BlinkyPeripheral.nordicBlinkyServiceUUID, primary: true,
-    characteristics:
-        buttonCharacteristic,
-        ledCharacteristic
-)
+    static let ledCharacteristic = CBMCharacteristicMock(
+        type: .ledCharacteristic,
+        properties: [.write, .read]
+    )
+    
+}
+
+extension CBMServiceMock {
+
+    static let blinkySerivce = CBMServiceMock(
+        type: .nordicBlinkyService, primary: true,
+        characteristics:
+            .buttonCharacteristic,
+            .ledCharacteristic
+    )
+    
+}
 
 private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     private var ledState: Bool = false
@@ -66,12 +80,12 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor characteristic: CBMCharacteristic)
-        -> Result<Data, Error> {
-            if characteristic.uuid == BlinkyPeripheral.ledCharacteristicUUID {
-                return .success(ledData)
-            } else {
-                return .success(buttonData)
-            }
+            -> Result<Data, Error> {
+        if characteristic.uuid == .ledCharacteristic {
+            return .success(ledData)
+        } else {
+            return .success(buttonData)
+        }
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -79,11 +93,6 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
                     data: Data) -> Result<Void, Error> {
         if data.count > 0 {
             ledState = data[0] != 0x00
-        }
-        // Let's simulate a button press every time LED was enabled.
-        if ledState {
-            buttonState = !buttonState
-            peripheral.simulateValueUpdate(buttonData, for: buttonCharacteristic)
         }
         return .success(())
     }
@@ -93,15 +102,15 @@ let blinky = CBMPeripheralSpec
     .simulatePeripheral(proximity: .immediate)
     .advertising(
         advertisementData: [
-            CBAdvertisementDataLocalNameKey : "nRF Blinky",
-            CBAdvertisementDataServiceUUIDsKey : [BlinkyPeripheral.nordicBlinkyServiceUUID],
-            CBAdvertisementDataIsConnectable : true as NSNumber
+            CBAdvertisementDataLocalNameKey    : "nRF Blinky",
+            CBAdvertisementDataServiceUUIDsKey : [CBUUID.nordicBlinkyService],
+            CBAdvertisementDataIsConnectable   : true as NSNumber
         ],
         withInterval: 0.250,
         alsoWhenConnected: false)
     .connectable(
         name: "nRF Blinky",
-        services: [blinkySerivce],
+        services: [.blinkySerivce],
         delegate: BlinkyCBMPeripheralSpecDelegate(),
         connectionInterval: 0.150,
         mtu: 23)
@@ -109,19 +118,24 @@ let blinky = CBMPeripheralSpec
 
 // MARK: - Mock Nordic HRM
 
-private let hrmSerivce = CBMServiceMock(
-    type: CBUUID(string: "180D"), primary: true,
-    characteristics:
-        CBMCharacteristicMock(
-            type: CBUUID(string: "2A37"), // Heart Rate Measurement
-            properties: [.notify],
-            descriptors: CBClientCharacteristicConfigurationDescriptorMock()
-        ),
-        CBMCharacteristicMock(
-            type: CBUUID(string: "2A38"), // Body Sensor Location
-            properties: [.read]
-        )
-)
+extension CBMServiceMock {
+    
+    static let hrmSerivce = CBMServiceMock(
+        type: CBUUID(string: "180D"), primary: true,
+        characteristics:
+            CBMCharacteristicMock(
+                type: CBUUID(string: "2A37"), // Heart Rate Measurement
+                properties: [.notify],
+                descriptors: CBClientCharacteristicConfigurationDescriptorMock()
+            ),
+            CBMCharacteristicMock(
+                type: CBUUID(string: "2A38"), // Body Sensor Location
+                properties: [.read]
+            )
+    )
+    
+}
+
 
 private struct DummyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     // Let's use default implementation.
@@ -146,7 +160,7 @@ let hrm = CBMPeripheralSpec
         withInterval: 0.100)
     .connectable(
         name: "NordicHRM",
-        services: [hrmSerivce],
+        services: [.hrmSerivce],
         delegate: DummyCBMPeripheralSpecDelegate(),
         connectionInterval: 0.250,
         mtu: 251)

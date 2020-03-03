@@ -78,13 +78,6 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
         #else
         let debug = false
         #endif
-        if #available(iOS 13.0, *) {
-            CBMCentralManagerFactory.simulateFeaturesSupport = { features in
-                return features.isSubset(of: .extendedScanAndConnect)
-            }
-        }
-        CBMCentralManagerMock.simulateInitialState(.poweredOn)
-        CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
         centralManager = CBMCentralManagerFactory.instance(
             delegate: self,
             queue: nil,
