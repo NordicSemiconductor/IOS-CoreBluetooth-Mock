@@ -171,25 +171,19 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     }
     
     /// Simulates turning the Bluetooth adapter on.
-    /// - Parameter deadline: Time when the state should changed.
-    public static func simulatePowerOn(deadline: DispatchTime = .now()) {
+    public static func simulatePowerOn() {
         guard managerState != .poweredOn else {
             return
         }
-        DispatchQueue.global().asyncAfter(deadline: deadline) {
-            managerState = .poweredOn
-        }
+        managerState = .poweredOn
     }
     
-    /// Simulate turns the Bluetooth adapter off.
-    /// - Parameter deadline: Time when the state should changed.
-    public static func simulatePowerOff(deadline: DispatchTime = .now()) {
+    /// Simulate turning the Bluetooth adapter off.
+    public static func simulatePowerOff() {
         guard managerState != .poweredOff else {
             return
         }
-        DispatchQueue.global().asyncAfter(deadline: deadline) {
-            managerState = .poweredOff
-        }
+        managerState = .poweredOff
     }
     
     // MARK: - Peripheral simulation methods
