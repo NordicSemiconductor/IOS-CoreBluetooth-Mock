@@ -881,6 +881,7 @@
 			baseConfigurationReference = FDD05DB6B9B51CA381BE6886 /* Pods-nRFBlinky.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				INFOPLIST_FILE = nRFBlinky/Info.plist;
@@ -901,6 +902,7 @@
 			baseConfigurationReference = E20CFB7929AACA783363B9F4 /* Pods-nRFBlinky.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = P3R8YQEV4L;
 				INFOPLIST_FILE = nRFBlinky/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
