@@ -113,6 +113,8 @@ of *Core Bluetooth Mock* library.
 This application controls an LED on an [nRF5 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits)
 and receive notifications whenever the button on the kit is pressed and released.
 
+The mock implementation is used in UI tests. See `AppDelegate.swift` and `UITests.swift` classes.
+
 ## Nordic LED and Button Service
 ###### Service UUID: `00001523-1212-EFDE-1523-785FEABCD123`
 A simplified proprietary service by Nordic Semiconductor, containing two characteristics one to control LED3 and Button1:
@@ -129,8 +131,8 @@ A simplified proprietary service by Nordic Semiconductor, containing two charact
   [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v16.0.0/ble_sdk_app_blinky.html?cp=7_1_4_2_2_3).
 
 ## Requirements:
-- An iOS device with BLE capabilities, or a simulator (tu run the mock)
-- A [Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits)
+- An iOS device with BLE capabilities, or a simulator (to run the mock)
+- A [Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits) (unless testing mock)
 - The Blinky example firmware to flash on the Development Kit. For your conveninence, we have bundled two firmwares in this project under the Firmwares directory.
 - To get the latest firmwares and check the source code, you may go directly to our [Developers website](http://developer.nordicsemi.com/nRF5_SDK/) and download the SDK version you need, then you can find the source code and hex files to the blinky demo in the directory `/examples/ble_peripheral/ble_app_blinky/`
 -  More information about the nRFBlinky example firmware can be found in the [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v16.0.0/ble_sdk_app_blinky.html?cp=7_1_4_2_2_3).
