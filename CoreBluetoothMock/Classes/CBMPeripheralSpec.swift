@@ -258,17 +258,17 @@ public class CBMPeripheralSpec {
         /// - Parameters:
         ///   - advertisementData: The advertising data.
         ///   - interval: Advertising interval, in seconds.
-        ///   - advertisignWhenConnected: If <i>true</i>, the device will also
+        ///   - advertisingWhenConnected: If <i>true</i>, the device will also
         ///                               be returned in scan results when
         ///                               connected. By default set to
         ///                               <i>false</i>.
         /// - Returns: The builder.
         public func advertising(advertisementData: [String : Any],
                                 withInterval interval: TimeInterval = 0.100,
-                                alsoWhenConnected advertisignWhenConnected: Bool = false) -> Builder {
+                                alsoWhenConnected advertisingWhenConnected: Bool = false) -> Builder {
             self.advertisementData = advertisementData
             self.advertisingInterval = interval
-            self.isAdvertisingWhenConnected = advertisignWhenConnected
+            self.isAdvertisingWhenConnected = advertisingWhenConnected
             return self
         }
         
