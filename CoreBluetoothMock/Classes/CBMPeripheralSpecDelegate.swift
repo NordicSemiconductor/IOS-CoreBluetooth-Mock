@@ -28,7 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
 public protocol CBMPeripheralSpecDelegate {
@@ -39,16 +38,16 @@ public protocol CBMPeripheralSpecDelegate {
     func peripheral(_ peripheral: CBMPeripheralSpec, didDisconnect error: Error?)
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveServiceDiscoveryRequest serviceUUIDs: [CBUUID]?)
+                    didReceiveServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?)
         -> Result<Void, Error>
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBUUID]?,
+                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
                     for service: CBMService)
         -> Result<Void, Error>
         
     func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBUUID]?,
+                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
                     for service: CBMService)
         -> Result<Void, Error>
             
@@ -97,20 +96,20 @@ public extension CBMPeripheralSpecDelegate {
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveServiceDiscoveryRequest serviceUUIDs: [CBUUID]?)
+                    didReceiveServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?)
         -> Result<Void, Error> {
             return .success(())
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBUUID]?,
+                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
                     for service: CBMService)
         -> Result<Void, Error> {
             return .success(())
     }
         
     func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBUUID]?,
+                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
                     for service: CBMService)
         -> Result<Void, Error> {
             return .success(())
@@ -125,20 +124,20 @@ public extension CBMPeripheralSpecDelegate {
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor characteristic: CBMCharacteristic)
         -> Result<Data, Error> {
-            return .failure(CBATTError(.readNotPermitted))
+            return .failure(CBMATTError(.readNotPermitted))
    }
         
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor descriptor: CBMDescriptor)
         -> Result<Data, Error> {
-            return .failure(CBATTError(.readNotPermitted))
+            return .failure(CBMATTError(.readNotPermitted))
     }
 
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor characteristic: CBMCharacteristic,
                     data: Data)
         -> Result<Void, Error> {
-            return .failure(CBATTError(.writeNotPermitted))
+            return .failure(CBMATTError(.writeNotPermitted))
     }
 
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -158,10 +157,15 @@ public extension CBMPeripheralSpecDelegate {
                     didReceiveSetNotifyRequest enabled: Bool,
                     for characteristic: CBMCharacteristic)
         -> Result<Void, Error> {
-            if !characteristic.properties.isDisjoint(with: [.notify, .indicate, .notifyEncryptionRequired, .indicateEncryptionRequired]) {
+            if !characteristic.properties
+                .isDisjoint(with: [
+                    .notify,
+                    .indicate,
+                    .notifyEncryptionRequired,
+                    .indicateEncryptionRequired]) {
                 return .success(())
             } else {
-                return .failure(CBError(.invalidHandle))
+                return .failure(CBMError(.invalidHandle))
             }
     }
 }

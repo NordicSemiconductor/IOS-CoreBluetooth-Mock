@@ -28,7 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
 /// The factory that instantiates the CBMCentralManager object.
@@ -40,20 +39,20 @@ public class CBMCentralManagerFactory {
     
     /// This simulation method is called when a mock central manager was
     /// created with an option to restore the state
-    /// (`CBCentralManagerOptionRestoreIdentifierKey`).
+    /// (`CBMCentralManagerOptionRestoreIdentifierKey`).
     ///
     /// The returned map, if not <i>nil</i>, will be passed to
     /// `centralManager(:willRestoreState:)` before creation.
-    /// - SeeAlso: CBCentralManagerRestoredStatePeripheralsKey
-    /// - SeeAlso: CBCentralManagerRestoredStateScanServicesKey
-    /// - SeeAlso: CBCentralManagerRestoredStateScanOptionsKey
+    /// - SeeAlso: CBMCentralManagerRestoredStatePeripheralsKey
+    /// - SeeAlso: CBMCentralManagerRestoredStateScanServicesKey
+    /// - SeeAlso: CBMCentralManagerRestoredStateScanOptionsKey
     public static var simulateStateRestoration: ((_ identifierKey: String) -> [String : Any]?)?
     
     /// Returns a boolean value representing the support for the provided features.
     ///
     /// This method will be called when `supports(:)` method is called.
     @available(iOS 13.0, *)
-    public static var simulateFeaturesSupport: ((_ features: CBCentralManager.Feature) -> Bool)?
+    public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
     
     /// Returns the implementaton of CBCentralManager, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock

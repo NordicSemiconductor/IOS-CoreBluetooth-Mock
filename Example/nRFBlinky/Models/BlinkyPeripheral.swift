@@ -29,8 +29,6 @@
 */
 
 import UIKit
-import CoreBluetooth
-import CoreBluetoothMock
 
 protocol BlinkyDelegate {
     
@@ -54,7 +52,7 @@ protocol BlinkyDelegate {
     func ledStateChanged(isOn: Bool)
 }
 
-class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelegate {
+class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
     
     // MARK: - Blinky services and charcteristics Identifiers
     
@@ -64,8 +62,8 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
     
     // MARK: - Properties
     
-    private let centralManager                : CBMCentralManager
-    private let basePeripheral                : CBMPeripheral
+    private let centralManager                : CBCentralManager
+    private let basePeripheral                : CBPeripheral
     public private(set) var advertisedName    : String!
     public private(set) var RSSI              : NSNumber
     
@@ -80,17 +78,17 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
 
     // MARK: - Characteristic properties
     
-    private var buttonCharacteristic: CBMCharacteristic?
-    private var ledCharacteristic   : CBMCharacteristic?
+    private var buttonCharacteristic: CBCharacteristic?
+    private var ledCharacteristic   : CBCharacteristic?
     
     // MARK: - Public API
     
     /// Creates teh BlinkyPeripheral based on the received peripheral and advertisign data.
     /// The device name is obtaied from the advertising data, not from CBPeripheral object
     /// to avoid caching problems.
-    init(withPeripheral peripheral: CBMPeripheral,
+    init(withPeripheral peripheral: CBPeripheral,
          advertisementData advertisementDictionary: [String : Any],
-         andRSSI currentRSSI: NSNumber, using manager: CBMCentralManager) {
+         andRSSI currentRSSI: NSNumber, using manager: CBCentralManager) {
         centralManager = manager
         basePeripheral = peripheral
         RSSI = currentRSSI
@@ -172,7 +170,7 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
     /// Starts characteristic discovery for LED and Button Characteristics.
     /// - Parameter service: The instance of a service in which characteristics will
     ///                      be discovered.
-    private func discoverCharacteristicsForBlinkyService(_ service: CBMService) {
+    private func discoverCharacteristicsForBlinkyService(_ service: CBService) {
         print("Discovering LED and Button characteristrics...")
         basePeripheral.discoverCharacteristics(
             [BlinkyPeripheral.buttonCharacteristicUUID, BlinkyPeripheral.ledCharacteristicUUID],
@@ -184,7 +182,7 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
     /// call delegate's blinkyDidConnect method and try to read values
     /// of LED and Button.
     /// - Parameter characteristic: Characteristic to be enabled.
-    private func enableNotifications(for characteristic: CBMCharacteristic) {
+    private func enableNotifications(for characteristic: CBCharacteristic) {
         if characteristic.properties.contains(.notify) {
             print("Enabling notifications for characteristic...")
             basePeripheral.setNotifyValue(true, for: characteristic)
@@ -247,35 +245,33 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
     // MARK: - NSObject protocols
     
     override func isEqual(_ object: Any?) -> Bool {
-        if object is BlinkyPeripheral {
-            let peripheralObject = object as! BlinkyPeripheral
+        if let peripheralObject = object as? BlinkyPeripheral {
             return peripheralObject.basePeripheral.identifier == basePeripheral.identifier
-        } else if object is CBMPeripheralMock {
-            let peripheralObject = object as! CBMPeripheralMock
-            return peripheralObject.identifier == basePeripheral.identifier
-        } else {
-            return false
         }
+        if let peripheralObject = object as? CBPeripheral {
+            return peripheralObject.identifier == basePeripheral.identifier
+        }
+        return false
     }
     
     // MARK: - CBCentralManagerDelegate
     
-    func centralManagerDidUpdateState(_ central: CBMCentralManager) {
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state != .poweredOn {
             print("Central Manager state changed to \(central.state)")
             delegate?.blinkyDidDisconnect()
         }
     }
     
-    func centralManager(_ central: CBMCentralManager, didConnect peripheral: CBMPeripheral) {
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         if peripheral.identifier == basePeripheral.identifier {
             print("Connected to Blinky")
             discoverBlinkyServices()
         }
     }
     
-    func centralManager(_ central: CBMCentralManager,
-                        didFailToConnect peripheral: CBMPeripheral,
+    func centralManager(_ central: CBCentralManager,
+                        didFailToConnect peripheral: CBPeripheral,
                         error: Error?) {
         if peripheral.identifier == basePeripheral.identifier {
             if let error = error {
@@ -286,8 +282,8 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
         }
     }
     
-    func centralManager(_ central: CBMCentralManager,
-                        didDisconnectPeripheral peripheral: CBMPeripheral,
+    func centralManager(_ central: CBCentralManager,
+                        didDisconnectPeripheral peripheral: CBPeripheral,
                         error: Error?) {
         if peripheral.identifier == basePeripheral.identifier {
             print("Blinky disconnected")
@@ -297,8 +293,8 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
     
     // MARK: - CBPeripheralDelegate
     
-    func peripheral(_ peripheral: CBMPeripheral,
-                    didUpdateValueFor characteristic: CBMCharacteristic,
+    func peripheral(_ peripheral: CBPeripheral,
+                    didUpdateValueFor characteristic: CBCharacteristic,
                     error: Error?) {
         guard error == nil else {
             print("Operation failed: \(error!)")
@@ -315,8 +311,8 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
         }
     }
 
-    func peripheral(_ peripheral: CBMPeripheral,
-                    didUpdateNotificationStateFor characteristic: CBMCharacteristic,
+    func peripheral(_ peripheral: CBPeripheral,
+                    didUpdateNotificationStateFor characteristic: CBCharacteristic,
                     error: Error?) {
         if characteristic == buttonCharacteristic {
             assert(characteristic.service.isPrimary)
@@ -329,7 +325,7 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
         }
     }
 
-    func peripheral(_ peripheral: CBMPeripheral, didDiscoverServices error: Error?) {
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let services = peripheral.services {
             for service in services {
                 if service.uuid == BlinkyPeripheral.nordicBlinkyServiceUUID {
@@ -348,8 +344,8 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
         delegate?.blinkyDidConnect(ledSupported: false, buttonSupported: false)
     }
     
-    func peripheral(_ peripheral: CBMPeripheral,
-                    didDiscoverCharacteristicsFor service: CBMService, error: Error?) {
+    func peripheral(_ peripheral: CBPeripheral,
+                    didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
                 assert(characteristic.service == service)
@@ -376,8 +372,8 @@ class BlinkyPeripheral: NSObject, CBMPeripheralDelegate, CBMCentralManagerDelega
         }
     }
     
-    func peripheral(_ peripheral: CBMPeripheral,
-                    didWriteValueFor characteristic: CBMCharacteristic, error: Error?) {
+    func peripheral(_ peripheral: CBPeripheral,
+                    didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         // LED value has been written, let's read it to confirm.
         readLEDValue()
     }

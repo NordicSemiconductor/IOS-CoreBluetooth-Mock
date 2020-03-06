@@ -28,7 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
 public protocol CBMPeripheral: class {
@@ -43,7 +42,7 @@ public protocol CBMPeripheral: class {
     var name: String? { get }
     
     /// The current connection state of the peripheral.
-    var state: CBPeripheralState { get }
+    var state: CBMPeripheralState { get }
     
     /// A list of `CBMServiceMock` objects that have been
     /// discovered on the peripheral.
@@ -68,33 +67,33 @@ public protocol CBMPeripheral: class {
     func readRSSI()
     
     /// Discovers available service(s) on the peripheral.
-    /// - Parameter serviceUUIDs: A list of `CBUUID` objects
+    /// - Parameter serviceUUIDs: A list of `CBMUUID` objects
     ///                           representing the service types to be
     ///                           discovered. If `nil`, all services
     ///                           will be discovered.
-    func discoverServices(_ serviceUUIDs: [CBUUID]?)
+    func discoverServices(_ serviceUUIDs: [CBMUUID]?)
     
     /// Discovers the specified included service(s) of service.
     /// - Parameters:
-    ///   - includedServiceUUIDs: A list of `CBUUID` objects
+    ///   - includedServiceUUIDs: A list of `CBMUUID` objects
     ///                           representing the included service types
     ///                           to be discovered. If `nil`, all
     ///                           of services included services will
     ///                           be discovered, which is considerably
     ///                           slower and not recommended.
     ///   - service: A GATT service.
-    func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
+    func discoverIncludedServices(_ includedServiceUUIDs: [CBMUUID]?,
                                   for service: CBMService)
     
     /// Discovers the specified characteristic(s) of service.
     /// - Parameters:
-    ///   - characteristicUUIDs: A list of `CBUUID` objects
+    ///   - characteristicUUIDs: A list of `CBMUUID` objects
     ///                          representing the characteristic types
     ///                          to be discovered. If `nil`, all
     ///                          characteristics of service will
     ///                          be discovered.
     ///   - service: A GATT service.
-    func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
+    func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?,
                                  for service: CBMService)
     
     /// Discovers the characteristic descriptor(s) of characteristic.
@@ -112,7 +111,7 @@ public protocol CBMPeripheral: class {
     /// The maximum amount of data, in bytes, that can be sent to a
     /// characteristic in a single write type.
     @available(iOS 9.0, *)
-    func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int
+    func maximumWriteValueLength(for type: CBMCharacteristicWriteType) -> Int
     
     /// Writes value to characteristic's characteristic value.
     /// If the `.withResponse` type is specified,
@@ -127,7 +126,7 @@ public protocol CBMPeripheral: class {
     ///                     be written.
     ///   - type: The type of write to be executed.
     func writeValue(_ data: Data, for characteristic: CBMCharacteristic,
-                    type: CBCharacteristicWriteType)
+                    type: CBMCharacteristicWriteType)
     
     /// Writes data to descriptor's value. Client characteristic
     /// configuration descriptors cannot be written using this method, and
@@ -154,5 +153,5 @@ public protocol CBMPeripheral: class {
     /// Attempt to open an L2CAP channel to the peripheral using the supplied PSM.
     /// - Parameter PSM: The PSM of the channel to open.
     @available(iOS 11.0, *)
-    func openL2CAPChannel(_ PSM: CBL2CAPPSM)
+    func openL2CAPChannel(_ PSM: CBML2CAPPSM)
 }

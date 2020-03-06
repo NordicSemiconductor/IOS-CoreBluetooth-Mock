@@ -28,10 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
 public protocol CBMCentralManager: class {
+    @available(iOS 13.0, *)
+    typealias Feature = CBCentralManager.Feature
     
     /// The delegate object that will receive central events.
     var delegate: CBMCentralManagerDelegate? { get set }
@@ -48,7 +49,7 @@ public protocol CBMCentralManager: class {
     /// Returns a boolean value representing the support for the provided features.
     /// - Parameter features: One or more features you would like to check if supported.
     @available(iOS 13.0, *)
-    static func supports(_ features: CBCentralManager.Feature) -> Bool
+    static func supports(_ features: CBMCentralManager.Feature) -> Bool
     
     /// Starts scanning for peripherals that are advertising any of the services listed
     /// in <i>serviceUUIDs</i>. Although strongly discouraged, if <i>serviceUUIDs</i>
@@ -63,7 +64,7 @@ public protocol CBMCentralManager: class {
     ///   - serviceUUIDs: A list of <code>CBUUID</code> objects representing the service(s)
     ///                   to scan for.
     ///   - options: An optional dictionary specifying options for the scan.
-    func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?, options: [String : Any]?)
+    func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?, options: [String : Any]?)
     
     /// Stops scanning for peripherals.
     func stopScan()
@@ -97,8 +98,12 @@ public protocol CBMCentralManager: class {
     /// `connect(peripheral:options:)` before they can be used.
     /// - Returns: A list of <code>CBMPeripheral</code> objects.
     @available(iOS 7.0, *)
-    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBMPeripheral]
+    func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral]
     
+    /// Calls `centralManager(:connectionEventDidOccur:for:)` when a connection event
+    /// occurs matching any of the given options. Passing nil in the option parameter
+    /// clears any prior registered matching options.
+    /// - Parameter options: A dictionary specifying connection event options.
     @available(iOS 13.0, *)
-    func registerForConnectionEvents(options: [CBConnectionEventMatchingOption : Any]?)
+    func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]?)
 }

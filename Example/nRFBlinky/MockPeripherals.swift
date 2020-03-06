@@ -29,7 +29,6 @@
 */
 
 import Foundation
-import CoreBluetooth
 import CoreBluetoothMock
 
 // MARK: - Mock nRF Blinky
@@ -45,7 +44,7 @@ extension CBMCharacteristicMock {
     static let buttonCharacteristic = CBMCharacteristicMock(
         type: .buttonCharacteristic,
         properties: [.notify, .read],
-        descriptors: CBClientCharacteristicConfigurationDescriptorMock()
+        descriptors: CBMClientCharacteristicConfigurationDescriptorMock()
     )
 
     static let ledCharacteristic = CBMCharacteristicMock(
@@ -131,7 +130,7 @@ extension CBMServiceMock {
             CBMCharacteristicMock(
                 type: CBUUID(string: "2A37"), // Heart Rate Measurement
                 properties: [.notify],
-                descriptors: CBClientCharacteristicConfigurationDescriptorMock()
+                descriptors: CBMClientCharacteristicConfigurationDescriptorMock()
             ),
             CBMCharacteristicMock(
                 type: CBUUID(string: "2A38"), // Body Sensor Location

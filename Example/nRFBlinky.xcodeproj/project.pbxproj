@@ -9,11 +9,12 @@
 /* Begin PBXBuildFile section */
 		12EB792A927B7E76694CFCA4 /* libPods-nRFBlinky_UITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B8485F486EB17AEF8380FD7F /* libPods-nRFBlinky_UITests.a */; };
 		443C46A99211A546CF53A0AF /* libPods-nRFBlinky.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ECFACC911DF92A82403558A /* libPods-nRFBlinky.a */; };
-		526EA530240D1B9000BF70B2 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
-		526EA531240D1B9000BF70B2 /* BuildFile in Resources */ = {isa = PBXBuildFile; };
+		526EA530240D1B9000BF70B2 /* (null) in Resources */ = {isa = PBXBuildFile; };
+		526EA531240D1B9000BF70B2 /* (null) in Resources */ = {isa = PBXBuildFile; };
 		526EA53D240D2F8100BF70B2 /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA53C240D2F8100BF70B2 /* UITests.swift */; };
 		52A648F1240E83F000817F2F /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A648F0240E83F000817F2F /* Tests.swift */; };
 		52A648F9240E95F700817F2F /* MockPeripherals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537D723FC129400372948 /* MockPeripherals.swift */; };
+		52A648FB24125D1D00817F2F /* CoreBluetothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A648FA24125D1D00817F2F /* CoreBluetothTypeAliases.swift */; };
 		52B537A423FBE84900372948 /* String+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B5377023FBE84900372948 /* String+Localization.swift */; };
 		52B537A523FBE84900372948 /* UIColor+Nordic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B5377123FBE84900372948 /* UIColor+Nordic.swift */; };
 		52B537A723FBE84900372948 /* BlinkyPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B5377423FBE84900372948 /* BlinkyPeripheral.swift */; };
@@ -58,6 +59,7 @@
 		52A648EE240E83F000817F2F /* nRFBlinky_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nRFBlinky_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		52A648F0240E83F000817F2F /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		52A648F2240E83F000817F2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		52A648FA24125D1D00817F2F /* CoreBluetothTypeAliases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBluetothTypeAliases.swift; sourceTree = "<group>"; };
 		52B5377023FBE84900372948 /* String+Localization.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Localization.swift"; sourceTree = "<group>"; };
 		52B5377123FBE84900372948 /* UIColor+Nordic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Nordic.swift"; sourceTree = "<group>"; };
 		52B5377423FBE84900372948 /* BlinkyPeripheral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlinkyPeripheral.swift; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 			children = (
 				52B537B123FBE85100372948 /* AppDelegate.swift */,
 				52B537D723FC129400372948 /* MockPeripherals.swift */,
+				52A648FA24125D1D00817F2F /* CoreBluetothTypeAliases.swift */,
 				52B5377223FBE84900372948 /* Models */,
 				52B5377623FBE84900372948 /* ViewControllers */,
 				52B5376F23FBE84900372948 /* Utils */,
@@ -455,11 +458,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				526EA531240D1B9000BF70B2 /* BuildFile in Resources */,
+				526EA531240D1B9000BF70B2 /* (null) in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
 				52B537B023FBE84900372948 /* Main.storyboard in Resources */,
 				52B537AF23FBE84900372948 /* LaunchScreen.storyboard in Resources */,
-				526EA530240D1B9000BF70B2 /* BuildFile in Resources */,
+				526EA530240D1B9000BF70B2 /* (null) in Resources */,
 				52B537AE23FBE84900372948 /* Localizable.strings in Resources */,
 				52B537AD23FBE84900372948 /* Main.strings in Resources */,
 			);
@@ -564,6 +567,7 @@
 				52B537A423FBE84900372948 /* String+Localization.swift in Sources */,
 				52B537AC23FBE84900372948 /* BlinkyViewController.swift in Sources */,
 				52B537A723FBE84900372948 /* BlinkyPeripheral.swift in Sources */,
+				52A648FB24125D1D00817F2F /* CoreBluetothTypeAliases.swift in Sources */,
 				52B537AB23FBE84900372948 /* RootViewController.swift in Sources */,
 				52B537B223FBE85100372948 /* AppDelegate.swift in Sources */,
 			);

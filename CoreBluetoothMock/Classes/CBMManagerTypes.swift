@@ -28,7 +28,7 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
+import CoreBluetooth
 
 public enum CBMManagerState: Int {
 
@@ -44,3 +44,43 @@ public enum CBMManagerState: Int {
 
     case poweredOn
 }
+
+public typealias CBMPeer = CBPeer
+public typealias CBMAttribute = CBAttribute
+public typealias CBMUUID = CBUUID
+public typealias CBMError = CBError
+public typealias CBMATTError = CBATTError
+public typealias CBMConnectionEvent = CBConnectionEvent
+public typealias CBMConnectionEventMatchingOption = CBConnectionEventMatchingOption
+public typealias CBMPeripheralState = CBPeripheralState
+public typealias CBMCharacteristicWriteType = CBCharacteristicWriteType
+public typealias CBMCharacteristicProperties = CBCharacteristicProperties
+@available(iOS 11.0, *)
+public typealias CBML2CAPPSM = CBL2CAPPSM
+@available(iOS 11.0, *)
+public typealias CBML2CAPChannel = CBL2CAPChannel
+
+public let CBMCentralManagerScanOptionAllowDuplicatesKey = CBCentralManagerScanOptionAllowDuplicatesKey
+public let CBMCentralManagerOptionShowPowerAlertKey = CBCentralManagerOptionShowPowerAlertKey
+public let CBMCentralManagerOptionRestoreIdentifierKey = CBCentralManagerOptionRestoreIdentifierKey
+public let CBMCentralManagerScanOptionSolicitedServiceUUIDsKey = CBCentralManagerScanOptionSolicitedServiceUUIDsKey
+public let CBMConnectPeripheralOptionStartDelayKey = CBConnectPeripheralOptionStartDelayKey
+@available(iOS 13.0, *)
+public let CBMConnectPeripheralOptionRequiresANCS = CBConnectPeripheralOptionRequiresANCS
+
+public let CBMCentralManagerRestoredStatePeripheralsKey  = CBCentralManagerRestoredStatePeripheralsKey
+public let CBMCentralManagerRestoredStateScanServicesKey = CBCentralManagerRestoredStateScanServicesKey
+public let CBMCentralManagerRestoredStateScanOptionsKey  = CBCentralManagerRestoredStateScanOptionsKey
+
+public let CBMAdvertisementDataLocalNameKey             = CBAdvertisementDataLocalNameKey
+public let CBMAdvertisementDataServiceUUIDsKey          = CBAdvertisementDataServiceUUIDsKey
+public let CBMAdvertisementDataIsConnectable            = CBAdvertisementDataIsConnectable
+public let CBMAdvertisementDataTxPowerLevelKey          = CBAdvertisementDataTxPowerLevelKey
+public let CBMAdvertisementDataServiceDataKey           = CBAdvertisementDataServiceDataKey
+public let CBMAdvertisementDataManufacturerDataKey      = CBAdvertisementDataManufacturerDataKey
+public let CBMAdvertisementDataOverflowServiceUUIDsKey  = CBAdvertisementDataOverflowServiceUUIDsKey
+public let CBMAdvertisementDataSolicitedServiceUUIDsKey = CBAdvertisementDataSolicitedServiceUUIDsKey
+
+public let CBMConnectPeripheralOptionNotifyOnConnectionKey = CBConnectPeripheralOptionNotifyOnConnectionKey
+public let CBMConnectPeripheralOptionNotifyOnDisconnectionKey = CBConnectPeripheralOptionNotifyOnDisconnectionKey
+public let CBMConnectPeripheralOptionNotifyOnNotificationKey = CBConnectPeripheralOptionNotifyOnNotificationKey

@@ -28,12 +28,11 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
-public class CBMService: CBAttribute {
+public class CBMService: CBMAttribute {
     internal let identifier: UUID
-    private let _uuid: CBUUID
+    private let _uuid: CBMUUID
     
     internal var _includedServices: [CBMService]?
     internal var _characteristics: [CBMCharacteristic]?
@@ -45,7 +44,7 @@ public class CBMService: CBAttribute {
     public fileprivate(set) var isPrimary: Bool
     
     /// The Bluetooth UUID of the attribute.
-    public override var uuid: CBUUID {
+    public override var uuid: CBMUUID {
         return _uuid
     }
     
@@ -63,7 +62,7 @@ public class CBMService: CBAttribute {
     /// - Parameters:
     ///   - uuid: The Bluetooth UUID of the service.
     ///   - isPrimary: The type of the service (primary or secondary).
-    init(type uuid: CBUUID, primary isPrimary: Bool) {
+    init(type uuid: CBMUUID, primary isPrimary: Bool) {
         self.identifier = UUID()
         self.peripheral = uninitializedPeriperheral
         self._uuid = uuid
@@ -123,7 +122,7 @@ public class CBMServiceMock: CBMService {
     ///   - uuid: The Bluetooth UUID of the service.
     ///   - isPrimary: The type of the service (primary or secondary).
     ///   - characteristics: Optional list of characteristics.
-    public init(type uuid: CBUUID, primary isPrimary: Bool,
+    public init(type uuid: CBMUUID, primary isPrimary: Bool,
                 characteristics: CBMCharacteristicMock...) {
         super.init(type: uuid, primary: isPrimary)
         self.characteristics = characteristics
@@ -141,14 +140,14 @@ public class CBMServiceMock: CBMService {
     }
 }
 
-public class CBMCharacteristic: CBAttribute {
+public class CBMCharacteristic: CBMAttribute {
     internal let identifier: UUID
-    private let _uuid: CBUUID
+    private let _uuid: CBMUUID
     
     internal var _descriptors: [CBMDescriptor]?
     
     /// The Bluetooth UUID of the attribute.
-    public override var uuid: CBUUID {
+    public override var uuid: CBMUUID {
         return _uuid
     }
 
@@ -156,7 +155,7 @@ public class CBMCharacteristic: CBAttribute {
     public internal(set) var service: CBMService
     
     /// The properties of the characteristic.
-    public let properties: CBCharacteristicProperties
+    public let properties: CBMCharacteristicProperties
 
     /// The value of the characteristic.
     public internal(set) var value: Data?
@@ -174,7 +173,7 @@ public class CBMCharacteristic: CBAttribute {
     /// - Parameters:
     ///   - uuid: The Bluetooth UUID of the characteristic.
     ///   - properties: The properties of the characteristic.
-    init(type uuid: CBUUID, properties: CBCharacteristicProperties) {
+    init(type uuid: CBMUUID, properties: CBMCharacteristicProperties) {
         self.identifier = UUID()
         self.service = uninitializedService
         self._uuid = uuid
@@ -229,7 +228,7 @@ public class CBMCharacteristicMock: CBMCharacteristic {
     ///   - uuid: The Bluetooth UUID of the characteristic.
     ///   - properties: The properties of the characteristic.
     ///   - descriptors: Optional list of descriptors.
-    public init(type uuid: CBUUID, properties: CBCharacteristicProperties,
+    public init(type uuid: CBMUUID, properties: CBMCharacteristicProperties,
                 descriptors: CBMDescriptorMock...) {
         super.init(type: uuid, properties: properties)
         self.descriptors = descriptors
@@ -247,12 +246,12 @@ public class CBMCharacteristicMock: CBMCharacteristic {
     }
 }
 
-public class CBMDescriptor: CBAttribute {
+public class CBMDescriptor: CBMAttribute {
     internal let identifier: UUID
-    private let _uuid: CBUUID
+    private let _uuid: CBMUUID
     
     /// The Bluetooth UUID of the attribute.
-    public override var uuid: CBUUID {
+    public override var uuid: CBMUUID {
         return _uuid
     }
     
@@ -268,7 +267,7 @@ public class CBMDescriptor: CBAttribute {
         return uuid.uuidString == "2902"
     }
     
-    init(type uuid: CBUUID) {
+    init(type uuid: CBMUUID) {
         self.identifier = UUID()
         self.characteristic = uninitializedCharacteristic
         self._uuid = uuid
@@ -301,7 +300,7 @@ internal class CBMDescriptorNative: CBMDescriptor {
 
 public class CBMDescriptorMock: CBMDescriptor {
     
-    public override init(type uuid: CBUUID) {
+    public override init(type uuid: CBMUUID) {
         super.init(type: uuid)
     }
     
@@ -313,25 +312,27 @@ public class CBMDescriptorMock: CBMDescriptor {
     }
 }
 
-public class CBClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock {
+public class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock {
     
     public init() {
-        super.init(type: CBUUID(string: "2902"))
+        super.init(type: CBMUUID(string: "2902"))
     }
 }
 
+public typealias CBMCCCDescriptorMock = CBMClientCharacteristicConfigurationDescriptorMock
+
 // MARK: - Mocking uninitialized objects
 
-fileprivate let uninitializedPeriperheral = CBPeripheralUninitialized()
-fileprivate let uninitializedService = CBServiceUninitialized()
-fileprivate let uninitializedCharacteristic = CBCharacteristicUninitialized()
+fileprivate let uninitializedPeriperheral   = CBMPeripheralUninitialized()
+fileprivate let uninitializedService        = CBMServiceUninitialized()
+fileprivate let uninitializedCharacteristic = CBMCharacteristicUninitialized()
 
-fileprivate class CBPeripheralUninitialized: CBMPeripheral, CustomDebugStringConvertible {
+fileprivate class CBMPeripheralUninitialized: CBMPeripheral, CustomDebugStringConvertible {
     let debugDescription: String = "<uninitialized>"
     
     var identifier: UUID { uninitialized() }
     var name: String? { uninitialized() }
-    var state: CBPeripheralState { uninitialized() }
+    var state: CBMPeripheralState { uninitialized() }
     var services: [CBMService]? { uninitialized() }
     var canSendWriteWithoutResponse: Bool { uninitialized() }
     var ancsAuthorized: Bool { uninitialized() }
@@ -344,16 +345,16 @@ fileprivate class CBPeripheralUninitialized: CBMPeripheral, CustomDebugStringCon
         uninitialized()
     }
     
-    func discoverServices(_ serviceUUIDs: [CBUUID]?) {
+    func discoverServices(_ serviceUUIDs: [CBMUUID]?) {
         uninitialized()
     }
     
-    func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
+    func discoverIncludedServices(_ includedServiceUUIDs: [CBMUUID]?,
                                   for service: CBMService) {
         uninitialized()
     }
     
-    func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
+    func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?,
                                  for service: CBMService) {
         uninitialized()
     }
@@ -370,13 +371,13 @@ fileprivate class CBPeripheralUninitialized: CBMPeripheral, CustomDebugStringCon
         uninitialized()
     }
     
-    func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int {
+    func maximumWriteValueLength(for type: CBMCharacteristicWriteType) -> Int {
         uninitialized()
     }
     
     func writeValue(_ data: Data,
                     for characteristic: CBMCharacteristic,
-                    type: CBCharacteristicWriteType) {
+                    type: CBMCharacteristicWriteType) {
         uninitialized()
     }
     
@@ -389,16 +390,17 @@ fileprivate class CBPeripheralUninitialized: CBMPeripheral, CustomDebugStringCon
         uninitialized()
     }
     
-    func openL2CAPChannel(_ PSM: CBL2CAPPSM) { uninitialized() }
+    @available(iOS 11.0, *)
+    func openL2CAPChannel(_ PSM: CBML2CAPPSM) { uninitialized() }
     
     func uninitialized() -> Never {
         fatalError("Uninitialized")
     }
 }
 
-fileprivate class CBServiceUninitialized: CBMService {
+fileprivate class CBMServiceUninitialized: CBMService {
     override var debugDescription: String { return "<uninitialized>" }
-    override var uuid: CBUUID { uninitialized() }
+    override var uuid: CBMUUID { uninitialized() }
     override var characteristics: [CBMCharacteristic]? { uninitialized() }
     override var isPrimary: Bool {
         get { uninitialized() }
@@ -406,7 +408,7 @@ fileprivate class CBServiceUninitialized: CBMService {
     }
     
     init() {
-        super.init(type: CBUUID(), primary: true)
+        super.init(type: CBMUUID(), primary: true)
     }
     
     func uninitialized() -> Never {
@@ -414,9 +416,9 @@ fileprivate class CBServiceUninitialized: CBMService {
     }
 }
 
-fileprivate class CBCharacteristicUninitialized: CBMCharacteristic {
+fileprivate class CBMCharacteristicUninitialized: CBMCharacteristic {
     override var debugDescription: String { return "<uninitialized>" }
-    override var uuid: CBUUID { uninitialized() }    
+    override var uuid: CBMUUID { uninitialized() }
     override var descriptors: [CBMDescriptor]? { uninitialized() }
     override var value: Data? {
         get { uninitialized() }
@@ -428,7 +430,7 @@ fileprivate class CBCharacteristicUninitialized: CBMCharacteristic {
     }
     
     init() {
-        super.init(type: CBUUID(), properties: [])
+        super.init(type: CBMUUID(), properties: [])
     }
     
     func uninitialized() -> Never {

@@ -28,7 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
 public class CBMCentralManagerNative: NSObject, CBMCentralManager {
@@ -139,7 +138,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     }
     
     @available(iOS 13.0, *)
-    public static func supports(_ features: CBCentralManager.Feature) -> Bool {
+    public static func supports(_ features: CBMCentralManager.Feature) -> Bool {
         return CBCentralManager.supports(features)
     }
     
@@ -161,7 +160,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     public init(delegate: CBMCentralManagerDelegate?, queue: DispatchQueue?,
                 options: [String : Any]?) {
         super.init()
-        let restoration = options?[CBCentralManagerOptionRestoreIdentifierKey] != nil
+        let restoration = options?[CBMCentralManagerOptionRestoreIdentifierKey] != nil
         self.wrapper = restoration ?
             CBMCentralManagerDelegateWrapperWithRestoration(self) :
             CBMCentralManagerDelegateWrapper(self)
@@ -169,7 +168,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
         self.delegate = delegate
     }
     
-    public func scanForPeripherals(withServices serviceUUIDs: [CBUUID]?,
+    public func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
                                    options: [String : Any]?) {
         manager.scanForPeripherals(withServices: serviceUUIDs, options: options)
     }
@@ -202,7 +201,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     }
     
     @available(iOS 7.0, *)
-    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBUUID]) -> [CBMPeripheral] {
+    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
         let retrievedPeripherals = manager.retrieveConnectedPeripherals(withServices: serviceUUIDs)
         retrievedPeripherals
             .filter { peripherals[$0.identifier] == nil }
@@ -213,12 +212,12 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     }
     
     @available(iOS 13.0, *)
-    public func registerForConnectionEvents(options: [CBConnectionEventMatchingOption : Any]? = nil) {
+    public func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
         manager.registerForConnectionEvents(options: options)
     }
 }
 
-public class CBMPeripheralNative: CBPeer, CBMPeripheral {
+public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
     
     private class CBPeripheralDelegateWrapper: NSObject, CBPeripheralDelegate {
         private var impl: CBMPeripheralNative
@@ -457,7 +456,7 @@ public class CBMPeripheralNative: CBPeer, CBMPeripheral {
         return peripheral.name
     }
     
-    public var state: CBPeripheralState {
+    public var state: CBMPeripheralState {
         return peripheral.state
     }
     
@@ -486,18 +485,18 @@ public class CBMPeripheralNative: CBPeer, CBMPeripheral {
         peripheral.readRSSI()
     }
     
-    public func discoverServices(_ serviceUUIDs: [CBUUID]?) {
+    public func discoverServices(_ serviceUUIDs: [CBMUUID]?) {
         peripheral.discoverServices(serviceUUIDs)
     }
     
-    public func discoverIncludedServices(_ includedServiceUUIDs: [CBUUID]?,
+    public func discoverIncludedServices(_ includedServiceUUIDs: [CBMUUID]?,
                                          for service: CBMService) {
         if let n = service as? CBMServiceNative {
             peripheral.discoverIncludedServices(includedServiceUUIDs, for: n.service)
         }
     }
     
-    public func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?,
+    public func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?,
                                         for service: CBMService) {
         if let n = service as? CBMServiceNative {
             peripheral.discoverCharacteristics(characteristicUUIDs, for: n.service)
@@ -523,12 +522,12 @@ public class CBMPeripheralNative: CBPeer, CBMPeripheral {
     }
     
     @available(iOS 9.0, *)
-    public func maximumWriteValueLength(for type: CBCharacteristicWriteType) -> Int {
+    public func maximumWriteValueLength(for type: CBMCharacteristicWriteType) -> Int {
         return peripheral.maximumWriteValueLength(for: type)
     }
     
     public func writeValue(_ data: Data, for characteristic: CBMCharacteristic,
-                           type: CBCharacteristicWriteType) {
+                           type: CBMCharacteristicWriteType) {
         if let n = characteristic as? CBMCharacteristicNative {
             peripheral.writeValue(data, for: n.characteristic, type: type)
         }
@@ -548,7 +547,7 @@ public class CBMPeripheralNative: CBPeer, CBMPeripheral {
     }
     
     @available(iOS 11.0, *)
-    public func openL2CAPChannel(_ PSM: CBL2CAPPSM) {
+    public func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
         peripheral.openL2CAPChannel(PSM)
     }
     

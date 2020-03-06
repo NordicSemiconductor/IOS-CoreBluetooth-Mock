@@ -28,7 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
 /// The approximate mock device proximity.
@@ -152,7 +151,7 @@ public class CBMPeripheralSpec {
     /// `peripheral(:didDisconnected:error)` callback.
     /// - Parameter error: The disconnection reason. Use `CBError` or
     ///                    `CBATTError` errors.
-    public func simulateDisconnection(withError error: Error = CBError(.peripheralDisconnected)) {
+    public func simulateDisconnection(withError error: Error = CBMError(.peripheralDisconnected)) {
         CBMCentralManagerMock.peripheral(self, didDisconnectWithError: error)
     }
     
@@ -160,7 +159,7 @@ public class CBMPeripheralSpec {
     /// again (if advertising was enabled) immediately. Connected central
     /// managers will be notified after the supervision timeout is over.
     public func simulateReset() {
-        simulateDisconnection(withError: CBError(.connectionTimeout))
+        simulateDisconnection(withError: CBMError(.connectionTimeout))
     }
     
     /// Simulates a situation when the device changes its services.

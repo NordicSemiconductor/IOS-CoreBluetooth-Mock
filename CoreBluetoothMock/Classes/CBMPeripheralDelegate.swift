@@ -28,7 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
 public protocol CBMPeripheralDelegate: class {
@@ -157,7 +156,7 @@ public protocol CBMPeripheralDelegate: class {
     ///   - error: If an error occurred, the cause of the failure.
     @available(iOS 11.0, *)
     func peripheral(_ peripheral: CBMPeripheral,
-                    didOpen channel: CBL2CAPChannel?, error: Error?)
+                    didOpen channel: CBML2CAPChannel?, error: Error?)
 }
 
 public extension CBMPeripheralDelegate {
@@ -227,7 +226,7 @@ public extension CBMPeripheralDelegate {
 
     @available(iOS 11.0, *)
     func peripheral(_ peripheral: CBMPeripheral,
-                    didOpen channel: CBL2CAPChannel?, error: Error?) {
+                    didOpen channel: CBML2CAPChannel?, error: Error?) {
         // optional method
     }
 }

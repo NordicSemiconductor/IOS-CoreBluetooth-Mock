@@ -28,7 +28,6 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import Foundation
 import CoreBluetooth
 
 public protocol CBMCentralManagerDelegate: class {
@@ -114,7 +113,7 @@ public protocol CBMCentralManagerDelegate: class {
     ///   - peripheral: The `CBMPeripheral` that caused the event.
     @available(iOS 13.0, *)
     func centralManager(_ central: CBMCentralManager,
-                        connectionEventDidOccur event: CBConnectionEvent,
+                        connectionEventDidOccur event: CBMConnectionEvent,
                         for peripheral: CBMPeripheral)
     
     /// This method is invoked when the authorization status changes for a
@@ -163,7 +162,7 @@ public extension CBMCentralManagerDelegate {
     
     @available(iOS 13.0, *)
     func centralManager(_ central: CBMCentralManager,
-                        connectionEventDidOccur event: CBConnectionEvent,
+                        connectionEventDidOccur event: CBMConnectionEvent,
                         for peripheral: CBMPeripheral) {
         // optional method
     }

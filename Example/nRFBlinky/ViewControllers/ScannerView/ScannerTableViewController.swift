@@ -29,10 +29,8 @@
 */
 
 import UIKit
-import CoreBluetooth
-import CoreBluetoothMock
 
-class ScannerTableViewController: UITableViewController, CBMCentralManagerDelegate {
+class ScannerTableViewController: UITableViewController, CBCentralManagerDelegate {
     
     // MARK: - Outlets and Actions
     
@@ -41,7 +39,7 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
     
     // MARK: - Properties
     
-    private var centralManager: CBMCentralManager!
+    private var centralManager: CBCentralManager!
     private var discoveredPeripherals = [BlinkyPeripheral]()
     
     // MARK: - UIViewController
@@ -73,7 +71,7 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
         tableView.accessibilityLabel = "Scan Results"
         tableView.accessibilityIdentifier = "scanResults"
         
-        centralManager = CBMCentralManagerFactory.instance(
+        centralManager = CBCentralManagerFactory.instance(
             delegate: self,
             queue: nil,
             options: [CBCentralManagerOptionShowPowerAlertKey : true],
@@ -146,13 +144,13 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
     
     // MARK: - CBCentralManagerDelegate
     
-    func centralManager(_ central: CBMCentralManager,
+    func centralManager(_ central: CBCentralManager,
                         willRestoreState dict: [String : Any]) {
         print("Restoring state")
     }
     
-    func centralManager(_ central: CBMCentralManager,
-                        didDiscover peripheral: CBMPeripheral,
+    func centralManager(_ central: CBCentralManager,
+                        didDiscover peripheral: CBPeripheral,
                         advertisementData: [String : Any],
                         rssi RSSI: NSNumber) {
         let newPeripheral = BlinkyPeripheral(withPeripheral: peripheral,
@@ -178,7 +176,7 @@ class ScannerTableViewController: UITableViewController, CBMCentralManagerDelega
         }
     }
 
-    func centralManagerDidUpdateState(_ central: CBMCentralManager) {
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state != .poweredOn {
             print("Central is not powered on")
             activityIndicator.stopAnimating()
