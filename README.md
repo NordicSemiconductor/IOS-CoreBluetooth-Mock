@@ -1,23 +1,25 @@
 # Core Bluetooth Mock
 
-The *Core Bluetooth Mock* library allows mocking *Core Bluetooth* objects, providing easy way to test Bluetooth-enabled apps
-on a simulator, or run them without a physical Bluetooth LE peripheral.
+The *Core Bluetooth Mock* library was designed to emulate *Core Bluetooth* objects, providing easy way to test 
+Bluetooth-enabled apps. As the native Bluetooth API is not supported on a simulator, using this library you can run, test 
+and take screenshots of such apps without the need of a physical phone or tablet. You may also start working on the
+iOS app when your peripheral is still under development.
 
 ### Core Bluetooth?
 
 The [Core Bluetooth](https://developer.apple.com/documentation/corebluetooth) framework provides the classes needed 
-for your apps to communicate with Bluetooth-equipped low energy (LE) wireless technology. As the documentation states:
+for your apps to communicate with Bluetooth-equipped low energy (LE) wireless technology. It requires an iPhone or iPad to 
+work making Bluetooth-enabled apps difficult to test. As the documentation states:
 
 > Don’t subclass any of the classes of the Core Bluetooth framework. Overriding these classes isn’t supported and results in 
    undefined behavior.
 
-Bluetooth isn't supported on the simulator, which makes testing Bluetooth-enabled apps even more difficult.
-
 ### Core Bluetooth Mock!
 
 The *Core Bluetooth Mock* library defines number of **CBM...** classes and constants, that wrap or imitate the corresponding
-**CB...** classes and constants from *Core Bluetooth* framework. For example, `CBMCentralManager` has the same API and 
-behavior as `CBCentralManager`, etc.
+**CB...** counterparts from *Core Bluetooth* framework. For example, `CBMCentralManager` has the same API and 
+behavior as `CBCentralManager`, etc. On physical iDevices all calls to `CBMCentralManager` and `CBMPeripheral` are
+forwarded to their native equivalents, but on a simulator a mock implementation that you define is used. 
 
 ## How to start
 
@@ -29,17 +31,15 @@ Import library from CocoaPods:
 pod 'CoreBluetoothMock'
 ```
 
-Then, you need to choose one of the following approaches:
+With this complete, you need to choose one of the following approaches:
 
-### Using aliases
+#### Using aliases (recommended)
 
-This solution is much easier to implement, and therefor recommended.
-
-Copy [CoreBluetoothTypeAliases.swift](.../Example/nRFBlinky/CoreBluetothTypeAliases.swift) file to your project. It will create 
+Copy [CoreBluetoothTypeAliases.swift](Example/nRFBlinky/CoreBluetoothTypeAliases.swift) file to your project. It will create 
 number of type aliases for all **CBM...** names and rename them to **CB...**, so you will not need to perform any changes in 
-your files, except from removing `import CoreBluetooth` in all your files, as the types are now defined locally.
+your code, except from removing `import CoreBluetooth` in all your files, as the types are now defined locally.
 
-### Direct
+#### Direct
 
 Replace `import CoreBluetooth` with `import CoreBluetoothMock` in your classes.
 
@@ -47,7 +47,7 @@ Replace all instances of **CB...** with **CBM...**.
 
 ### Other required changes
 
-The only difference you will notice is how the central manager is instantiated. Instead of:
+The only difference is how the central manager is instantiated. Instead of:
 ```swift
 let manager = CBCentralManager(delegate: self, queue: ...)
 ```
@@ -55,8 +55,7 @@ you need to use the `CBCentralManagerFactory`:
 ```swift
 let manager = CBCentralManagerFactory.initiate(delegate: self, queue: ...)
 ```
-With these changes your app should work exactly the same as without any changes. On physical iDevices all calls in 
-`CBMCentralManager` and `CBMPeripheral` are forwarded to their native counterparts.
+The last parameter, `forceMock`, when set to *true*, allows to run mock implementation also on a physical device.
 
 ## Defining mock peripherals
 
@@ -76,12 +75,16 @@ any central manager instance was created. It defines the intial state of the moc
 `CBMCentralManagerMock.simulatePeripherals(_ peripherals: [CBMPeripheralSpec])` - defines list of 
 mock peripheral. This method should be called once, before any central manager was initialized.
 
+See [AppDelegate.swift](Example/nRFBlinky/AppDelegate.swift#L48) for reference. In the sample app the mock implementation is
+used only in UI Tests, which lauch the app with `mocking-enabled` parameter (see [here](Example/UI%20Tests/UITests.swift#L42)),
+but can be easily modified to use it every time it is launched on a simulator or a device.
+
 ### Peripheral specs
 
 `CBMPeripheralSpec.Builder` - use the builder to define your mock peripheral. Specify the proximity, whether it is advertising 
 together with advertising data and advertising interval, is it connectable (or already connected when your app starts), by defining
-its services and their behavior. List of such peripheral specifications need to be set using the above `simulatePeripherals(:)` 
-method.
+its services and their behavior. A ist of such peripheral specifications needs to be set by calling the `simulatePeripherals(:)` 
+method described above.
 
 `CBMPeripheralSpec.simulateConnection()` - simulates a situation when another app on the iDevice connects to this 
 peripheral. It will stop advertising (unless `advertisingWhenConnected` flag was set) and will be available using 
@@ -97,6 +100,10 @@ after the device has been reset.
 `CBMPeripheralSpec.simulateValueUpdate(:for:)` - simulates sending a notification or indication from the device. All subscribed
 clients will be notified a connection interval later.
 
+See [AppDelegate.swift](Example/nRFBlinky/MockPeripherals.swift#L48) for reference, where 3 mock peripherals are defined: a test blinky
+device (like in Nordic SDK), an HRM device (GATT behavior not implemented, as the app does not support it), and a Physical Web Beacon,
+a non-connectable device. The 2 latter will not pop up on in the sample app, as it is scanning with Service UUID filter.
+
 ### Advanced
 
 `CBMCentralManagerFactory.simulateStateRestoration` - this closure will be used when you initiate a central manager
@@ -109,11 +116,12 @@ by the manager. It is availalbe on iOS 13+.
 ## Sample application: nRF BLINKY
 
 nRF Blinky is an example app targeted towards newcomer BLE developers, and also demonstrating the use 
-of *Core Bluetooth Mock* library.
-This application controls an LED on an [nRF5 DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits)
+of *Core Bluetooth Mock* library. This application controls an LED on an
+[nRF5DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits)
 and receive notifications whenever the button on the kit is pressed and released.
 
-The mock implementation is used in UI tests. See `AppDelegate.swift` and `UITests.swift` classes.
+The mock implementation is used in UI tests. See [AppDelegate.swift](Example/nRFBlinky/AppDelegate.swift) 
+and [UITests.swift](Example/UI%20Tests/UITests.swift) classes.
 
 ## Nordic LED and Button Service
 ###### Service UUID: `00001523-1212-EFDE-1523-785FEABCD123`
