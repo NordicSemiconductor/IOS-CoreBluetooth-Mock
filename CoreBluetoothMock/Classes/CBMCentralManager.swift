@@ -38,7 +38,7 @@ public protocol CBMCentralManager: class {
     var delegate: CBMCentralManagerDelegate? { get set }
     
     /// The current state of the manager, initially set to
-    /// <code>CBManagerStateUnknown</code>. Updates are provided by required delegate
+    /// `CBManagerStateUnknown`. Updates are provided by required delegate
     /// method `centralManagerDidUpdateState(_:)`.
     var state: CBMManagerState { get }
     
@@ -52,16 +52,16 @@ public protocol CBMCentralManager: class {
     static func supports(_ features: CBMCentralManager.Feature) -> Bool
     
     /// Starts scanning for peripherals that are advertising any of the services listed
-    /// in <i>serviceUUIDs</i>. Although strongly discouraged, if <i>serviceUUIDs</i>
-    /// is <i>nil</i> all discovered peripherals will be returned. If the central is
-    /// already scanning with different <i>serviceUUIDs</i> or <i>options</i>, the
+    /// in serviceUUIDs. Although strongly discouraged, if serviceUUIDs
+    /// is nil all discovered peripherals will be returned. If the central is
+    /// already scanning with different serviceUUIDs or options, the
     /// provided parameters will replace them. Applications that have specified the
-    /// <code>bluetooth-central</code> background mode are allowed to scan while
+    /// `bluetooth-central` background mode are allowed to scan while
     /// backgrounded, with two caveats: the scan must specify one or more service types
-    /// in <i>serviceUUIDs</i>, and the <code>CBCentralManagerScanOptionAllowDuplicatesKey</code>
+    /// in serviceUUIDs, and the `CBCentralManagerScanOptionAllowDuplicatesKey`
     /// scan option will be ignored.
     /// - Parameters:
-    ///   - serviceUUIDs: A list of <code>CBUUID</code> objects representing the service(s)
+    ///   - serviceUUIDs: A list of `CBUUID` objects representing the service(s)
     ///                   to scan for.
     ///   - options: An optional dictionary specifying options for the scan.
     func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?, options: [String : Any]?)
@@ -69,34 +69,34 @@ public protocol CBMCentralManager: class {
     /// Stops scanning for peripherals.
     func stopScan()
     
-    /// Initiates a connection to <i>peripheral</i>. Connection attempts never time out
+    /// Initiates a connection to peripheral. Connection attempts never time out
     /// and, depending on the outcome, will result in a call to either
     /// `centralManager(didConnect:)` or `centralManager(didFailToConnect:error:)`.
-    /// Pending attempts are cancelled automatically upon deallocation of <i>peripheral</i>,
+    /// Pending attempts are cancelled automatically upon deallocation of peripheral,
     /// and explicitly via `cancelPeripheralConnection(_:)`.
     /// - Parameters:
-    ///   - peripheral: The <code>CBMPeripheral</code> to be connected.
+    ///   - peripheral: The `CBMPeripheral` to be connected.
     ///   - options: An optional dictionary specifying connection behavior options.
     func connect(_ peripheral: CBMPeripheral, options: [String : Any]?)
     
-    /// Cancels an active or pending connection to <i>peripheral</i>. Note that this
-    /// is non-blocking, and any <code>CBMPeripheral</code> commands that are still
-    /// pending to <i>peripheral</i> may or may not complete.
-    /// - Parameter peripheral: A <code>CBMPeripheral</code>.
+    /// Cancels an active or pending connection to peripheral. Note that this
+    /// is non-blocking, and any `CBMPeripheral` commands that are still
+    /// pending to peripheral may or may not complete.
+    /// - Parameter peripheral: A `CBMPeripheral`.
     func cancelPeripheralConnection(_ peripheral: CBMPeripheral)
     
-    /// Attempts to retrieve the <code>CBMPeripheral</code> object(s) with the
-    /// corresponding <i>identifiers</i>.
-    /// - Parameter identifiers: A list of <code>UUID</code> objects.
+    /// Attempts to retrieve the `CBMPeripheral` object(s) with the
+    /// corresponding identifiers.
+    /// - Parameter identifiers: A list of `UUID` objects.
     @available(iOS 7.0, *)
     func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral]
     
     /// Retrieves all peripherals that are connected to the system and implement
-    /// any of the services listed in <i>serviceUUIDs</i>.
+    /// any of the services listed in serviceUUIDs.
     /// Note that this set can include peripherals which were connected by other
     /// applications, which will need to be connected locally via
     /// `connect(peripheral:options:)` before they can be used.
-    /// - Returns: A list of <code>CBMPeripheral</code> objects.
+    /// - Returns: A list of `CBMPeripheral` objects.
     @available(iOS 7.0, *)
     func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral]
     

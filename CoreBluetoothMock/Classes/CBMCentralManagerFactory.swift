@@ -54,7 +54,7 @@ public class CBMCentralManagerFactory {
     @available(iOS 13.0, *)
     public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
     
-    /// Returns the implementaton of CBCentralManager, depending on the environment.
+    /// Returns the implementation of CBCentralManager, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
@@ -70,7 +70,7 @@ public class CBMCentralManagerFactory {
         #endif
     }
     
-    /// Returns the implementaton of CBCentralManager, depending on the environment.
+    /// Returns the implementation of CBCentralManager, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
@@ -91,7 +91,7 @@ public class CBMCentralManagerFactory {
         #endif
     }
     
-    /// Returns the implementaton of CBCentralManager, depending on the environment.
+    /// Returns the implementation of CBCentralManager, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:

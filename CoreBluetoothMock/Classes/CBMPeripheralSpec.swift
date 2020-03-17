@@ -155,9 +155,10 @@ public class CBMPeripheralSpec {
         CBMCentralManagerMock.peripheral(self, didDisconnectWithError: error)
     }
     
-    /// Simulates a reset of the peripheral. It will make it advertising
-    /// again (if advertising was enabled) immediately. Connected central
-    /// managers will be notified after the supervision timeout is over.
+    /// Simulates a reset of the peripheral. The peripheral will start
+    /// advertising again (if advertising was enabled) immediately.
+    /// Connected central managers will be notified after the supervision
+    /// timeout is over.
     public func simulateReset() {
         simulateDisconnection(withError: CBMError(.connectionTimeout))
     }
@@ -210,8 +211,7 @@ public class CBMPeripheralSpec {
             return
         }
         characteristic.value = data
-        CBMCentralManagerMock.peripheral(self,
-                                        didUpdateValueFor: characteristic)
+        CBMCentralManagerMock.peripheral(self, didUpdateValueFor: characteristic)
     }
     
     public class Builder {
@@ -272,7 +272,7 @@ public class CBMPeripheralSpec {
             return self
         }
         
-        /// Makes the device connnectable, but not connected at the moment
+        /// Makes the device connectable, but not connected at the moment
         /// of initialization.
         /// - Parameters:
         ///   - name: The device name, returned by Device Name characteristic.
@@ -299,7 +299,7 @@ public class CBMPeripheralSpec {
             return self
         }
         
-        /// Makes the device connnectable, and also marks already connected
+        /// Makes the device connectable, and also marks already connected
         /// by some other application. Such device, if not advertising,
         /// can be obtained using `retrieveConnectedPeripherals(withServices:)`.
         /// - Parameters:
