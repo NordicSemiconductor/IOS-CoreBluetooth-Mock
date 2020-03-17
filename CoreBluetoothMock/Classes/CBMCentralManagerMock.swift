@@ -225,6 +225,10 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
             return
         }
         peripheral.services = newServices
+
+        guard peripheral.virtualConnections > 0 else {
+            return
+        }
         let existingManagers = managers.compactMap { $0.ref }
         existingManagers.forEach { manager in
             manager.peripherals[peripheral.identifier]?
@@ -254,6 +258,9 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
                                     didUpdateValueFor characteristic: CBMCharacteristicMock) {
         // Is the peripheral simulated?
         guard peripherals.contains(peripheral) else {
+            return
+        }
+        guard peripheral.virtualConnections > 0 else {
             return
         }
         managers
