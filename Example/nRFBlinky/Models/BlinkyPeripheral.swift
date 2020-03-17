@@ -199,7 +199,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
                 print("Writing LED value... (without response)")
                 basePeripheral.writeValue(value, for: ledCharacteristic, type: .withoutResponse)
                 // peripheral(_:didWriteValueFor,error) will not be called after write without response
-                // we are caling the delegate here
+                // we are calling the delegate here
                 didWriteValueToLED(value)
             } else {
                 print("LED Characteristic is not writable")
@@ -348,6 +348,9 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral,
                     didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+        if let error = error {
+            print("Error: \(error)")
+        }
         // LED value has been written, let's read it to confirm.
         readLEDValue()
     }

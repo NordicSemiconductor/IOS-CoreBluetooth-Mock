@@ -69,10 +69,10 @@ class BlinkyViewController: UITableViewController {
         let buttonObserver = blinky.onButtonStateDidChange { [unowned self] isPressed in
             self.buttonStateChanged(isPressed: isPressed)
         }
-        blinky.onDisconnected { [unowned self] in
-            self.blinky.dispose(ledObserver)
-            self.blinky.dispose(buttonObserver)
-            self.blinkyDidDisconnect()
+        blinky.onDisconnected { [weak self] in
+            self?.blinky.dispose(ledObserver)
+            self?.blinky.dispose(buttonObserver)
+            self?.blinkyDidDisconnect()
         }
     }
 
