@@ -1,0 +1,6 @@
+module CoreBluetoothMock {
+  umbrella header "CoreBluetoothMock-umbrella.h"
+
+  export *
+  module * { export * }
+}

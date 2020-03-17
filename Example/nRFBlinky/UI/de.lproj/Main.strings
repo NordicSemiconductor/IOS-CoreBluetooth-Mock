@@ -1,0 +1,45 @@
+
+/* Class = "UITableViewSection"; footerTitle = "Toggling the switch will cause LED 3 on the Blinky peripheral to turn ON or OFF."; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.footerTitle" = "Das Betätigen des Schalters schaltet die LED 3 am Blinky ein bzw. aus.";
+
+/* Class = "UITableViewSection"; headerTitle = "LED"; ObjectID = "4YT-Qt-7PG"; */
+"4YT-Qt-7PG.headerTitle" = "LED";
+
+/* Class = "UILabel"; text = "Toggle the switch next to the micro USB port to switch it on."; ObjectID = "IAE-tV-Psp"; */
+"IAE-tV-Psp.text" = "Betätige den Schalter neben dem Micro-USB-Port um es einzuschalten.";
+
+/* Class = "UIBarButtonItem"; title = "Scanner"; ObjectID = "K05-ZQ-Swb"; */
+"K05-ZQ-Swb.title" = "Scanner";
+
+/* Class = "UILabel"; text = "If not, connect it to a PC or a charger using a micro USB cable. Coin cell battery is on the bottom side of the dev kit."; ObjectID = "MCd-9i-lIO"; */
+"MCd-9i-lIO.text" = "Wenn nicht, verbinde es mit einem Micro-USB-Kabel und einem PC oder einem Ladegerät. Die Knopfzellen-Batterie befindet sich auf der Unterseite des DevKits.";
+
+/* Class = "UILabel"; text = "1. Make sure it's switched on."; ObjectID = "bcI-yv-RmI"; */
+"bcI-yv-RmI.text" = "1. Stelle sicher, dass es eingeschaltet ist.";
+
+/* Class = "UILabel"; text = "CAN'T SEE YOUR BLINKY?"; ObjectID = "eor-wV-hOm"; */
+"eor-wV-hOm.text" = "Kannst Du Dein Blinky nicht sehen?";
+
+/* Class = "UINavigationItem"; title = "nRF Blinky"; ObjectID = "mCo-A8-H1i"; */
+"mCo-A8-H1i.title" = "nRF Blinky";
+
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "oaQ-Ex-coH"; */
+"oaQ-Ex-coH.text" = "UNBEKANNT";
+
+/* Class = "UITableViewController"; title = "nRF Blinky"; ObjectID = "pK8-7d-htc"; */
+"pK8-7d-htc.title" = "nRF Blinky";
+
+/* Class = "UITableViewSection"; footerTitle = "Pressing and releasing BUTTON 1 on the Blinky peripheral will update the button state here."; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.footerTitle" = "Drücken und Loslassen von BUTTON 1 auf dem Blinky zeigt den Zustand des Schalters an dieser Stelle an.";
+
+/* Class = "UITableViewSection"; headerTitle = "Button"; ObjectID = "qKS-C3-Jkd"; */
+"qKS-C3-Jkd.headerTitle" = "Schalter";
+
+/* Class = "UILabel"; text = "2. Make sure the coin cell battery has power."; ObjectID = "rmw-BF-cDo"; */
+"rmw-BF-cDo.text" = "2. Stelle sicher, dass die Knopfzellenbatterie Spannung hat.";
+
+/* Class = "UILabel"; text = "OFF"; ObjectID = "sXe-8K-21Q"; */
+"sXe-8K-21Q.text" = "UNBEKANNT";
+
+/* Class = "UILabel"; text = "Nordic Blinky"; ObjectID = "ufl-Iw-mhn"; */
+"ufl-Iw-mhn.text" = "Nordic Blinky";

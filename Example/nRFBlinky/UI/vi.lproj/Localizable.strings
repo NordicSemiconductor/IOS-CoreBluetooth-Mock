@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  nRFBlinky
+
+  Created by Hung Bui on 08/02/2019.
+  Copyright © 2019 Nordic Semiconductor ASA. All rights reserved.
+*/
+"ON" = "BẬT";
+"OFF" = "TẮT";
+"PRESSED" = "ĐÃ ẤN";
+"RELEASED" = "ĐÃ NHẢ";
+"Reading..." = "Đang đọc...";
+"Unknown Device" = "Thiết bị chưa nhận dạng";

@@ -1,42 +1,21 @@
-#
-# Be sure to run `pod lib lint CoreBluetoothMock.podspec' to ensure this is a
-# valid spec before submitting.
-#
-# Any lines starting with a # are optional, but their use is encouraged
-# To learn more about a Podspec see https://guides.cocoapods.org/syntax/podspec.html
-#
-
 Pod::Spec.new do |s|
   s.name             = 'CoreBluetoothMock'
-  s.version          = '0.1.0'
-  s.summary          = 'A short description of CoreBluetoothMock.'
-
-# This description is used to generate tags and improve search results.
-#   * Think: What does it do? Why did you write it? What is the focus?
-#   * Try to keep it short, snappy and to the point.
-#   * Write the description between the DESC delimiters below.
-#   * Finally, don't worry about the indent, CocoaPods strips it!
+  s.version          = '0.7.0'
+  s.summary          = 'Mocking library for CoreBluetooth.'
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+This is a mocking library for CoreBluetooth framework. Allows to mock a Bluetooth Low Energy
+device and test the app on simulator.
                        DESC
 
-  s.homepage         = 'https://github.com/philips77/CoreBluetoothMock'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
-  s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'philips77' => 'aleksander.nowakowski@nordicsemi.no' }
-  s.source           = { :git => 'https://github.com/philips77/CoreBluetoothMock.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.homepage         = 'https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock'
+  s.license          = { :type => 'BSD 3-Clause', :file => 'LICENSE' }
+  s.author           = { 'Aleksander Nowakowski' => 'aleksander.nowakowski@nordicsemi.no' }
+  s.source           = { :git => 'https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git', :tag => s.version.to_s }
+  s.social_media_url = 'https://twitter.com/nordictweets'
 
   s.ios.deployment_target = '8.0'
+  s.swift_versions = ['4.2', '5.0', '5.1']
 
   s.source_files = 'CoreBluetoothMock/Classes/**/*'
-  
-  # s.resource_bundles = {
-  #   'CoreBluetoothMock' => ['CoreBluetoothMock/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end

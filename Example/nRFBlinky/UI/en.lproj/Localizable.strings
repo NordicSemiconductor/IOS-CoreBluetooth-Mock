@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  nRFBlinky
+
+  Created by Aleksander Nowakowski on 08/02/2019.
+  Copyright © 2019 Nordic Semiconductor ASA. All rights reserved.
+*/
+"ON" = "ON";
+"OFF" = "OFF";
+"PRESSED" = "PRESSED";
+"RELEASED" = "RELEASED";
+"Reading..." = "Reading...";
+"Unknown Device" = "Unknown Device";

@@ -1,11 +1,16 @@
-use_frameworks!
+platform :ios, '8.0'
 
-target 'CoreBluetoothMock_Example' do
+target 'nRFBlinky' do
   pod 'CoreBluetoothMock', :path => '../'
 
-  target 'CoreBluetoothMock_Tests' do
+  target 'nRFBlinky_Tests' do
     inherit! :search_paths
 
-    
   end
+
+  target 'nRFBlinky_UITests' do
+    inherit! :search_paths
+
+  end
+
 end

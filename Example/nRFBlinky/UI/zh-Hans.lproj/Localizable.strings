@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  nRFBlinky
+
+  Created by Wei Li on 08/02/2019.
+  Copyright © 2019 Nordic Semiconductor ASA. All rights reserved.
+*/
+"ON" = "开";
+"OFF" = "关";
+"PRESSED" = "按下";
+"RELEASED" = "释放";
+"Reading..." = "读取...";
+"Unknown Device" = "未知设备";
