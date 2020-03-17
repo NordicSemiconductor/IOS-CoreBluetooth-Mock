@@ -160,6 +160,7 @@ public class CBMPeripheralSpec {
     /// Connected central managers will be notified after the supervision
     /// timeout is over.
     public func simulateReset() {
+        connectionDelegate?.reset()
         simulateDisconnection(withError: CBMError(.connectionTimeout))
     }
     

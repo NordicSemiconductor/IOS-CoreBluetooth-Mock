@@ -32,6 +32,10 @@ import CoreBluetooth
 
 public protocol CBMPeripheralSpecDelegate {
 
+    /// This method is called when the mock peripheral has been reset.
+    /// It should reset all values to the initial state.
+    func reset()
+
     /// This method will be called when a connect request was initiated from a
     /// mock central manager.
     /// - Parameter peripheral: The peripheral specification to handle connection.
@@ -174,7 +178,11 @@ public protocol CBMPeripheralSpecDelegate {
 }
 
 public extension CBMPeripheralSpecDelegate {
-    
+
+    func reset() {
+        // Empty default implementation
+    }
+
     func peripheralDidReceiveConnectionRequest(_ peripheral: CBMPeripheralSpec)
         -> Result<Void, Error> {
             return .success(())
