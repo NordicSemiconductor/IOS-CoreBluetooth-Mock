@@ -1,5 +1,7 @@
 # Core Bluetooth Mock
 
+https://img.shields.io/cocoapods/v/CoreBluetoothMock
+
 The *Core Bluetooth Mock* library was designed to emulate *Core Bluetooth* objects, providing easy way to test 
 Bluetooth-enabled apps. As the native Bluetooth API is not supported on a simulator, using this library you can run, test 
 and take screenshots of such apps without the need of a physical phone or tablet. You may also start working on the
