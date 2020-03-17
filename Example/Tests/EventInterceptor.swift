@@ -28,28 +28,31 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
-import XCTest
-import CoreBluetoothMock
+import Foundation
+@testable import nRF_Blinky
 
-class Tests: XCTestCase {
+class Sim {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    static func post(_ notification: Notification) {
+        NotificationCenter.default.post(notification)
     }
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    static func dispose(_ observer: NSObjectProtocol) {
+        NotificationCenter.default.removeObserver(observer)
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        XCTAssert(true, "Pass")
+    private static func on(_ name: Notification.Name, do action: @escaping (Notification) -> ()) -> NSObjectProtocol {
+        return NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil, using: action)
     }
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+    static func onBlinkyDiscovery(do action: @escaping (BlinkyPeripheral) -> ()) {
+        var observer: NSObjectProtocol?
+        observer = on(.newPeripheral) { notification in
+            if let userInfo = notification.userInfo,
+               let blinky = userInfo["blinky"] as? BlinkyPeripheral {
+                action(blinky)
+            }
+            dispose(observer!)
         }
     }
 

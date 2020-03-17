@@ -29,52 +29,63 @@
 */
 
 import UIKit
-import CoreBluetooth
 
-class BlinkyViewController: UITableViewController, BlinkyDelegate {
-    
+class BlinkyViewController: UITableViewController {
+
     // MARK: - Outlets and Actions
-    
+
     @IBOutlet weak var ledStateLabel: UILabel!
     @IBOutlet weak var ledToggleSwitch: UISwitch!
     @IBOutlet weak var buttonStateLabel: UILabel!
-    
-    @IBAction func ledToggleSwitchDidChange(_ sender: Any) {
-        handleSwitchValueChange(newValue: ledToggleSwitch.isOn)
+
+    @IBAction func ledToggleSwitchDidChange(_ sender: UISwitch) {
+        handleSwitchValueChange(newValue: sender.isOn)
     }
 
     // MARK: - Properties
 
     private var hapticGenerator: NSObject? // UIImpactFeedbackGenerator is available on iOS 10 and above
-    private var blinkyPeripheral: BlinkyPeripheral!
-    
-    // MARK: - Public API
-    
-    public func setPeripheral(_ peripheral: BlinkyPeripheral) {
-        blinkyPeripheral = peripheral
-        title = peripheral.advertisedName
-        peripheral.delegate = self
+
+    var blinky: BlinkyPeripheral! {
+        didSet {
+            title = blinky.advertisedName
+        }
     }
-    
+
     // MARK: - UIViewController
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.isAccessibilityElement = true
-        tableView.accessibilityLabel = "Control"
+        tableView.accessibilityLabel = "Blinky Control"
         tableView.accessibilityIdentifier = "control"
+
+        blinky.onReady { [unowned self] ledSupported, buttonSupported in
+            self.blinkyDidConnect(ledSupported: ledSupported, buttonSupported: buttonSupported)
+        }
+        let ledObserver = blinky.onLedStateDidChange { [unowned self] isOn in
+            self.ledStateChanged(isOn: isOn)
+        }
+        let buttonObserver = blinky.onButtonStateDidChange { [unowned self] isPressed in
+            self.buttonStateChanged(isPressed: isPressed)
+        }
+        blinky.onDisconnected { [unowned self] in
+            self.blinky.dispose(ledObserver)
+            self.blinky.dispose(buttonObserver)
+            self.blinkyDidDisconnect()
+        }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard !blinkyPeripheral.isConnected else {
+        guard !blinky.isConnected else {
             // View is coming back from a swipe, everything is already setup
             return
         }
         prepareHaptics()
-        blinkyPeripheral.connect()
+        blinky.connect()
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         // Restore original navigation bar color. It might have changed
         // when the device got disconnected.
@@ -83,18 +94,18 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
     }
 
     override func viewDidDisappear(_ animated: Bool) {
-        blinkyPeripheral.disconnect()
+        blinky.disconnect()
         super.viewDidDisappear(animated)
     }
-    
+
     // MARK: - Implementation
-    
+
     private func handleSwitchValueChange(newValue isOn: Bool) {
         if isOn {
-            blinkyPeripheral.turnOnLED()
+            blinky.turnOnLED()
             ledStateLabel.text = "ON".localized
         } else {
-            blinkyPeripheral.turnOffLED()
+            blinky.turnOffLED()
             ledStateLabel.text = "OFF".localized
         }
     }
@@ -107,21 +118,25 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
             (hapticGenerator as? UIImpactFeedbackGenerator)?.prepare()
         }
     }
-    
+
     /// Generates a tap feedback on iOS 10 or above.
     private func buttonTapHapticFeedback() {
         if #available(iOS 10.0, *) {
             (hapticGenerator as? UIImpactFeedbackGenerator)?.impactOccurred()
         }
     }
-    
-    // MARK: - Blinky Delegate
-    
+
+}
+
+// MARK: - Blinky Delegate
+
+private extension BlinkyViewController {
+
     func blinkyDidConnect(ledSupported: Bool, buttonSupported: Bool) {
         if ledSupported || buttonSupported {
             DispatchQueue.main.async {
                 self.ledToggleSwitch.isEnabled = ledSupported
-                
+
                 if buttonSupported {
                     self.buttonStateLabel.text = "Reading...".localized
                 }
@@ -131,7 +146,7 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
             }
         } else {
             // Not supported device
-            blinkyPeripheral.disconnect()
+            blinky.disconnect()
         }
     }
     
@@ -167,7 +182,7 @@ class BlinkyViewController: UITableViewController, BlinkyDelegate {
     }
 }
 
-extension BlinkyViewController {
+private extension BlinkyViewController {
     
     /// Sets the color of the Navigation Bar to given one.
     /// - Parameter color: The new Navigation Bar color.

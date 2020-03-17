@@ -33,10 +33,10 @@ import CoreBluetoothMock
 
 // MARK: - Mock nRF Blinky
 
-extension CBUUID {
-    static let nordicBlinkyService  = CBUUID(string: "00001523-1212-EFDE-1523-785FEABCD123")
-    static let buttonCharacteristic = CBUUID(string: "00001524-1212-EFDE-1523-785FEABCD123")
-    static let ledCharacteristic    = CBUUID(string: "00001525-1212-EFDE-1523-785FEABCD123")
+extension CBMUUID {
+    static let nordicBlinkyService  = CBMUUID(string: "00001523-1212-EFDE-1523-785FEABCD123")
+    static let buttonCharacteristic = CBMUUID(string: "00001524-1212-EFDE-1523-785FEABCD123")
+    static let ledCharacteristic    = CBMUUID(string: "00001525-1212-EFDE-1523-785FEABCD123")
 }
 
 extension CBMCharacteristicMock {
@@ -56,7 +56,7 @@ extension CBMCharacteristicMock {
 
 extension CBMServiceMock {
 
-    static let blinkySerivce = CBMServiceMock(
+    static let blinkyService = CBMServiceMock(
         type: .nordicBlinkyService, primary: true,
         characteristics:
             .buttonCharacteristic,
@@ -76,7 +76,12 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     private var buttonData: Data {
         return buttonPressed ? Data([0x01]) : Data([0x00])
     }
-    
+
+    func reset() {
+        ledEnabled = false
+        buttonPressed = false
+    }
+
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor characteristic: CBMCharacteristic)
             -> Result<Data, Error> {
@@ -93,28 +98,23 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
         if data.count > 0 {
             ledEnabled = data[0] != 0x00
         }
-        // Simulate a button click when the LED has been turned on.
-        if ledEnabled {
-            buttonPressed = true
-            blinky.simulateValueUpdate(buttonData, for: .buttonCharacteristic)
-        }
         return .success(())
     }
 }
 
 let blinky = CBMPeripheralSpec
-    .simulatePeripheral(proximity: .immediate)
+    .simulatePeripheral(proximity: .outOfRange)
     .advertising(
         advertisementData: [
-            CBAdvertisementDataLocalNameKey    : "nRF Blinky",
-            CBAdvertisementDataServiceUUIDsKey : [CBUUID.nordicBlinkyService],
-            CBAdvertisementDataIsConnectable   : true as NSNumber
+            CBMAdvertisementDataLocalNameKey    : "nRF Blinky",
+            CBMAdvertisementDataServiceUUIDsKey : [CBMUUID.nordicBlinkyService],
+            CBMAdvertisementDataIsConnectable   : true as NSNumber
         ],
         withInterval: 0.250,
         alsoWhenConnected: false)
     .connectable(
         name: "nRF Blinky",
-        services: [.blinkySerivce],
+        services: [.blinkyService],
         delegate: BlinkyCBMPeripheralSpecDelegate(),
         connectionInterval: 0.150,
         mtu: 23)
@@ -124,22 +124,21 @@ let blinky = CBMPeripheralSpec
 
 extension CBMServiceMock {
     
-    static let hrmSerivce = CBMServiceMock(
-        type: CBUUID(string: "180D"), primary: true,
+    static let hrmService = CBMServiceMock(
+        type: CBMUUID(string: "180D"), primary: true,
         characteristics:
             CBMCharacteristicMock(
-                type: CBUUID(string: "2A37"), // Heart Rate Measurement
+                type: CBMUUID(string: "2A37"), // Heart Rate Measurement
                 properties: [.notify],
                 descriptors: CBMClientCharacteristicConfigurationDescriptorMock()
             ),
             CBMCharacteristicMock(
-                type: CBUUID(string: "2A38"), // Body Sensor Location
+                type: CBMUUID(string: "2A38"), // Body Sensor Location
                 properties: [.read]
             )
     )
     
 }
-
 
 private struct DummyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     // Let's use default implementation.
@@ -150,21 +149,21 @@ private struct DummyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
 }
 
 let hrm = CBMPeripheralSpec
-    .simulatePeripheral(proximity: .far)
+    .simulatePeripheral(proximity: .outOfRange)
     .advertising(
         advertisementData: [
-            CBAdvertisementDataLocalNameKey : "NordicHRM",
-            CBAdvertisementDataServiceUUIDsKey : [
-                CBUUID(string: "180D"), // Heart Rate
-                CBUUID(string: "180A"), // Device Information
+            CBMAdvertisementDataLocalNameKey : "NordicHRM",
+            CBMAdvertisementDataServiceUUIDsKey : [
+                CBMUUID(string: "180D"), // Heart Rate
+                CBMUUID(string: "180A"), // Device Information
                 // BlinkyPeripheral.nordicBlinkyServiceUUID // <- this line
             ],
-            CBAdvertisementDataIsConnectable : true as NSNumber
+            CBMAdvertisementDataIsConnectable : true as NSNumber
         ],
         withInterval: 0.100)
     .connectable(
         name: "NordicHRM",
-        services: [.hrmSerivce],
+        services: [.hrmService],
         delegate: DummyCBMPeripheralSpecDelegate(),
         connectionInterval: 0.250,
         mtu: 251)
@@ -173,19 +172,19 @@ let hrm = CBMPeripheralSpec
 // MARK: - Physical Web Beacon
 
 let thingy = CBMPeripheralSpec
-    .simulatePeripheral()
+    .simulatePeripheral(proximity: .outOfRange)
     .advertising(
         advertisementData: [
-            CBAdvertisementDataServiceUUIDsKey : [
+            CBMAdvertisementDataServiceUUIDsKey : [
                 CBUUID(string: "FEAA")  // Eddystone
             ],
-            CBAdvertisementDataServiceDataKey : [
+            CBMAdvertisementDataServiceDataKey : [
                 // Physical Web beacon: 10ee03676f2e676c2f7049576466972
                 // type: URL
                 // TX Power: -18 dBm
                 // URL: https://goo.gl/pIWdir -> Thingy:52
-                CBUUID(string: "FEAA") : Data(base64Encoded: "EO4DZ28uZ2wvcElXZGaXIA==")
+                CBMUUID(string: "FEAA") : Data(base64Encoded: "EO4DZ28uZ2wvcElXZGaXIA==")
             ]
         ],
-        withInterval: 2.500)
+        withInterval: 0.100)
     .build()

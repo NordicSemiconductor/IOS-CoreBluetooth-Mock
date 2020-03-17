@@ -30,7 +30,7 @@
 
 import XCTest
 
-class nRFBlinky_UITests: XCTestCase {
+class UITests: XCTestCase {
 
     override func setUp() {
         continueAfterFailure = false
@@ -67,9 +67,6 @@ class nRFBlinky_UITests: XCTestCase {
         ledSwitch.tap()
         XCTAssert(ledSwitch.isOn == true)
         XCTAssertEqual(ledState.label, "ON")
-        
-        // A button notification should also be received at this time.
-        XCTAssertEqual(buttonState.label, "PRESSED")
         
         // Tap the LED switch again to disable it.
         ledSwitch.tap()
