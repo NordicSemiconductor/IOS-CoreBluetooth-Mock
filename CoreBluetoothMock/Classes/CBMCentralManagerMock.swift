@@ -148,7 +148,7 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     /// Sets the initial state of the Bluetooth central manager.
     ///
     /// This method should only be called ones, before any `CBMCentralManagerMock`
-    /// is created. By defult, the initial state is `.poweredOff`.
+    /// is created. By default, the initial state is `.poweredOff`.
     /// - Parameter state: The initial state of the central manager.
     public static func simulateInitialState(_ state: CBMManagerState) {
         managerState = state
@@ -158,7 +158,7 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     ///
     /// Peripherals added using this method will be available for scanning
     /// and connecting, depending on their proximity. Use
-    /// periperal's `simulateProximity(of:didChangeTo:)` to modify proximity.
+    /// peripheral's `simulateProximity(of:didChangeTo:)` to modify proximity.
     ///
     /// This method may only be called once, before any manager was created.
     /// - Parameter peripherals: Peripherals that are not connected.
@@ -212,7 +212,7 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
     }
     
-    /// Simulates a sitution when the device changes its services.
+    /// Simulates a situation when the device changes its services.
     /// - Parameters:
     ///   - peripheral: The peripheral that changed services.
     ///   - newName: New device name.
@@ -225,6 +225,10 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
             return
         }
         peripheral.services = newServices
+
+        guard peripheral.virtualConnections > 0 else {
+            return
+        }
         let existingManagers = managers.compactMap { $0.ref }
         existingManagers.forEach { manager in
             manager.peripherals[peripheral.identifier]?
@@ -254,6 +258,9 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
                                     didUpdateValueFor characteristic: CBMCharacteristicMock) {
         // Is the peripheral simulated?
         guard peripherals.contains(peripheral) else {
+            return
+        }
+        guard peripheral.virtualConnections > 0 else {
             return
         }
         managers
@@ -286,9 +293,9 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         // TODO: notify a user registered for connection events
     }
     
-    /// Simulates the peripheral to disconenct from the device.
+    /// Simulates the peripheral to disconnect from the device.
     /// All connected mock central managers will receive
-    /// `peripheral(:didDisconencted:error)` callback.
+    /// `peripheral(:didDisconnected:error)` callback.
     /// - Parameter peripheral: The peripheral to disconnect.
     /// - Parameter error: The disconnection reason. Use `CBError` or
     ///                    `CBATTError` errors.
@@ -567,7 +574,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     private var queue: DispatchQueue {
         return manager.queue
     }
-    /// The mock peripheral with user-defined implementatino.
+    /// The mock peripheral with user-defined implementation.
     private let mock: CBMPeripheralSpec
     /// Size of the outgoing buffer. Only this many packets
     /// can be written without response in a loop, without
@@ -596,7 +603,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     public var name: String? {
         // If the device wasn't connected and has just been scanned first time,
         // return nil. When scanning continued, the Local Name from the
-        // advertisment data is returned. When the device was connected, the
+        // advertisement data is returned. When the device was connected, the
         // central reads the Device Name characteristic and returns cached value.
         return wasConnected ?
             mock.name :
@@ -846,7 +853,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     .filter { s in !service._includedServices!
                         .contains(where: { ds in s.identifier == ds.identifier })
                     }
-                    // Copy the service info, without included characterisitics.
+                    // Copy the service info, without included characteristics.
                     .map { CBMService(shallowCopy: $0, for: self) }
             let newServicesCount = service._includedServices!.count - initialSize
             // Service discovery may takes the more time, the more services
@@ -900,7 +907,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 originalCharacteristics
                     // Filter all service characteristics that match given list (if set).
                     .filter { characteristicUUIDs?.contains($0.uuid) ?? true }
-                    // Filter those of them, that are not already in discovered characteritics.
+                    // Filter those of them, that are not already in discovered characteristics.
                     .filter { c in !service._characteristics!
                         .contains(where: { dc in c.identifier == dc.identifier })
                     }

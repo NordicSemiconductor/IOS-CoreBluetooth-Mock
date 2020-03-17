@@ -41,6 +41,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // UI Tests can't access app code, so the Blinky mock must be in the app.
+        // The "mocking-enabled" argument is set in UITests.
         #if DEBUG
         if CommandLine.arguments.contains("mocking-enabled") {
             mockingEnabled = true
@@ -54,6 +56,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             CBMCentralManagerMock.simulateInitialState(.poweredOn)
             CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
+
+            // Set up initial conditions.
+            blinky.simulateProximityChange(.immediate)
+            hrm.simulateProximityChange(.near)
+            thingy.simulateProximityChange(.far)
+            blinky.simulateReset()
         }
         #endif
         

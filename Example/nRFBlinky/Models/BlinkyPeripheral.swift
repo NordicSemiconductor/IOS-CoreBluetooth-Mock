@@ -30,44 +30,21 @@
 
 import UIKit
 
-protocol BlinkyDelegate {
+class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
     
-    /// A callback called when a device gets connected.
-    /// - Parameters:
-    ///   - ledSupported: A flag indicating that the LED Service is present on the
-    ///                   device.
-    ///   - buttonSupported: A flag indicating that the Button Service is present
-    ///                      on the device.
-    func blinkyDidConnect(ledSupported: Bool, buttonSupported: Bool)
-    
-    /// A callback called when the device gets disconnected.
-    func blinkyDidDisconnect()
-    
-    /// A callback called after a notification with new button state has been received.
-    /// - Parameter isPressed: The new button state.
-    func buttonStateChanged(isPressed: Bool)
-    
-    /// A callback called when the request to turn on or off the LED has been sent.
-    /// - Parameter isOn: The new LED state.
-    func ledStateChanged(isOn: Bool)
-}
-
-class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate {
-    
-    // MARK: - Blinky services and charcteristics Identifiers
+    // MARK: - Blinky services and characteristics Identifiers
     
     public static let nordicBlinkyServiceUUID  = CBUUID(string: "00001523-1212-EFDE-1523-785FEABCD123")
     public static let buttonCharacteristicUUID = CBUUID(string: "00001524-1212-EFDE-1523-785FEABCD123")
     public static let ledCharacteristicUUID    = CBUUID(string: "00001525-1212-EFDE-1523-785FEABCD123")
     
     // MARK: - Properties
-    
-    private let centralManager                : CBCentralManager
-    private let basePeripheral                : CBPeripheral
-    public private(set) var advertisedName    : String!
+
+    private let blinkyManager                 : BlinkyManager
+    let basePeripheral                        : CBPeripheral
+    public private(set) var advertisedName    : String
+    public private(set) var isConnectable     : Bool
     public private(set) var RSSI              : NSNumber
-    
-    public var delegate: BlinkyDelegate?
     
     // MARK: - Computed variables
     
@@ -82,38 +59,48 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
     private var ledCharacteristic   : CBCharacteristic?
     
     // MARK: - Public API
+
+    var state: CBPeripheralState {
+        return basePeripheral.state
+    }
     
-    /// Creates teh BlinkyPeripheral based on the received peripheral and advertisign data.
-    /// The device name is obtaied from the advertising data, not from CBPeripheral object
-    /// to avoid caching problems.
+    /// Creates teh BlinkyPeripheral based on the received peripheral and advertising data.
+    /// The device name is obtained from the advertising data, instead of CBPeripheral's name
+    /// property to avoid caching problems.
+    /// - Parameters:
+    ///   - peripheral: The underlying peripheral.
+    ///   - data: The latest advertisement data of the device.
+    ///   - currentRSSI: The most recent RSSI value.
     init(withPeripheral peripheral: CBPeripheral,
-         advertisementData advertisementDictionary: [String : Any],
-         andRSSI currentRSSI: NSNumber, using manager: CBCentralManager) {
-        centralManager = manager
-        basePeripheral = peripheral
-        RSSI = currentRSSI
+         advertisementData data: [String : Any],
+         andRSSI currentRSSI: NSNumber,
+         using manager: BlinkyManager) {
+        self.blinkyManager = manager
+        self.basePeripheral = peripheral
+        self.RSSI = currentRSSI
+        self.advertisedName = data[CBAdvertisementDataLocalNameKey] as? String ?? "Unknown Device".localized
+        self.isConnectable  = data[CBAdvertisementDataIsConnectable] as? Bool ?? false
         super.init()
-        advertisedName = parseAdvertisementData(advertisementDictionary)
-        basePeripheral.delegate = self
+        peripheral.delegate = self
+
+        _ = manager.onStateChange { [unowned self] state in
+            if state != .poweredOn {
+                self.post(.blinkyDidDisconnect(self))
+            }
+        }
+        onConnected {
+            self.discoverBlinkyServices()
+        }
     }
-    
+
     /// Connects to the Blinky device.
-    public func connect() {
-        guard centralManager.state == .poweredOn else {
-            delegate?.blinkyDidDisconnect()
-            return
-        }
-        centralManager.delegate = self
-        print("Connecting to Blinky device...")
-        centralManager.connect(basePeripheral, options: nil)
+    func connect() {
+        blinkyManager.connect(self)
     }
-    
+
     /// Cancels existing or pending connection.
-    public func disconnect() {
-        if basePeripheral.state != .disconnected {
-            print("Cancelling connection...")
-            centralManager.cancelPeripheralConnection(basePeripheral)
-        }
+    func disconnect() {
+        blinkyManager.disconnect(self)
     }
     
     // MARK: - Blinky API
@@ -128,7 +115,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
                 basePeripheral.readValue(for: ledCharacteristic)
             } else {
                 print("Can't read LED state")
-                delegate?.ledStateChanged(isOn: false)
+                post(.ledState(of: self, didChangeTo: false))
             }
         }
     }
@@ -143,19 +130,19 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
                 basePeripheral.readValue(for: buttonCharacteristic)
             } else {
                 print("Can't read Button state")
-                delegate?.buttonStateChanged(isPressed: false)
+                post(.buttonState(of: self, didChangeTo: false))
             }
         }
     }
     
     /// Sends a request to turn the LED on.
     public func turnOnLED() {
-        writeLEDCharcateristic(withValue: Data([0x1]))
+        writeLEDCharacteristic(withValue: Data([0x1]))
     }
     
     /// Sends a request to turn the LED off.
     public func turnOffLED() {
-        writeLEDCharcateristic(withValue: Data([0x0]))
+        writeLEDCharacteristic(withValue: Data([0x0]))
     }
     
     // MARK: - Implementation
@@ -171,7 +158,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
     /// - Parameter service: The instance of a service in which characteristics will
     ///                      be discovered.
     private func discoverCharacteristicsForBlinkyService(_ service: CBService) {
-        print("Discovering LED and Button characteristrics...")
+        print("Discovering LED and Button characteristics...")
         basePeripheral.discoverCharacteristics(
             [BlinkyPeripheral.buttonCharacteristicUUID, BlinkyPeripheral.ledCharacteristicUUID],
             for: service)
@@ -179,15 +166,19 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
     
     /// Enables notification for given characteristic.
     /// If the characteristic does not have notify property, this method will
-    /// call delegate's blinkyDidConnect method and try to read values
+    /// post blinkyDidConnect event and try to read values
     /// of LED and Button.
     /// - Parameter characteristic: Characteristic to be enabled.
-    private func enableNotifications(for characteristic: CBCharacteristic) {
-        if characteristic.properties.contains(.notify) {
+    private func enableButtonNotifications() {
+        if let buttonCharacteristic = buttonCharacteristic,
+           buttonCharacteristic.properties.contains(.notify) {
             print("Enabling notifications for characteristic...")
-            basePeripheral.setNotifyValue(true, for: characteristic)
+            basePeripheral.setNotifyValue(true, for: buttonCharacteristic)
         } else {
-            delegate?.blinkyDidConnect(ledSupported: ledCharacteristic != nil, buttonSupported: true)
+            post(.blinky(self,
+                    didBecameReadyWithLedSupported: ledCharacteristic != nil,
+                    buttonSupported: buttonCharacteristic != nil)
+            )
             readButtonValue()
             readLEDValue()
         }
@@ -199,7 +190,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
     /// If the characteristic does not have any of write properties
     /// this method also does nothing.
     /// - Parameter value: Data to be written to the LED characteristic.
-    private func writeLEDCharcateristic(withValue value: Data) {
+    private func writeLEDCharacteristic(withValue value: Data) {
         if let ledCharacteristic = ledCharacteristic {
             if ledCharacteristic.properties.contains(.write) {
                 print("Writing LED value (with response)...")
@@ -219,27 +210,21 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
     /// A callback called when the LED value has been written.
     /// - Parameter value: The data written.
     private func didWriteValueToLED(_ value: Data) {
+        guard value.count == 1 else {
+            return
+        }
         print("LED value written \(value[0])")
-        delegate?.ledStateChanged(isOn: value[0] == 0x1)
+        post(.ledState(of: self, didChangeTo: value[0] == 0x01))
     }
     
     /// A callback called when the Button characteristic value has changed.
     /// - Parameter value: The data received.
     private func didReceiveButtonNotification(withValue value: Data) {
-        print("Button value changed to: \(value[0])")
-        delegate?.buttonStateChanged(isPressed: value[0] == 0x1)
-    }
-    
-    /// This method parses the advertising data and returns the device name
-    /// found in Complete or Shortened Local Name field.
-    /// - Parameter data: The advertising data of the device.
-    /// - Returns: The device name or "Unknown Device" when not found.
-    private func parseAdvertisementData(_ data: [String : Any]) -> String {
-        if let name = data[CBAdvertisementDataLocalNameKey] as? String {
-            return name
-        } else {
-            return "Unknown Device".localized
+        guard value.count == 1 else {
+            return
         }
+        print("Button value changed to: \(value[0])")
+        post(.buttonState(of: self, didChangeTo: value[0] == 0x01))
     }
     
     // MARK: - NSObject protocols
@@ -256,20 +241,6 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
     
     // MARK: - CBCentralManagerDelegate
     
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        if central.state != .poweredOn {
-            print("Central Manager state changed to \(central.state)")
-            delegate?.blinkyDidDisconnect()
-        }
-    }
-    
-    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        if peripheral.identifier == basePeripheral.identifier {
-            print("Connected to Blinky")
-            discoverBlinkyServices()
-        }
-    }
-    
     func centralManager(_ central: CBCentralManager,
                         didFailToConnect peripheral: CBPeripheral,
                         error: Error?) {
@@ -279,15 +250,6 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
             } else {
                 print("Connection failed: No error")
             }
-        }
-    }
-    
-    func centralManager(_ central: CBCentralManager,
-                        didDisconnectPeripheral peripheral: CBPeripheral,
-                        error: Error?) {
-        if peripheral.identifier == basePeripheral.identifier {
-            print("Blinky disconnected")
-            delegate?.blinkyDidDisconnect()
         }
     }
     
@@ -319,7 +281,10 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
             assert(characteristic.service.peripheral.identifier == basePeripheral.identifier)
             assert(characteristic.isNotifying)
             print("Button notifications enabled")
-            delegate?.blinkyDidConnect(ledSupported: ledCharacteristic != nil, buttonSupported: buttonCharacteristic != nil)
+            post(.blinky(self,
+                    didBecameReadyWithLedSupported: ledCharacteristic != nil,
+                    buttonSupported: buttonCharacteristic != nil)
+            )
             readButtonValue()
             readLEDValue()
         }
@@ -341,7 +306,10 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
         }
         // Blinky service has not been found
         print("Device not supported: Required service not found.")
-        delegate?.blinkyDidConnect(ledSupported: false, buttonSupported: false)
+        post(.blinky(self,
+                didBecameReadyWithLedSupported: false,
+                buttonSupported: false)
+        )
     }
     
     func peripheral(_ peripheral: CBPeripheral,
@@ -359,16 +327,22 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate, CBCentralManagerDelegate
             }
         }
         
-        // If Button caracteristic was found, try to enable notifications on it.
-        if let buttonCharacteristic = buttonCharacteristic {
-            enableNotifications(for: buttonCharacteristic)
+        // If Button characteristic was found, try to enable notifications on it.
+        if let _ = buttonCharacteristic {
+            enableButtonNotifications()
         } else if let _ = ledCharacteristic {
             // else, notify the delegate and read LED state.
-            delegate?.blinkyDidConnect(ledSupported: true, buttonSupported: false)
+            post(.blinky(self,
+                    didBecameReadyWithLedSupported: true,
+                    buttonSupported: false)
+            )
             readLEDValue()
         } else {
             print("Device not supported: Required characteristics not found.")
-            delegate?.blinkyDidConnect(ledSupported: false, buttonSupported: false)
+            post(.blinky(self,
+                    didBecameReadyWithLedSupported: false,
+                    buttonSupported: false)
+            )
         }
     }
     

@@ -45,25 +45,26 @@ class BlinkyTableViewCell: UITableViewCell {
     
     // MARK: - Implementation
 
-    public func setupView(withPeripheral aPeripheral: BlinkyPeripheral) {
-        accessibilityLabel = aPeripheral.advertisedName
-        peripheralName.text = aPeripheral.advertisedName
+    public func setupView(withPeripheral peripheral: BlinkyPeripheral) {
+        accessibilityLabel = peripheral.advertisedName
+        peripheralName.text = peripheral.advertisedName
 
-        if aPeripheral.RSSI.decimalValue < -60 {
+        switch peripheral.RSSI.decimalValue {
+        case let rssi where rssi < -75:
             peripheralRSSIIcon.image = #imageLiteral(resourceName: "rssi_2")
-        } else if aPeripheral.RSSI.decimalValue < -50 {
+        case let rssi where rssi < -55:
             peripheralRSSIIcon.image = #imageLiteral(resourceName: "rssi_3")
-        } else if aPeripheral.RSSI.decimalValue < -30 {
+        case let rssi where rssi < -30:
             peripheralRSSIIcon.image = #imageLiteral(resourceName: "rssi_4")
-        } else {
+        default:
             peripheralRSSIIcon.image = #imageLiteral(resourceName: "rssi_1")
         }
     }
     
-    public func peripheralUpdatedAdvertisementData(_ aPeripheral: BlinkyPeripheral) {
+    public func peripheralUpdatedAdvertisementData(_ peripheral: BlinkyPeripheral) {
         if Date().timeIntervalSince(lastUpdateTimestamp) > 1.0 {
             lastUpdateTimestamp = Date()
-            setupView(withPeripheral: aPeripheral)
+            setupView(withPeripheral: peripheral)
         }
     }
 }
