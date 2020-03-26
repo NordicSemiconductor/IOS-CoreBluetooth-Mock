@@ -51,8 +51,10 @@ public class CBMCentralManagerFactory {
     /// Returns a boolean value representing the support for the provided features.
     ///
     /// This method will be called when `supports(:)` method is called.
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
+    #endif
     
     /// Returns the implementation of CBCentralManager, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock

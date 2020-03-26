@@ -31,8 +31,10 @@
 import CoreBluetooth
 
 public protocol CBMCentralManager: class {
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     typealias Feature = CBCentralManager.Feature
+    #endif
     
     /// The delegate object that will receive central events.
     var delegate: CBMCentralManagerDelegate? { get set }
@@ -48,8 +50,10 @@ public protocol CBMCentralManager: class {
     
     /// Returns a boolean value representing the support for the provided features.
     /// - Parameter features: One or more features you would like to check if supported.
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     static func supports(_ features: CBMCentralManager.Feature) -> Bool
+    #endif
     
     /// Starts scanning for peripherals that are advertising any of the services listed
     /// in serviceUUIDs. Although strongly discouraged, if serviceUUIDs
@@ -104,6 +108,8 @@ public protocol CBMCentralManager: class {
     /// occurs matching any of the given options. Passing nil in the option parameter
     /// clears any prior registered matching options.
     /// - Parameter options: A dictionary specifying connection event options.
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]?)
+    #endif
 }

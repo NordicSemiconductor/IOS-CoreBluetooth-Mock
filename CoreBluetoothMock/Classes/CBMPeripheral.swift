@@ -60,8 +60,10 @@ public protocol CBMPeripheral: class {
     /// If this value is false, the value will be set to true after
     /// a user authorization occurs and
     /// `centralManager(_:didUpdateANCSAuthorizationFor:)` will be called.
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     var ancsAuthorized: Bool { get }
+    #endif
     
     /// While connected, retrieves the current RSSI of the link.
     func readRSSI()
@@ -152,6 +154,8 @@ public protocol CBMPeripheral: class {
 
     /// Attempt to open an L2CAP channel to the peripheral using the supplied PSM.
     /// - Parameter PSM: The PSM of the channel to open.
+    #if !os(macOS)
     @available(iOS 11.0, *)
     func openL2CAPChannel(_ PSM: CBML2CAPPSM)
+    #endif
 }
