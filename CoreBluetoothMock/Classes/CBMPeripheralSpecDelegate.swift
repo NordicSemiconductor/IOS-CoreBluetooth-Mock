@@ -36,6 +36,12 @@ public protocol CBMPeripheralSpecDelegate {
     /// It should reset all values to the initial state.
     func reset()
 
+    /// This method will be called when device has to provide advertisement data
+    /// - Parameter peripheral: The peripheral specification.
+    /// - Returns: Optional advertisement data
+    func peripheralAdvertisementData(_ peripheral: CBMPeripheralSpec)
+        -> CBMPeripheralSpec.AdvertisementData?
+
     /// This method will be called when a connect request was initiated from a
     /// mock central manager.
     /// - Parameter peripheral: The peripheral specification to handle connection.
@@ -181,6 +187,11 @@ public extension CBMPeripheralSpecDelegate {
 
     func reset() {
         // Empty default implementation
+    }
+
+    func peripheralAdvertisementData(_ peripheral: CBMPeripheralSpec)
+        -> CBMPeripheralSpec.AdvertisementData? {
+            return nil
     }
 
     func peripheralDidReceiveConnectionRequest(_ peripheral: CBMPeripheralSpec)

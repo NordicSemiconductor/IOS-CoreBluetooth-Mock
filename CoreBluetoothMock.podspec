@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'CoreBluetoothMock'
-  s.version          = '0.8.0'
+  s.version          = '0.8.1'
   s.summary          = 'Mocking library for CoreBluetooth.'
 
   s.description      = <<-DESC
@@ -11,7 +11,7 @@ device and test the app on simulator.
   s.homepage         = 'https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock'
   s.license          = { :type => 'BSD 3-Clause', :file => 'LICENSE' }
   s.author           = { 'Aleksander Nowakowski' => 'aleksander.nowakowski@nordicsemi.no' }
-  s.source           = { :git => 'https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/avdyushin/IOS-CoreBluetooth-Mock.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/nordictweets'
 
   s.ios.deployment_target = '8.0'

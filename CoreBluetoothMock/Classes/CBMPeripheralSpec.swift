@@ -53,6 +53,9 @@ public enum CBMProximity {
 
 /// The peripheral instance specification.
 public class CBMPeripheralSpec {
+
+    public typealias AdvertisementData = [String: Any]
+
     /// The peripheral identifier.
     public let identifier: UUID
     /// The name of the peripheral usually returned by Device Name
@@ -63,11 +66,13 @@ public class CBMPeripheralSpec {
     /// Should the mock peripheral appear in scan results when it's
     /// connected.
     public let isAdvertisingWhenConnected: Bool
-    
+
     /// The device's advertising data.
     /// Make sure to include `CBAdvertisementDataIsConnectable` if
     /// the device is connectable.
-    public let advertisementData: [String : Any]?
+    public var advertisementData: AdvertisementData? {
+        connectionDelegate?.peripheralAdvertisementData(self) ?? _advertisementData
+    }
     /// The advertising interval.
     public let advertisingInterval: TimeInterval?
     
@@ -90,14 +95,17 @@ public class CBMPeripheralSpec {
     /// multiple apps. When this drops to 0, the device is physically
     /// disconnected.
     internal var virtualConnections: Int
-    
+
+    /// Static advertisement data as fallback if no data provided by connection delegate
+    private var _advertisementData: AdvertisementData?
+
     private init(
             identifier: UUID,
             name: String?,
             proximity: CBMProximity,
             isInitiallyConnected: Bool,
             isAdvertisingWhenConnected: Bool,
-            advertisementData: [String : Any]?,
+            advertisementData: AdvertisementData?,
             advertisingInterval: TimeInterval?,
             services: [CBMServiceMock]?,
             connectionInterval: TimeInterval?,
@@ -108,7 +116,7 @@ public class CBMPeripheralSpec {
         self.proximity = proximity
         self.virtualConnections = isInitiallyConnected ? 1 : 0
         self.isAdvertisingWhenConnected = isAdvertisingWhenConnected
-        self.advertisementData = advertisementData
+        self._advertisementData = advertisementData
         self.advertisingInterval = advertisingInterval
         self.services = services
         self.connectionInterval = connectionInterval
@@ -227,7 +235,7 @@ public class CBMPeripheralSpec {
         /// The device's advertising data.
         /// Make sure to include `CBAdvertisementDataIsConnectable` with
         /// value <i>true</i> if the device is connectable.
-        private var advertisementData: [String : Any]? = nil
+        private var advertisementData: AdvertisementData? = nil
         /// The advertising interval, in seconds.
         private var advertisingInterval: TimeInterval? = 0.100
         
@@ -264,7 +272,7 @@ public class CBMPeripheralSpec {
         ///                               connected. By default set to
         ///                               <i>false</i>.
         /// - Returns: The builder.
-        public func advertising(advertisementData: [String : Any],
+        public func advertising(advertisementData: AdvertisementData,
                                 withInterval interval: TimeInterval = 0.100,
                                 alsoWhenConnected advertisingWhenConnected: Bool = false) -> Builder {
             self.advertisementData = advertisementData
