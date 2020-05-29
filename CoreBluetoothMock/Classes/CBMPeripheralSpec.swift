@@ -272,7 +272,7 @@ public class CBMPeripheralSpec {
         ///                               connected. By default set to
         ///                               <i>false</i>.
         /// - Returns: The builder.
-        public func advertising(advertisementData: AdvertisementData,
+        public func advertising(advertisementData: AdvertisementData? = nil,
                                 withInterval interval: TimeInterval = 0.100,
                                 alsoWhenConnected advertisingWhenConnected: Bool = false) -> Builder {
             self.advertisementData = advertisementData
