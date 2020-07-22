@@ -65,9 +65,10 @@ public let CBMCentralManagerOptionShowPowerAlertKey = CBCentralManagerOptionShow
 public let CBMCentralManagerOptionRestoreIdentifierKey = CBCentralManagerOptionRestoreIdentifierKey
 public let CBMCentralManagerScanOptionSolicitedServiceUUIDsKey = CBCentralManagerScanOptionSolicitedServiceUUIDsKey
 public let CBMConnectPeripheralOptionStartDelayKey = CBConnectPeripheralOptionStartDelayKey
-@available(iOS 13.0, *)
+#if !os(macOS)
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public let CBMConnectPeripheralOptionRequiresANCS = CBConnectPeripheralOptionRequiresANCS
-
+#endif
 public let CBMCentralManagerRestoredStatePeripheralsKey  = CBCentralManagerRestoredStatePeripheralsKey
 public let CBMCentralManagerRestoredStateScanServicesKey = CBCentralManagerRestoredStateScanServicesKey
 public let CBMCentralManagerRestoredStateScanOptionsKey  = CBCentralManagerRestoredStateScanOptionsKey

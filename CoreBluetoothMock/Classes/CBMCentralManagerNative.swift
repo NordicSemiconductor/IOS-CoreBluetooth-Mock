@@ -89,13 +89,16 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
                                              error: error)
         }
         
+        #if !os(macOS)
         @available(iOS 13.0, *)
         func centralManager(_ central: CBCentralManager,
                             didUpdateANCSAuthorizationFor peripheral: CBPeripheral) {
             manager.delegate?.centralManager(manager,
                                              didUpdateANCSAuthorizationFor: getPeripheral(peripheral))
         }
+        #endif
         
+        #if !os(macOS)
         @available(iOS 13.0, *)
         func centralManager(_ central: CBCentralManager,
                             connectionEventDidOccur event: CBConnectionEvent,
@@ -104,6 +107,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
                                              connectionEventDidOccur: event,
                                              for: getPeripheral(peripheral))
         }
+        #endif
         
         private func getPeripheral(_ peripheral: CBPeripheral) -> CBMPeripheralNative {
             return manager.peripherals[peripheral.identifier] ?? newPeripheral(peripheral)
@@ -137,10 +141,12 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
         return manager.isScanning
     }
     
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public static func supports(_ features: CBMCentralManager.Feature) -> Bool {
         return CBCentralManager.supports(features)
     }
+    #endif
     
     public override init() {
         super.init()
@@ -211,10 +217,12 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
             .map { $0.value }
     }
     
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
         manager.registerForConnectionEvents(options: options)
     }
+    #endif
 }
 
 public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
@@ -470,10 +478,12 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         return peripheral.canSendWriteWithoutResponse
     }
     
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public var ancsAuthorized: Bool {
         return peripheral.ancsAuthorized
     }
+    #endif
     
     fileprivate let peripheral: CBPeripheral
     
@@ -546,10 +556,12 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         }
     }
     
+    #if !os(macOS)
     @available(iOS 11.0, *)
     public func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
         peripheral.openL2CAPChannel(PSM)
     }
+    #endif
     
     public override var hash: Int {
         return identifier.hashValue

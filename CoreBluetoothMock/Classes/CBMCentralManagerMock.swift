@@ -330,10 +330,12 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     
     // MARK: - CBCentralManager mock methods
     
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public static func supports(_ features: CBMCentralManager.Feature) -> Bool {
         return CBMCentralManagerFactory.simulateFeaturesSupport?(features) ?? false
     }
+    #endif
     
     /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
     /// devices. When the `CBCentralManagerScanOptionAllowDuplicatesKey` options
