@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5647B3702CC9BCAD6F81C5D3E7417452"
-               BuildableName = "libCoreBluetoothMock.a"
+               BuildableName = "CoreBluetoothMock.framework"
                BlueprintName = "CoreBluetoothMock"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>

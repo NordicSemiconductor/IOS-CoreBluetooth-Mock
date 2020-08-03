@@ -1,4 +1,4 @@
-module CoreBluetoothMock {
+framework module CoreBluetoothMock {
   umbrella header "CoreBluetoothMock-umbrella.h"
 
   export *
