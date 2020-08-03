@@ -1101,21 +1101,37 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 }
             }
         } else {
-            queue.sync {
-                guard availableWriteWithoutResponseBuffer > 0 else {
+            let decreaseBuffer = { [weak self] in
+                guard let strongSelf = self,
+                    strongSelf.availableWriteWithoutResponseBuffer > 0 else {
                     return
                 }
-                availableWriteWithoutResponseBuffer -= 1
-                _canSendWriteWithoutResponse = false
+                strongSelf.availableWriteWithoutResponseBuffer -= 1
+                strongSelf._canSendWriteWithoutResponse = false
             }
+            if DispatchQueue.main.label == queue.label {
+                decreaseBuffer()
+            } else {
+                queue.sync {
+                    decreaseBuffer()
+                }
+            }
+            
             delegate.peripheral(mock,
                                 didReceiveWriteCommandFor: characteristic,
                                 data: data.subdata(in: 0..<mtu - 3))
             queue.async { [weak self] in
                 if let self = self, self.state == .connected {
-                    self.queue.sync {
+                    let increaseBuffer = {
                         self.availableWriteWithoutResponseBuffer += 1
                         self._canSendWriteWithoutResponse = true
+                    }
+                    if DispatchQueue.main.label == self.queue.label {
+                        increaseBuffer()
+                    } else {
+                        self.queue.sync {
+                            increaseBuffer()
+                        }
                     }
                     if #available(iOS 11.0, *) {
                         self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
