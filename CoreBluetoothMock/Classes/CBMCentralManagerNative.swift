@@ -38,7 +38,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     private var peripherals: [UUID : CBMPeripheralNative] = [:]
     
     private class CBMCentralManagerDelegateWrapper: NSObject, CBCentralManagerDelegate {
-        fileprivate var manager: CBMCentralManagerNative
+        fileprivate weak var manager: CBMCentralManagerNative! // weak to avoid cyclic reference (#9)
         
         init(_ manager: CBMCentralManagerNative) {
             self.manager = manager
