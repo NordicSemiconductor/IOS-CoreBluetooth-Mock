@@ -15,7 +15,7 @@ device and test the app on simulator.
   s.social_media_url = 'https://twitter.com/nordictweets'
 
   s.ios.deployment_target = '8.0'
-  s.osx.deployment_target = '10.7'
+  s.osx.deployment_target = '10.13'
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.0'
   s.swift_versions = ['4.2', '5.0', '5.1', '5.2']

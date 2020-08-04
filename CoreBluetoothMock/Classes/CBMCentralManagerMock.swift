@@ -613,7 +613,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 mock.advertisementData?[CBMAdvertisementDataLocalNameKey] as? String :
                 nil
     }
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public var canSendWriteWithoutResponse: Bool {
         return _canSendWriteWithoutResponse
     }
@@ -1135,7 +1135,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                             increaseBuffer()
                         }
                     }
-                    if #available(iOS 11.0, *) {
+                    if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
                         self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
                     }
                 }
@@ -1246,7 +1246,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         }
     }
     
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
         fatalError("L2CAP mock is not implemented")
     }
