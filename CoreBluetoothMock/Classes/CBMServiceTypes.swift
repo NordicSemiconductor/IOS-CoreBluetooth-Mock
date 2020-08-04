@@ -390,7 +390,7 @@ fileprivate class CBMPeripheralUninitialized: CBMPeripheral, CustomDebugStringCo
         uninitialized()
     }
     
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func openL2CAPChannel(_ PSM: CBML2CAPPSM) { uninitialized() }
     
     func uninitialized() -> Never {

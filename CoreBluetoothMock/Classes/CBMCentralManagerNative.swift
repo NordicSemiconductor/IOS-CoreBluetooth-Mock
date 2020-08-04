@@ -352,12 +352,12 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         }
 
         func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBPeripheral) {
-            if #available(iOS 11.0, *) {
+            if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
                 impl.delegate?.peripheralIsReady(toSendWriteWithoutResponse: impl)
             }
         }
         
-        @available(iOS 11.0, *)
+        @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
         func peripheral(_ peripheral: CBPeripheral,
                         didOpen channel: CBL2CAPChannel?,
                         error: Error?) {
@@ -473,7 +473,7 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         return mockServices
     }
     
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public var canSendWriteWithoutResponse: Bool {
         return peripheral.canSendWriteWithoutResponse
     }
@@ -557,7 +557,7 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
     }
     
     #if !os(macOS)
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
         peripheral.openL2CAPChannel(PSM)
     }
