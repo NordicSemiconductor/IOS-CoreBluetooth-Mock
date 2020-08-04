@@ -57,7 +57,7 @@ The library support CocoaPods, Carthage and Swift Package Manager.
 - Create a new **Cartfile** in your project's root with the following contents
 
     ```
-    github "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock" ~> x.y //Replace x.y with your required version
+    github "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock" ~> x.y // Replace x.y with your required version
     ```
     
 - Build with carthage
@@ -77,7 +77,9 @@ If you have *Swift.package* file, inculde the following dependency:
 ```swift
 dependencies: [
     // [...]
-    .package(name: "CoreBluetoothMock", url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git", .upToNextMajor(from: "0.9.0"))
+    .package(name: "CoreBluetoothMock", 
+             url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git", 
+             .upToNextMajor(from: "x.y")) // Replace x.y with your required version
 ]
 ```
 and add it to your target:
