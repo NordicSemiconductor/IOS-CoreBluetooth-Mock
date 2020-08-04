@@ -1,6 +1,8 @@
 # Core Bluetooth Mock
 
-![Version number](https://img.shields.io/cocoapods/v/CoreBluetoothMock)
+![Version number](https://img.shields.io/cocoapods/v/CoreBluetoothMock) 
+[![Platform](https://img.shields.io/cocoapods/p/CoreBluetoothMock.svg?style=flat)](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 The *Core Bluetooth Mock* library was designed to emulate *Core Bluetooth* objects, providing easy way to test 
 Bluetooth-enabled apps. As the native Bluetooth API is not supported on a simulator, using this library you can run, test 
@@ -28,10 +30,67 @@ forwarded to their native equivalents, but on a simulator a mock implementation 
 The *Core Bluetooth Mock* library is available only in Swift, and compatible with iOS 8.0+. For projects running Objective-C 
 we recommend https://github.com/Rightpoint/RZBluetooth library.
 
-Import library from CocoaPods:
+### Including the library
+
+The library support CocoaPods, Carthage and Swift Package Manager.
+
+#### CocoaPods
+
+- Create/Update your **Podfile** with the following contents
+
+    ```
+    target 'YourAppTargetName' do
+        pod 'CoreBluetoothMock'
+    end
+    ```
+
+- Install dependencies
+
+    ```
+    pod install
+    ```
+
+- Open the newly created `.xcworkspace`
+
+#### Carthage
+
+- Create a new **Cartfile** in your project's root with the following contents
+
+    ```
+    github "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock" ~> x.y //Replace x.y with your required version
+    ```
+    
+- Build with carthage
+
+    ```
+    carthage update --platform iOS // also supported are tvOS, watchOS and macOS
+    ```
+
+- Copy the **CoreBluetoothMock.framework** from *Carthage/Build* to your project and follow [instructions from Carthage](https://github.com/Carthage/Carthage).
+
+#### Swift Package Manager
+
+The library can also be included as SPM package. Simply add it in Xcode: *File -> Swift Packages -> Add package dependency*, 
+type *https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git* and set required version, branch or commit.
+
+If you have *Swift.package* file, inculde the following dependency:
+```swift
+dependencies: [
+    // [...]
+    .package(name: "CoreBluetoothMock", url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git", .upToNextMajor(from: "0.9.0"))
+]
 ```
-pod 'CoreBluetoothMock'
+and add it to your target:
+```swift
+targets: [
+    // [...]
+    .target(
+        name: "<Your target name>",
+        dependencies: ["CoreBluetoothMock"]),
+]
 ```
+
+### Usage
 
 With this complete, you need to choose one of the following approaches:
 
@@ -58,6 +117,11 @@ you need to use the `CBCentralManagerFactory`:
 let manager = CBCentralManagerFactory.initiate(delegate: self, queue: ...)
 ```
 The last parameter, `forceMock`, when set to *true*, allows to run mock implementation also on a physical device.
+
+### Known issues
+
+- The new `CBMCentralManager` and `CBMPeripheral` are protocols, not classes. That means that, e.g. they cannot 
+be used as `Equatable` or `Hashable`. When using in maps, you may need to use the *identifier*. Also, KVO are not yet supported.
 
 ## Defining mock peripherals
 
