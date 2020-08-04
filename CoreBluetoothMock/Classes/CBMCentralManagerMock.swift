@@ -613,7 +613,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 mock.advertisementData?[CBMAdvertisementDataLocalNameKey] as? String :
                 nil
     }
-    @available(iOS 11.0, tvOS 9.0, watchOS 4.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public var canSendWriteWithoutResponse: Bool {
         return _canSendWriteWithoutResponse
     }
