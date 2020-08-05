@@ -38,7 +38,7 @@ The library support CocoaPods, Carthage and Swift Package Manager.
 
 - Create/Update your **Podfile** with the following contents
 
-    ```
+    ```ruby
     target 'YourAppTargetName' do
         pod 'CoreBluetoothMock'
     end
@@ -46,7 +46,7 @@ The library support CocoaPods, Carthage and Swift Package Manager.
 
 - Install dependencies
 
-    ```
+    ```bash
     pod install
     ```
 
@@ -62,7 +62,7 @@ The library support CocoaPods, Carthage and Swift Package Manager.
     
 - Build with carthage
 
-    ```
+    ```bash
     carthage update --platform iOS // also supported are tvOS, watchOS and macOS
     ```
 
@@ -151,7 +151,7 @@ but can be easily modified to use it every time it is launched on a simulator or
 
 `CBMPeripheralSpec.Builder` - use the builder to define your mock peripheral. Specify the proximity, whether it is advertising 
 together with advertising data and advertising interval, is it connectable (or already connected when your app starts), by defining
-its services and their behavior. A ist of such peripheral specifications needs to be set by calling the `simulatePeripherals(:)` 
+its services and their behavior. A list of such peripheral specifications needs to be set by calling the `simulatePeripherals(:)` 
 method described above.
 
 `CBMPeripheralSpec.simulateConnection()` - simulates a situation when another app on the iDevice connects to this 
@@ -192,16 +192,17 @@ The mock implementation is used in UI tests. See [AppDelegate.swift](Example/nRF
 and [UITests.swift](Example/UI%20Tests/UITests.swift) classes.
 
 ## Nordic LED and Button Service
-###### Service UUID: `00001523-1212-EFDE-1523-785FEABCD123`
+
 A simplified proprietary service by Nordic Semiconductor, containing two characteristics one to control LED3 and Button1:
-- First characteristic controls the LED state (On/Off).
-  - UUID: **`00001525-1212-EFDE-1523-785FEABCD123`**
-  - Value: **`1`** => LED On
-  - Value: **`0`** => LED Off
-- Second characteristic notifies central of the button state on change (Pressed/Released).
-  - UUID: **`00001524-1212-EFDE-1523-785FEABCD123`**
-  - Value: **`1`** => Button Pressed
-  - Value: **`0`** => Button Released
+- Service UUID: **`00001523-1212-EFDE-1523-785FEABCD123`**
+  - First characteristic controls the LED state (On/Off).
+    - UUID: **`00001525-1212-EFDE-1523-785FEABCD123`**
+    - Value: **`1`** => LED On
+    - Value: **`0`** => LED Off
+  - Second characteristic notifies central of the button state on change (Pressed/Released).
+    - UUID: **`00001524-1212-EFDE-1523-785FEABCD123`**
+    - Value: **`1`** => Button Pressed
+    - Value: **`0`** => Button Released
   
   For full specification, check out 
   [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v16.0.0/ble_sdk_app_blinky.html?cp=7_1_4_2_2_3).
