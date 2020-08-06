@@ -143,6 +143,16 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
     }
     
+    /// Remove all active CBMCentralManagerMock instances and mock peripherals
+    /// from the simulation, resetting it to the initial state.
+    /// Use this to tear down your mocks between tests, e.g. in tearDownWithError()
+    /// All manager delegates will receive a powerOff state update.
+    public static func tearDownSimulation() {
+        managerState = .poweredOff
+        managers.removeAll()
+        peripherals.removeAll()
+    }
+    
     // MARK: - Central manager simulation methods
     
     /// Sets the initial state of the Bluetooth central manager.
@@ -164,7 +174,9 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     /// - Parameter peripherals: Peripherals that are not connected.
     public static func simulatePeripherals(_ peripherals: [CBMPeripheralSpec]) {
         guard managers.isEmpty, CBMCentralManagerMock.peripherals.isEmpty else {
-            NSLog("Warning: Peripherals can be added to simulation only once, and not after any central manager was initiated")
+            NSLog("Warning: Peripherals can not be added while the simulation is running. " +
+                  "Add peripherals before getting a CBMCentralManagerMock instance, " +
+                  "or after calling CBMCentralManagerFactory.tearDownInstances()")
             return
         }
         CBMCentralManagerMock.peripherals = peripherals
