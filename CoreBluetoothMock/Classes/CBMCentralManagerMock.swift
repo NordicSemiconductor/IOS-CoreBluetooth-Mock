@@ -681,6 +681,8 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     self.state = .connected
                     self._canSendWriteWithoutResponse = true
                     self.mock.virtualConnections += 1
+                } else {
+                    self.state = .disconnected
                 }
                 completion(result)
             }
