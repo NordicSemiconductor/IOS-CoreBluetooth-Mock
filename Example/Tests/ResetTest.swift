@@ -41,7 +41,7 @@ class ResetTest: XCTestCase {
     }
 
     override func tearDown() {
-        CBMCentralManagerMock.simulatePowerOff()
+        CBMCentralManagerMock.tearDownSimulation()
     }
 
     func testScanningBlinky() {
