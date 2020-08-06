@@ -32,16 +32,27 @@ import XCTest
 @testable import nRF_Blinky
 @testable import CoreBluetoothMock
 
+/// This test simulates normal behavior of a device with Nordic LED Button service.
+/// 
+/// It is using the app and testing it by sending notifications that trigger different
+/// actions.
 class NormalBehaviorTest: XCTestCase {
 
     override func setUp() {
-        (UIApplication.shared.delegate as! AppDelegate).mockingEnabled = true
+        // This method is called AFTER ScannerTableViewController.viewDidLoad()
+        // where the BlinkyManager is instantiated. A separate mock manager
+        // is not created in this test.
+        // Initially mock Bluetooth adapter is powered Off.
         CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
         CBMCentralManagerMock.simulateInitialState(.poweredOn)
     }
 
     override func tearDown() {
-        CBMCentralManagerMock.tearDownSimulation()
+        // We can't call CBMCentralManagerMock.tearDownSimulation() here.
+        // That would invalidate the BlinkyManager in ScannerTableViewController.
+        // The central manager must be reused, so let's just power mock off,
+        // which will allow us to set different set of peripherals in another test.
+        CBMCentralManagerMock.simulatePowerOff()
     }
 
     func testScanningBlinky() {

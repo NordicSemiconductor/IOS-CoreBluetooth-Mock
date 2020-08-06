@@ -115,12 +115,4 @@ public class CBMCentralManagerFactory {
                 CBMCentralManagerNative(delegate: delegate, queue: queue, options: options)
         #endif
     }
-    
-    /// Remove all active CBMCentralManagerMock instances and mock peripherals
-    /// from the simulation, resetting it to the initial state.
-    /// Use this to tear down your mocks between tests, e.g. in tearDownWithError()
-    /// All manager delegates will receive a powerOff state update.
-    public static func tearDownSimulation() {
-        CBMCentralManagerMock.tearDownSimulation()
-    }
 }

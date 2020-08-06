@@ -82,7 +82,13 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     /// A flag set to true few milliseconds after the manager is created.
     /// Some features, like the state or retrieving peripherals are not
     /// available when manager hasn't been initialized yet.
-    private var initialized: Bool = false
+    private var initialized: Bool {
+        // This method returns true if the manager is added to
+        // the list of managers.
+        // Calling tearDownSimulation() will remove all managers
+        // from that list, making them uninitialized again.
+        return CBMCentralManagerMock.managers.contains { $0.ref == self }
+    }
     
     // MARK: - Initializers
     
@@ -130,26 +136,33 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     }
     
     private func initialize() {
-        if CBMCentralManagerMock.peripherals.isEmpty {
-            NSLog("Warning: No simulated peripherals. Call simulatePeripherals(:) before creating central manager")
+        if CBMCentralManagerMock.managerState == .poweredOn &&
+           CBMCentralManagerMock.peripherals.isEmpty {
+            NSLog("Warning: No simulated peripherals. " +
+                  "Call simulatePeripherals(:) before creating central manager")
         }
         // Let's say initialization takes 10 ms. Less or more.
         queue.asyncAfter(deadline: .now() + .milliseconds(10)) { [weak self] in
             if let self = self {
                 CBMCentralManagerMock.managers.append(WeakRef(self))
-                self.initialized = true
                 self.delegate?.centralManagerDidUpdateState(self)
             }
         }
     }
     
-    /// Remove all active CBMCentralManagerMock instances and mock peripherals
-    /// from the simulation, resetting it to the initial state.
-    /// Use this to tear down your mocks between tests, e.g. in tearDownWithError()
-    /// All manager delegates will receive a powerOff state update.
+    /// Removes all active central manager instances and peripherals from the
+    /// simulation, resetting it to the initial state.
+    ///
+    /// Use this to tear down your mocks between tests, e.g. in `tearDownWithError()`.
+    /// All manager delegates will receive a `.unknown` state update.
     public static func tearDownSimulation() {
-        managerState = .poweredOff
+        // Set the state of all currently existing cenral manager instances to
+        // .unknown, which will make them invalid.
+        managerState = .unknown
+        // Remove all central manager instances.
         managers.removeAll()
+        // Set the manager state to powered Off.
+        managerState = .poweredOff
         peripherals.removeAll()
     }
     
@@ -157,7 +170,7 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     
     /// Sets the initial state of the Bluetooth central manager.
     ///
-    /// This method should only be called ones, before any `CBMCentralManagerMock`
+    /// This method should only be called ones, before any central manager
     /// is created. By default, the initial state is `.poweredOff`.
     /// - Parameter state: The initial state of the central manager.
     public static func simulateInitialState(_ state: CBMManagerState) {
@@ -167,16 +180,18 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     /// This method sets a list of simulated peripherals.
     ///
     /// Peripherals added using this method will be available for scanning
-    /// and connecting, depending on their proximity. Use
-    /// peripheral's `simulateProximity(of:didChangeTo:)` to modify proximity.
+    /// and connecting, depending on their proximity. Use peripheral's
+    /// `simulateProximity(of:didChangeTo:)` to modify proximity.
     ///
-    /// This method may only be called once, before any manager was created.
-    /// - Parameter peripherals: Peripherals that are not connected.
+    /// This method may only be called before any central manager was created
+    /// or when Bluetooth state is `.poweredOff`. Existing list of peripherals
+    /// will be overritten.
+    /// - Parameter peripherals: Peripherals specifications.
     public static func simulatePeripherals(_ peripherals: [CBMPeripheralSpec]) {
-        guard managers.isEmpty, CBMCentralManagerMock.peripherals.isEmpty else {
+        guard managers.isEmpty || managerState == .poweredOff else {
             NSLog("Warning: Peripherals can not be added while the simulation is running. " +
-                  "Add peripherals before getting a CBMCentralManagerMock instance, " +
-                  "or after calling CBMCentralManagerFactory.tearDownInstances()")
+                  "Add peripherals before getting any central manager instance, " +
+                  "or when manager is powered off.")
             return
         }
         CBMCentralManagerMock.peripherals = peripherals
