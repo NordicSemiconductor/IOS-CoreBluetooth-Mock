@@ -56,12 +56,12 @@ public class CBMCentralManagerFactory {
     public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
     #endif
     
-    /// Returns the implementation of CBCentralManager, depending on the environment.
+    /// Returns the implementation of `CBCentralManager`, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
     ///   - forceMock: A flag to force mocking also on physical device.
-    /// - Returns: The implementation of CBCentralManager.
+    /// - Returns: The implementation of `CBCentralManager`.
     public static func instance(forceMock: Bool = false) -> CBMCentralManager {
         #if targetEnvironment(simulator)
             return CBMCentralManagerMock()
