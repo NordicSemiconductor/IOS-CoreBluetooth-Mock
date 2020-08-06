@@ -76,7 +76,11 @@ class ResetTest: XCTestCase {
             found.fulfill()
         }
         wait(for: [found], timeout: 3)
-        XCTAssertNotNil(target)
+        XCTAssertNotNil(target, "nRF Blinky not found. Make sure you run the test on a simulator.")
+        if target == nil {
+            // Going further would cause a crash.
+            return
+        }
 
         // Select found device.
         Sim.post(.selectPeripheral(at: 0))
