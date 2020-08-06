@@ -6,12 +6,7 @@ target 'nRFBlinky' do
 
   target 'nRFBlinky_Tests' do
     inherit! :search_paths
-
   end
 
-  target 'nRFBlinky_UITests' do
-    inherit! :search_paths
-
-  end
-
+  target 'nRFBlinky_UITests'
 end

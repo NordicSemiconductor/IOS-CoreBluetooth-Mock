@@ -1,0 +1,6 @@
+framework module Pods_nRFBlinky_nRFBlinky_UITests {
+  umbrella header "Pods-nRFBlinky-nRFBlinky_UITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
