@@ -27,12 +27,14 @@ forwarded to their native equivalents, but on a simulator a mock implementation 
 
 ## How to start
 
-The *Core Bluetooth Mock* library is available only in Swift, and compatible with iOS 8.0+. For projects running Objective-C 
-we recommend https://github.com/Rightpoint/RZBluetooth library.
+The *Core Bluetooth Mock* library is available only in Swift, and compatible with iOS 8.0+, macOS 10.13+, tvOS 9.0+ and watchOS 2.0+,
+with some features available only on newer platforms.
+For projects running Objective-C we recommend https://github.com/Rightpoint/RZBluetooth library.
 
 ### Including the library
 
-The library support CocoaPods, Carthage and Swift Package Manager.
+The library support [CocoaPods](https://github.com/CocoaPods/CocoaPods), [Carthage](https://github.com/Carthage/Carthage) and 
+[Swift Package Manager](https://swift.org/package-manager).
 
 #### CocoaPods
 
@@ -141,7 +143,10 @@ any central manager instance was created. It defines the intial state of the moc
 `CBMCentralManager.simulatePowerOff()` - turns off the mock central manager. All scans and connections will be terminated.
 
 `CBMCentralManagerMock.simulatePeripherals(_ peripherals: [CBMPeripheralSpec])` - defines list of 
-mock peripheral. This method should be called once, before any central manager was initialized.
+mock peripheral. This method should be called when the manager is powered off, or before any central manager was initialized.
+
+`CBMCentralManagerMock.tearDownSimulation()` - sets the state of all currently existing central managers to `.unknown` and
+clears the list of managers and peripherals bringing the mock manager to initial state.
 
 See [AppDelegate.swift](Example/nRFBlinky/AppDelegate.swift#L48) for reference. In the sample app the mock implementation is
 used only in UI Tests, which lauch the app with `mocking-enabled` parameter (see [here](Example/UI%20Tests/UITests.swift#L42)),
@@ -179,7 +184,7 @@ with `CBMCentralManagerOptionRestoreIdentifierKey` option. The map returned will
 `centralManager(:willRestoreState:)` callback in central manager's delegate.
 
 `CBMCentralManagerFactory.simulateFeaturesSupport` - this closure will be used to emulate Bluetooth features supported
-by the manager. It is availalbe on iOS 13+.
+by the manager. It is availalbe on iOS 13+, tvOS 13+ or watchOS 6+.
 
 ## Sample application: nRF BLINKY
 

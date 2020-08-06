@@ -32,16 +32,27 @@ import XCTest
 @testable import nRF_Blinky
 @testable import CoreBluetoothMock
 
+/// This test simulates a device with Nordic LED Button service which gets reset during
+/// connection.
+///
+/// It is using the app and testing it by sending notifications that trigger different
+/// actions.
 class ResetTest: XCTestCase {
 
     override func setUp() {
-        (UIApplication.shared.delegate as! AppDelegate).mockingEnabled = true
+        // This method is called AFTER ScannerTableViewController.viewDidLoad()
+        // where the BlinkyManager is instantiated.
+        // Initially mock Bluetooth adapter is powered Off.
         CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
         CBMCentralManagerMock.simulatePowerOn()
     }
 
     override func tearDown() {
-        CBMCentralManagerMock.tearDownSimulation()
+        // We can't call CBMCentralManagerMock.tearDownSimulation() here.
+        // That would invalidate the BlinkyManager in ScannerTableViewController.
+        // The central manager must be reused, so let's just power mock off,
+        // which will allow us to set different set of peripherals in another test.
+        CBMCentralManagerMock.simulatePowerOff()
     }
 
     func testScanningBlinky() {
@@ -65,7 +76,11 @@ class ResetTest: XCTestCase {
             found.fulfill()
         }
         wait(for: [found], timeout: 3)
-        XCTAssertNotNil(target)
+        XCTAssertNotNil(target, "nRF Blinky not found. Make sure you run the test on a simulator.")
+        if target == nil {
+            // Going further would cause a crash.
+            return
+        }
 
         // Select found device.
         Sim.post(.selectPeripheral(at: 0))
