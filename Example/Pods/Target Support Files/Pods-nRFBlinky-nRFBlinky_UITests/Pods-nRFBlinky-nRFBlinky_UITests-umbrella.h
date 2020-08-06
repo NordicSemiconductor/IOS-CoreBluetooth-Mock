@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_nRFBlinky_UITestsVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_nRFBlinky_UITestsVersionString[];
+FOUNDATION_EXPORT double Pods_nRFBlinky_nRFBlinky_UITestsVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_nRFBlinky_nRFBlinky_UITestsVersionString[];
 

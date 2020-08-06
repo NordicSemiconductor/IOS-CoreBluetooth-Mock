@@ -30,8 +30,8 @@
 		52B537B223FBE85100372948 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537B123FBE85100372948 /* AppDelegate.swift */; };
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		7B2BC15014F59F63362D632E /* Pods_nRFBlinky.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D451FCAEA31E307D873AF9E /* Pods_nRFBlinky.framework */; };
+		9C3DAF3BDCE839F729AB18D4 /* Pods_nRFBlinky_nRFBlinky_UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAE5CCCE10D0C6B6720ACAB6 /* Pods_nRFBlinky_nRFBlinky_UITests.framework */; };
 		C6364701431B98C1DECD43DF /* Pods_nRFBlinky_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D967657A32EC3FE966B803EE /* Pods_nRFBlinky_Tests.framework */; };
-		FD2A1E0268844F90AA450EFD /* Pods_nRFBlinky_UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E2D218C970BA63CAF8653CE /* Pods_nRFBlinky_UITests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +52,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1E2D218C970BA63CAF8653CE /* Pods_nRFBlinky_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2DBB22CFA82E35CBA3BB326F /* ResetTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetTest.swift; sourceTree = "<group>"; };
 		2DBB27ABD18F3DAECC075CF2 /* BlinkyManagerEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlinkyManagerEvents.swift; sourceTree = "<group>"; };
 		2DBB27B357E95965525A70A5 /* BlinkyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlinkyManager.swift; sourceTree = "<group>"; };
@@ -114,14 +113,17 @@
 		607FACD01AFB9204008FA782 /* nRF Blinky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "nRF Blinky.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACDC1AFB9204008FA782 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		67E8966D049A1D4FEEC96612 /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig"; sourceTree = "<group>"; };
 		6894406D31B247BE53A383BD /* Pods-nRFBlinky_UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_UITests.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_UITests/Pods-nRFBlinky_UITests.release.xcconfig"; sourceTree = "<group>"; };
 		7D451FCAEA31E307D873AF9E /* Pods_nRFBlinky.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B0AB27CFE9E1B11962D6240 /* Pods-nRFBlinky_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_Tests.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		9723757454CD65FC25E163A5 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		9E8150E67F16BF0FD2A96B9F /* Pods-nRFBlinky_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky_Tests.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		AE8E2043E29D520BCD22A393 /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig"; sourceTree = "<group>"; };
 		D967657A32EC3FE966B803EE /* Pods_nRFBlinky_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF2A391A629B418AF377967D /* CoreBluetoothMock.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CoreBluetoothMock.podspec; path = ../CoreBluetoothMock.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		E20CFB7929AACA783363B9F4 /* Pods-nRFBlinky.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.release.xcconfig"; sourceTree = "<group>"; };
+		FAE5CCCE10D0C6B6720ACAB6 /* Pods_nRFBlinky_nRFBlinky_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_nRFBlinky_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD05DB6B9B51CA381BE6886 /* Pods-nRFBlinky.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,7 +132,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FD2A1E0268844F90AA450EFD /* Pods_nRFBlinky_UITests.framework in Frameworks */,
+				9C3DAF3BDCE839F729AB18D4 /* Pods_nRFBlinky_nRFBlinky_UITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -314,6 +316,8 @@
 				8B0AB27CFE9E1B11962D6240 /* Pods-nRFBlinky_Tests.release.xcconfig */,
 				593E9FFC1917DE0521FBC97F /* Pods-nRFBlinky_UITests.debug.xcconfig */,
 				6894406D31B247BE53A383BD /* Pods-nRFBlinky_UITests.release.xcconfig */,
+				67E8966D049A1D4FEEC96612 /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */,
+				AE8E2043E29D520BCD22A393 /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -324,7 +328,7 @@
 				52A648E0240E7BDF00817F2F /* CoreBluetoothMock.framework */,
 				7D451FCAEA31E307D873AF9E /* Pods_nRFBlinky.framework */,
 				D967657A32EC3FE966B803EE /* Pods_nRFBlinky_Tests.framework */,
-				1E2D218C970BA63CAF8653CE /* Pods_nRFBlinky_UITests.framework */,
+				FAE5CCCE10D0C6B6720ACAB6 /* Pods_nRFBlinky_nRFBlinky_UITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -340,6 +344,7 @@
 				526EA536240D2F8100BF70B2 /* Sources */,
 				526EA537240D2F8100BF70B2 /* Frameworks */,
 				526EA538240D2F8100BF70B2 /* Resources */,
+				744485E023546A9FD0E85BC5 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -498,7 +503,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-nRFBlinky_UITests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-nRFBlinky-nRFBlinky_UITests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -525,6 +530,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		744485E023546A9FD0E85BC5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/CoreBluetoothMock/CoreBluetoothMock.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CoreBluetoothMock.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		A36B1697AF0343F52321BB2A /* [CP] Embed Pods Frameworks */ = {
@@ -691,7 +714,7 @@
 /* Begin XCBuildConfiguration section */
 		526EA542240D2F8100BF70B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 593E9FFC1917DE0521FBC97F /* Pods-nRFBlinky_UITests.debug.xcconfig */;
+			baseConfigurationReference = 67E8966D049A1D4FEEC96612 /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "";
@@ -723,7 +746,7 @@
 		};
 		526EA543240D2F8100BF70B2 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6894406D31B247BE53A383BD /* Pods-nRFBlinky_UITests.release.xcconfig */;
+			baseConfigurationReference = AE8E2043E29D520BCD22A393 /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
 				BUNDLE_LOADER = "";
