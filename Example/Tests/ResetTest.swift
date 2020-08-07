@@ -123,7 +123,8 @@ class ResetTest: XCTestCase {
 
         // Simulate reset and button press afterwards.
         let reset = XCTestExpectation(description: "Reset")
-        target!.onDisconnected {
+        target!.onDisconnected { error in
+            XCTAssertEqual((error as? CBMError)?.code, CBError.connectionTimeout)
             reset.fulfill()
         }
         blinky.simulateReset()

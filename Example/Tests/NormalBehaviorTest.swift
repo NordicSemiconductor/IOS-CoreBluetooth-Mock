@@ -138,7 +138,8 @@ class NormalBehaviorTest: XCTestCase {
 
         // Simulate graceful disconnect.
         let disconnection = XCTestExpectation(description: "Disconnection")
-        target!.onDisconnected {
+        target!.onDisconnected { error in
+            XCTAssertEqual((error as? CBMError)?.code, CBError.peripheralDisconnected)
             disconnection.fulfill()
         }
         blinky.simulateDisconnection()
