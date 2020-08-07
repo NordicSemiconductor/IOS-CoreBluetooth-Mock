@@ -69,7 +69,13 @@ class BlinkyViewController: UITableViewController {
         let buttonObserver = blinky.onButtonStateDidChange { [unowned self] isPressed in
             self.buttonStateChanged(isPressed: isPressed)
         }
-        blinky.onDisconnected { [weak self] in
+        blinky.onConnectionError { [weak self] error in
+            self?.showErrorMessage(error?.localizedDescription ?? "Connection failed.")
+        }
+        blinky.onDisconnected { [weak self] error in
+            if let error = error {
+                self?.showErrorMessage(error.localizedDescription)
+            }
             self?.blinky.dispose(ledObserver)
             self?.blinky.dispose(buttonObserver)
             self?.blinkyDidDisconnect()
@@ -178,6 +184,16 @@ private extension BlinkyViewController {
                 self.buttonStateLabel.text = "RELEASED".localized
             }
             self.buttonTapHapticFeedback()
+        }
+    }
+    
+    func showErrorMessage(_ message: String) {
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Error",
+                                          message: message,
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+            self.present(alert, animated: true)
         }
     }
 }
