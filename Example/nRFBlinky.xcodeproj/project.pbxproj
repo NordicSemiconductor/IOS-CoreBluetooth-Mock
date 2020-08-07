@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2DBB24A841D22CDDB14787B6 /* BlinkyPeripheralEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB2D0A6C475A3BA45D6FAA /* BlinkyPeripheralEvents.swift */; };
-		2DBB258568F7E07E0DFA3B4E /* EventInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB2F5ACA6DCE530B0DDE90 /* EventInterceptor.swift */; };
+		2DBB258568F7E07E0DFA3B4E /* EventHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB2F5ACA6DCE530B0DDE90 /* EventHelper.swift */; };
 		2DBB2A694C3D00999D8B3E29 /* BlinkyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB27B357E95965525A70A5 /* BlinkyManager.swift */; };
 		2DBB2D9D87AA009D95C10DEE /* ResetTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB22CFA82E35CBA3BB326F /* ResetTest.swift */; };
 		2DBB2F44478EB7F4C0DF3AA4 /* BlinkyManagerEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB27ABD18F3DAECC075CF2 /* BlinkyManagerEvents.swift */; };
@@ -56,7 +56,7 @@
 		2DBB27ABD18F3DAECC075CF2 /* BlinkyManagerEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlinkyManagerEvents.swift; sourceTree = "<group>"; };
 		2DBB27B357E95965525A70A5 /* BlinkyManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlinkyManager.swift; sourceTree = "<group>"; };
 		2DBB2D0A6C475A3BA45D6FAA /* BlinkyPeripheralEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlinkyPeripheralEvents.swift; sourceTree = "<group>"; };
-		2DBB2F5ACA6DCE530B0DDE90 /* EventInterceptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventInterceptor.swift; sourceTree = "<group>"; };
+		2DBB2F5ACA6DCE530B0DDE90 /* EventHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventHelper.swift; sourceTree = "<group>"; };
 		453BB604F04AB8D6B8030CE1 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		526EA53A240D2F8100BF70B2 /* nRFBlinky_UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nRFBlinky_UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		526EA53C240D2F8100BF70B2 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
@@ -176,9 +176,9 @@
 			isa = PBXGroup;
 			children = (
 				52A648F0240E83F000817F2F /* NormalBehaviorTest.swift */,
-				52A648F8240E844700817F2F /* Supporting Files */,
-				2DBB2F5ACA6DCE530B0DDE90 /* EventInterceptor.swift */,
 				2DBB22CFA82E35CBA3BB326F /* ResetTest.swift */,
+				2DBB2F5ACA6DCE530B0DDE90 /* EventHelper.swift */,
+				52A648F8240E844700817F2F /* Supporting Files */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -606,7 +606,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				52A648F1240E83F000817F2F /* NormalBehaviorTest.swift in Sources */,
-				2DBB258568F7E07E0DFA3B4E /* EventInterceptor.swift in Sources */,
+				2DBB258568F7E07E0DFA3B4E /* EventHelper.swift in Sources */,
 				2DBB2D9D87AA009D95C10DEE /* ResetTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
