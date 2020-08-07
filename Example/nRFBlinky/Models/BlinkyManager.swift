@@ -93,6 +93,7 @@ class BlinkyManager {
             return
         }
         guard blinky.state != .disconnected else {
+            connectedBlinky = nil
             return
         }
         print("Cancelling connection...")
