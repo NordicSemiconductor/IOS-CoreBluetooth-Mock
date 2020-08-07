@@ -236,6 +236,8 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         if proximity == .outOfRange {
             self.peripheral(peripheral,
                             didDisconnectWithError: CBMError(.connectionTimeout))
+        } else {
+            self.peripheralBecameAvailable(peripheral)
         }
     }
     
@@ -318,6 +320,32 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         peripheral.virtualConnections += 1
         
         // TODO: notify a user registered for connection events
+    }
+    
+    /// Method called when a peripheral becomes available (in range).
+    /// If there is a pending connection request, it will connect.
+    /// - Parameter peripheral: The peripheral that came in range. 
+    internal static func peripheralBecameAvailable(_ peripheral: CBMPeripheralSpec) {
+        // Is the peripheral simulated?
+        guard peripherals.contains(peripheral) else {
+            return
+        }
+        managers
+            .compactMap { $0.ref }
+            .forEach { manager in
+                if let target = manager.peripherals[peripheral.identifier],
+                   target.state == .connecting {
+                    target.connect() { result in
+                        switch result {
+                        case .success:
+                            manager.delegate?.centralManager(manager, didConnect: target)
+                        case .failure(let error):
+                            manager.delegate?.centralManager(manager, didFailToConnect: target,
+                                                             error: error)
+                        }
+                    }
+                }
+            }
     }
     
     /// Simulates the peripheral to disconnect from the device.
@@ -477,7 +505,7 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         guard peripherals.values.contains(mock) else {
             return
         }
-        mock.connect { result in
+        mock.connect() { result in
             switch result {
             case .success:
                 self.delegate?.centralManager(self, didConnect: mock)
@@ -667,13 +695,20 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     // MARK: Connection
     
     fileprivate func connect(completion: @escaping (Result<Void, Error>) -> ()) {
-        // Ensure the device is connectable and disconnected.
-        guard let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval,
-              state == .disconnected else {
+        // Ensure the device is disconnected.
+        guard state == .disconnected || state == .connecting else {
             return
         }
+        // Connection is pending.
         state = .connecting
+        // Ensure the device is connectable and in range.
+        guard let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval,
+              mock.proximity != .outOfRange else {
+            // There's no timeout on iOS. The device will connect when brought back
+            // into range. To cancel pending connection, call disconnect().
+            return
+        }
         let result = delegate.peripheralDidReceiveConnectionRequest(mock)
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, self.state == .connecting {
@@ -690,9 +725,17 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     }
     
     fileprivate func disconnect(completion: @escaping () -> ()) {
-        // Ensure the device is connected.
+        // Cancel pending connection.
+        guard state != .connecting else {
+            state = .disconnected
+            queue.async {
+                completion()
+            }
+            return
+        }
+        // Ensure the device is connectable and connected.
         guard let interval = mock.connectionInterval,
-              state == .connected || state == .connecting else {
+              state == .connected else {
             return
         }
         if #available(iOS 9.0, *), case .connected = state {

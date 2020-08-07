@@ -34,6 +34,7 @@ extension Notification.Name {
 
     static let connection    = Notification.Name("Connection")
     static let ready         = Notification.Name("Ready")
+    static let fail          = Notification.Name("Fail")
     static let disconnection = Notification.Name("Disconnection")
     static let ledState      = Notification.Name("LED State")
     static let buttonState   = Notification.Name("Button State")
@@ -50,20 +51,32 @@ extension Notification {
                        didBecameReadyWithLedSupported ledSupported: Bool,
                        buttonSupported: Bool) -> Notification {
         return Notification(name: .ready, object: blinkyPeripheral,
-                userInfo: ["ledSupported": ledSupported,
-                           "buttonSupported": buttonSupported])
+                            userInfo: ["ledSupported": ledSupported,
+                                       "buttonSupported": buttonSupported])
+    }
+    
+    static func blinkyDidFailToConnect(_ blinkyPeripheral: BlinkyPeripheral,
+                                       error: Error?) -> Notification {
+        return Notification(name: .fail, object: blinkyPeripheral,
+                            userInfo: ["error": error as AnyObject])
     }
 
-    static func blinkyDidDisconnect(_ blinkyPeripheral: BlinkyPeripheral) -> Notification {
-        return Notification(name: .disconnection, object: blinkyPeripheral)
+    static func blinkyDidDisconnect(_ blinkyPeripheral: BlinkyPeripheral,
+                                    error: Error?) -> Notification {
+        return Notification(name: .disconnection, object: blinkyPeripheral,
+                            userInfo: ["error": error as AnyObject])
     }
 
-    static func ledState(of blinkyPeripheral: BlinkyPeripheral, didChangeTo isOn: Bool) -> Notification {
-        return Notification(name: .ledState, object: blinkyPeripheral, userInfo: ["isOn": isOn])
+    static func ledState(of blinkyPeripheral: BlinkyPeripheral,
+                         didChangeTo isOn: Bool) -> Notification {
+        return Notification(name: .ledState, object: blinkyPeripheral,
+                            userInfo: ["isOn": isOn])
     }
 
-    static func buttonState(of blinkyPeripheral: BlinkyPeripheral, didChangeTo isPressed: Bool) -> Notification {
-        return Notification(name: .buttonState, object: blinkyPeripheral, userInfo: ["isPressed": isPressed])
+    static func buttonState(of blinkyPeripheral: BlinkyPeripheral,
+                            didChangeTo isPressed: Bool) -> Notification {
+        return Notification(name: .buttonState, object: blinkyPeripheral,
+                            userInfo: ["isPressed": isPressed])
     }
 
 }
@@ -101,12 +114,28 @@ extension BlinkyPeripheral {
             }
         }
     }
+    
+    func onConnectionError(do action: @escaping (Error?) -> ()) {
+        var observer: NSObjectProtocol?
+        observer = on(.fail) { [unowned self] notification in
+            self.dispose(observer!)
+            if let userInfo = notification.userInfo,
+               let error = userInfo["error"] as? Error? {
+                action(error)
+            }
+        }
+    }
 
-    func onDisconnected(do action: @escaping () -> ()) {
+    func onDisconnected(do action: @escaping (Error?) -> ()) {
         var observer: NSObjectProtocol?
         observer = on(.disconnection) { [unowned self] notification in
             self.dispose(observer!)
-            action()
+            if let userInfo = notification.userInfo,
+               let error = userInfo["error"] as? Error {
+                action(error)
+            } else {
+                action(nil)
+            }
         }
     }
 

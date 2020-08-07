@@ -28,23 +28,24 @@
 * POSSIBILITY OF SUCH DAMAGE.
 */
 
+
 import XCTest
 @testable import nRF_Blinky
 @testable import CoreBluetoothMock
 
-/// This test simulates a device with Nordic LED Button service which gets reset during
-/// connection.
+/// This test simulates a scenario when a device failed to connect for some reason.
 ///
 /// It is using the app and testing it by sending notifications that trigger different
 /// actions.
-class ResetTest: XCTestCase {
+class FailedConnectionTest: XCTestCase {
 
     override func setUp() {
         // This method is called AFTER ScannerTableViewController.viewDidLoad()
-        // where the BlinkyManager is instantiated.
+        // where the BlinkyManager is instantiated. A separate mock manager
+        // is not created in this test.
         // Initially mock Bluetooth adapter is powered Off.
         CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
-        CBMCentralManagerMock.simulatePowerOn()
+        CBMCentralManagerMock.simulateInitialState(.poweredOn)
     }
 
     override func tearDown() {
@@ -57,7 +58,7 @@ class ResetTest: XCTestCase {
 
     func testScanningBlinky() {
         // Set up the devices in range.
-        blinky.simulateProximityChange(.far)
+        blinky.simulateProximityChange(.immediate)
         hrm.simulateProximityChange(.near)
         thingy.simulateProximityChange(.far)
         // Reset the blinky.
@@ -70,8 +71,8 @@ class ResetTest: XCTestCase {
             XCTAssertEqual(blinky.advertisedName, "nRF Blinky")
             XCTAssert(blinky.isConnectable == true)
             XCTAssert(blinky.isConnected == false)
-            XCTAssertGreaterThanOrEqual(blinky.RSSI.intValue, -100 - 15)
-            XCTAssertLessThanOrEqual(blinky.RSSI.intValue, -100 + 15)
+            XCTAssertGreaterThanOrEqual(blinky.RSSI.intValue, -70 - 15)
+            XCTAssertLessThanOrEqual(blinky.RSSI.intValue, -70 + 15)
             target = blinky
             found.fulfill()
         }
@@ -81,58 +82,23 @@ class ResetTest: XCTestCase {
             // Going further would cause a crash.
             return
         }
-
+        
+        // Let's move Blinky out of range.
+        blinky.simulateProximityChange(.outOfRange)
+        
         // Select found device.
         Sim.post(.selectPeripheral(at: 0))
 
         // Wait until blinky is connected and ready.
         let connected = XCTestExpectation(description: "Connected")
-        let ready = XCTestExpectation(description: "Ready")
+        connected.isInverted = true
         target!.onConnected {
             connected.fulfill()
         }
-        target!.onReady { ledSupported, buttonSupported in
-            if ledSupported && buttonSupported {
-                ready.fulfill()
-            }
-        }
-        wait(for: [connected, ready], timeout: 3)
+        wait(for: [connected], timeout: 3)
 
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let navigationController = appDelegate.window!.rootViewController as! UINavigationController
-
-        // Initially, LED is OFF and button is released.
-        let ledDisabled = XCTestExpectation(description: "LED Disabled")
-        let buttonReleased = XCTestExpectation(description: "Button released")
-        let buttonPressed = XCTestExpectation(description: "Button pressed")
-        buttonPressed.isInverted = true
-
-        let ledObserver = target!.onLedStateDidChange { isOn in
-            if !isOn {
-                ledDisabled.fulfill()
-            }
-        }
-        let buttonObserver = target!.onButtonStateDidChange { isPressed in
-            if isPressed {
-                buttonPressed.fulfill()
-            } else {
-                buttonReleased.fulfill()
-            }
-        }
-        wait(for: [ledDisabled, buttonReleased], timeout: 1)
-
-        // Simulate reset and button press afterwards.
-        let reset = XCTestExpectation(description: "Reset")
-        target!.onDisconnected { error in
-            XCTAssertEqual((error as? CBMError)?.code, CBError.connectionTimeout)
-            reset.fulfill()
-        }
-        blinky.simulateReset()
-        blinky.simulateValueUpdate(Data([0x01]), for: .buttonCharacteristic)
-        wait(for: [reset, buttonPressed], timeout: 5)
-
-        Sim.dispose(ledObserver)
-        Sim.dispose(buttonObserver)
         navigationController.popViewController(animated: true)
     }
 
