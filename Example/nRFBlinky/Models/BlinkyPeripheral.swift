@@ -85,7 +85,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
 
         _ = manager.onStateChange { [unowned self] state in
             if state != .poweredOn {
-                self.post(.blinkyDidDisconnect(self))
+                self.post(.blinkyDidDisconnect(self, error: nil))
             }
         }
         onConnected {
@@ -246,7 +246,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
                         error: Error?) {
         if peripheral.identifier == basePeripheral.identifier {
             if let error = error {
-                print("Connection failed: \(error)")
+                print("Connection failed: \(error.localizedDescription)")
             } else {
                 print("Connection failed: No error")
             }
@@ -259,7 +259,9 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
                     didUpdateValueFor characteristic: CBCharacteristic,
                     error: Error?) {
         guard error == nil else {
-            print("Operation failed: \(error!)")
+            print("Reading value failed: \(error!.localizedDescription)")
+            post(.blinkyDidFailToConnect(self, error: error))
+            disconnect()
             return
         }
         if characteristic == buttonCharacteristic {
@@ -276,6 +278,12 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral,
                     didUpdateNotificationStateFor characteristic: CBCharacteristic,
                     error: Error?) {
+        guard error == nil else {
+            print("Enabling notifications failed: \(error!.localizedDescription)")
+            post(.blinkyDidFailToConnect(self, error: error))
+            disconnect()
+            return
+        }
         if characteristic == buttonCharacteristic {
             assert(characteristic.service.isPrimary)
             assert(characteristic.service.peripheral.identifier == basePeripheral.identifier)
@@ -291,6 +299,12 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
     }
 
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        guard error == nil else {
+            print("Discovering services failed: \(error!.localizedDescription)")
+            post(.blinkyDidFailToConnect(self, error: error))
+            disconnect()
+            return
+        }
         if let services = peripheral.services {
             for service in services {
                 if service.uuid == BlinkyPeripheral.nordicBlinkyServiceUUID {
@@ -314,6 +328,12 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral,
                     didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        guard error == nil else {
+            print("Discovering characteristics failed: \(error!.localizedDescription)")
+            post(.blinkyDidFailToConnect(self, error: error))
+            disconnect()
+            return
+        }
         if let characteristics = service.characteristics {
             for characteristic in characteristics {
                 assert(characteristic.service == service)
@@ -349,7 +369,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
     func peripheral(_ peripheral: CBPeripheral,
                     didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
         if let error = error {
-            print("Error: \(error)")
+            print("Writing value failed: \(error.localizedDescription)")
         }
         // LED value has been written, let's read it to confirm.
         readLEDValue()
