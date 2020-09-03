@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-public class CBMService: CBMAttribute {
+open class CBMService: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
     
@@ -105,7 +105,7 @@ internal class CBMServiceNative: CBMService {
     
 }
 
-public class CBMServiceMock: CBMService {
+open class CBMServiceMock: CBMService {
 
     public override var includedServices: [CBMService]? {
         set { _includedServices = newValue }
@@ -140,7 +140,7 @@ public class CBMServiceMock: CBMService {
     }
 }
 
-public class CBMCharacteristic: CBMAttribute {
+open class CBMCharacteristic: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
     
@@ -213,7 +213,7 @@ internal class CBMCharacteristicNative: CBMCharacteristic {
     }
 }
 
-public class CBMCharacteristicMock: CBMCharacteristic {
+open class CBMCharacteristicMock: CBMCharacteristic {
 
     public override var descriptors: [CBMDescriptor]? {
         set {
@@ -246,7 +246,7 @@ public class CBMCharacteristicMock: CBMCharacteristic {
     }
 }
 
-public class CBMDescriptor: CBMAttribute {
+open class CBMDescriptor: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
     
@@ -298,7 +298,7 @@ internal class CBMDescriptorNative: CBMDescriptor {
     }
 }
 
-public class CBMDescriptorMock: CBMDescriptor {
+open class CBMDescriptorMock: CBMDescriptor {
     
     public override init(type uuid: CBMUUID) {
         super.init(type: uuid)
@@ -312,7 +312,7 @@ public class CBMDescriptorMock: CBMDescriptor {
     }
 }
 
-public class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock {
+open class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock {
     
     public init() {
         super.init(type: CBMUUID(string: "2902"))

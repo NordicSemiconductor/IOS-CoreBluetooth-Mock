@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-public class CBMCentralManagerMock: NSObject, CBMCentralManager {
+open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     /// Mock RSSI deviation.
     ///
     /// Returned RSSI values will be in range
@@ -623,7 +623,7 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
 
 // MARK: - CBPeripheralMock implementation
 
-public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
+open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     
     /// The parent central manager.
     private let manager: CBMCentralManagerMock
