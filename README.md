@@ -1,6 +1,8 @@
 # Core Bluetooth Mock
 
-![Version number](https://img.shields.io/cocoapods/v/CoreBluetoothMock)
+![Version number](https://img.shields.io/cocoapods/v/CoreBluetoothMock) 
+[![Platform](https://img.shields.io/cocoapods/p/CoreBluetoothMock.svg?style=flat)](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 The *Core Bluetooth Mock* library was designed to emulate *Core Bluetooth* objects, providing easy way to test 
 Bluetooth-enabled apps. As the native Bluetooth API is not supported on a simulator, using this library you can run, test 
@@ -25,13 +27,74 @@ forwarded to their native equivalents, but on a simulator a mock implementation 
 
 ## How to start
 
-The *Core Bluetooth Mock* library is available only in Swift, and compatible with iOS 8.0+. For projects running Objective-C 
-we recommend https://github.com/Rightpoint/RZBluetooth library.
+The *Core Bluetooth Mock* library is available only in Swift, and compatible with iOS 8.0+, macOS 10.13+, tvOS 9.0+ and watchOS 2.0+,
+with some features available only on newer platforms.
+For projects running Objective-C we recommend https://github.com/Rightpoint/RZBluetooth library.
 
-Import library from CocoaPods:
+### Including the library
+
+The library support [CocoaPods](https://github.com/CocoaPods/CocoaPods), [Carthage](https://github.com/Carthage/Carthage) and 
+[Swift Package Manager](https://swift.org/package-manager).
+
+#### CocoaPods
+
+- Create/Update your **Podfile** with the following contents
+
+    ```ruby
+    target 'YourAppTargetName' do
+        pod 'CoreBluetoothMock'
+    end
+    ```
+
+- Install dependencies
+
+    ```bash
+    pod install
+    ```
+
+- Open the newly created `.xcworkspace`
+
+#### Carthage
+
+- Create a new **Cartfile** in your project's root with the following contents
+
+    ```
+    github "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock" ~> x.y // Replace x.y with your required version
+    ```
+    
+- Build with carthage
+
+    ```bash
+    carthage update --platform iOS // also supported are tvOS, watchOS and macOS
+    ```
+
+- Copy the **CoreBluetoothMock.framework** from *Carthage/Build* to your project and follow [instructions from Carthage](https://github.com/Carthage/Carthage).
+
+#### Swift Package Manager
+
+The library can also be included as SPM package. Simply add it in Xcode: *File -> Swift Packages -> Add package dependency*, 
+type *https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git* and set required version, branch or commit.
+
+If you have *Swift.package* file, inculde the following dependency:
+```swift
+dependencies: [
+    // [...]
+    .package(name: "CoreBluetoothMock", 
+             url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git", 
+             .upToNextMajor(from: "x.y")) // Replace x.y with your required version
+]
 ```
-pod 'CoreBluetoothMock'
+and add it to your target:
+```swift
+targets: [
+    // [...]
+    .target(
+        name: "<Your target name>",
+        dependencies: ["CoreBluetoothMock"]),
+]
 ```
+
+### Usage
 
 With this complete, you need to choose one of the following approaches:
 
@@ -59,6 +122,11 @@ let manager = CBCentralManagerFactory.initiate(delegate: self, queue: ...)
 ```
 The last parameter, `forceMock`, when set to *true*, allows to run mock implementation also on a physical device.
 
+### Known issues
+
+- The new `CBMCentralManager` and `CBMPeripheral` are protocols, not classes. That means that, e.g. they cannot 
+be used as `Equatable` or `Hashable`. When using in maps, you may need to use the *identifier*. Also, KVO are not yet supported.
+
 ## Defining mock peripherals
 
 When the app using *Core Bluetooth Mock* library is started on a simulator, or the `forceMock` parameter is set to *true* during 
@@ -75,7 +143,10 @@ any central manager instance was created. It defines the intial state of the moc
 `CBMCentralManager.simulatePowerOff()` - turns off the mock central manager. All scans and connections will be terminated.
 
 `CBMCentralManagerMock.simulatePeripherals(_ peripherals: [CBMPeripheralSpec])` - defines list of 
-mock peripheral. This method should be called once, before any central manager was initialized.
+mock peripheral. This method should be called when the manager is powered off, or before any central manager was initialized.
+
+`CBMCentralManagerMock.tearDownSimulation()` - sets the state of all currently existing central managers to `.unknown` and
+clears the list of managers and peripherals bringing the mock manager to initial state.
 
 See [AppDelegate.swift](Example/nRFBlinky/AppDelegate.swift#L48) for reference. In the sample app the mock implementation is
 used only in UI Tests, which lauch the app with `mocking-enabled` parameter (see [here](Example/UI%20Tests/UITests.swift#L42)),
@@ -85,7 +156,7 @@ but can be easily modified to use it every time it is launched on a simulator or
 
 `CBMPeripheralSpec.Builder` - use the builder to define your mock peripheral. Specify the proximity, whether it is advertising 
 together with advertising data and advertising interval, is it connectable (or already connected when your app starts), by defining
-its services and their behavior. A ist of such peripheral specifications needs to be set by calling the `simulatePeripherals(:)` 
+its services and their behavior. A list of such peripheral specifications needs to be set by calling the `simulatePeripherals(:)` 
 method described above.
 
 `CBMPeripheralSpec.simulateConnection()` - simulates a situation when another app on the iDevice connects to this 
@@ -113,7 +184,7 @@ with `CBMCentralManagerOptionRestoreIdentifierKey` option. The map returned will
 `centralManager(:willRestoreState:)` callback in central manager's delegate.
 
 `CBMCentralManagerFactory.simulateFeaturesSupport` - this closure will be used to emulate Bluetooth features supported
-by the manager. It is availalbe on iOS 13+.
+by the manager. It is availalbe on iOS 13+, tvOS 13+ or watchOS 6+.
 
 ## Sample application: nRF BLINKY
 
@@ -126,16 +197,17 @@ The mock implementation is used in UI tests. See [AppDelegate.swift](Example/nRF
 and [UITests.swift](Example/UI%20Tests/UITests.swift) classes.
 
 ## Nordic LED and Button Service
-###### Service UUID: `00001523-1212-EFDE-1523-785FEABCD123`
+
 A simplified proprietary service by Nordic Semiconductor, containing two characteristics one to control LED3 and Button1:
-- First characteristic controls the LED state (On/Off).
-  - UUID: **`00001525-1212-EFDE-1523-785FEABCD123`**
-  - Value: **`1`** => LED On
-  - Value: **`0`** => LED Off
-- Second characteristic notifies central of the button state on change (Pressed/Released).
-  - UUID: **`00001524-1212-EFDE-1523-785FEABCD123`**
-  - Value: **`1`** => Button Pressed
-  - Value: **`0`** => Button Released
+- Service UUID: **`00001523-1212-EFDE-1523-785FEABCD123`**
+  - First characteristic controls the LED state (On/Off).
+    - UUID: **`00001525-1212-EFDE-1523-785FEABCD123`**
+    - Value: **`1`** => LED On
+    - Value: **`0`** => LED Off
+  - Second characteristic notifies central of the button state on change (Pressed/Released).
+    - UUID: **`00001524-1212-EFDE-1523-785FEABCD123`**
+    - Value: **`1`** => Button Pressed
+    - Value: **`0`** => Button Released
   
   For full specification, check out 
   [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v16.0.0/ble_sdk_app_blinky.html?cp=7_1_4_2_2_3).

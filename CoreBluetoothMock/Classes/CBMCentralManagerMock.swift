@@ -82,7 +82,13 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     /// A flag set to true few milliseconds after the manager is created.
     /// Some features, like the state or retrieving peripherals are not
     /// available when manager hasn't been initialized yet.
-    private var initialized: Bool = false
+    private var initialized: Bool {
+        // This method returns true if the manager is added to
+        // the list of managers.
+        // Calling tearDownSimulation() will remove all managers
+        // from that list, making them uninitialized again.
+        return CBMCentralManagerMock.managers.contains { $0.ref == self }
+    }
     
     // MARK: - Initializers
     
@@ -130,24 +136,41 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     }
     
     private func initialize() {
-        if CBMCentralManagerMock.peripherals.isEmpty {
-            NSLog("Warning: No simulated peripherals. Call simulatePeripherals(:) before creating central manager")
+        if CBMCentralManagerMock.managerState == .poweredOn &&
+           CBMCentralManagerMock.peripherals.isEmpty {
+            NSLog("Warning: No simulated peripherals. " +
+                  "Call simulatePeripherals(:) before creating central manager")
         }
         // Let's say initialization takes 10 ms. Less or more.
         queue.asyncAfter(deadline: .now() + .milliseconds(10)) { [weak self] in
             if let self = self {
                 CBMCentralManagerMock.managers.append(WeakRef(self))
-                self.initialized = true
                 self.delegate?.centralManagerDidUpdateState(self)
             }
         }
+    }
+    
+    /// Removes all active central manager instances and peripherals from the
+    /// simulation, resetting it to the initial state.
+    ///
+    /// Use this to tear down your mocks between tests, e.g. in `tearDownWithError()`.
+    /// All manager delegates will receive a `.unknown` state update.
+    public static func tearDownSimulation() {
+        // Set the state of all currently existing cenral manager instances to
+        // .unknown, which will make them invalid.
+        managerState = .unknown
+        // Remove all central manager instances.
+        managers.removeAll()
+        // Set the manager state to powered Off.
+        managerState = .poweredOff
+        peripherals.removeAll()
     }
     
     // MARK: - Central manager simulation methods
     
     /// Sets the initial state of the Bluetooth central manager.
     ///
-    /// This method should only be called ones, before any `CBMCentralManagerMock`
+    /// This method should only be called ones, before any central manager
     /// is created. By default, the initial state is `.poweredOff`.
     /// - Parameter state: The initial state of the central manager.
     public static func simulateInitialState(_ state: CBMManagerState) {
@@ -157,14 +180,18 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
     /// This method sets a list of simulated peripherals.
     ///
     /// Peripherals added using this method will be available for scanning
-    /// and connecting, depending on their proximity. Use
-    /// peripheral's `simulateProximity(of:didChangeTo:)` to modify proximity.
+    /// and connecting, depending on their proximity. Use peripheral's
+    /// `simulateProximity(of:didChangeTo:)` to modify proximity.
     ///
-    /// This method may only be called once, before any manager was created.
-    /// - Parameter peripherals: Peripherals that are not connected.
+    /// This method may only be called before any central manager was created
+    /// or when Bluetooth state is `.poweredOff`. Existing list of peripherals
+    /// will be overritten.
+    /// - Parameter peripherals: Peripherals specifications.
     public static func simulatePeripherals(_ peripherals: [CBMPeripheralSpec]) {
-        guard managers.isEmpty, CBMCentralManagerMock.peripherals.isEmpty else {
-            NSLog("Warning: Peripherals can be added to simulation only once, and not after any central manager was initiated")
+        guard managers.isEmpty || managerState == .poweredOff else {
+            NSLog("Warning: Peripherals can not be added while the simulation is running. " +
+                  "Add peripherals before getting any central manager instance, " +
+                  "or when manager is powered off.")
             return
         }
         CBMCentralManagerMock.peripherals = peripherals
@@ -209,6 +236,8 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         if proximity == .outOfRange {
             self.peripheral(peripheral,
                             didDisconnectWithError: CBMError(.connectionTimeout))
+        } else {
+            self.peripheralBecameAvailable(peripheral)
         }
     }
     
@@ -291,6 +320,32 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         peripheral.virtualConnections += 1
         
         // TODO: notify a user registered for connection events
+    }
+    
+    /// Method called when a peripheral becomes available (in range).
+    /// If there is a pending connection request, it will connect.
+    /// - Parameter peripheral: The peripheral that came in range. 
+    internal static func peripheralBecameAvailable(_ peripheral: CBMPeripheralSpec) {
+        // Is the peripheral simulated?
+        guard peripherals.contains(peripheral) else {
+            return
+        }
+        managers
+            .compactMap { $0.ref }
+            .forEach { manager in
+                if let target = manager.peripherals[peripheral.identifier],
+                   target.state == .connecting {
+                    target.connect() { result in
+                        switch result {
+                        case .success:
+                            manager.delegate?.centralManager(manager, didConnect: target)
+                        case .failure(let error):
+                            manager.delegate?.centralManager(manager, didFailToConnect: target,
+                                                             error: error)
+                        }
+                    }
+                }
+            }
     }
     
     /// Simulates the peripheral to disconnect from the device.
@@ -450,7 +505,7 @@ public class CBMCentralManagerMock: NSObject, CBMCentralManager {
         guard peripherals.values.contains(mock) else {
             return
         }
-        mock.connect { result in
+        mock.connect() { result in
             switch result {
             case .success:
                 self.delegate?.centralManager(self, didConnect: mock)
@@ -613,7 +668,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 mock.advertisementData?[CBMAdvertisementDataLocalNameKey] as? String :
                 nil
     }
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public var canSendWriteWithoutResponse: Bool {
         return _canSendWriteWithoutResponse
     }
@@ -640,13 +695,20 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     // MARK: Connection
     
     fileprivate func connect(completion: @escaping (Result<Void, Error>) -> ()) {
-        // Ensure the device is connectable and disconnected.
-        guard let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval,
-              state == .disconnected else {
+        // Ensure the device is disconnected.
+        guard state == .disconnected || state == .connecting else {
             return
         }
+        // Connection is pending.
         state = .connecting
+        // Ensure the device is connectable and in range.
+        guard let delegate = mock.connectionDelegate,
+              let interval = mock.connectionInterval,
+              mock.proximity != .outOfRange else {
+            // There's no timeout on iOS. The device will connect when brought back
+            // into range. To cancel pending connection, call disconnect().
+            return
+        }
         let result = delegate.peripheralDidReceiveConnectionRequest(mock)
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, self.state == .connecting {
@@ -654,6 +716,8 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     self.state = .connected
                     self._canSendWriteWithoutResponse = true
                     self.mock.virtualConnections += 1
+                } else {
+                    self.state = .disconnected
                 }
                 completion(result)
             }
@@ -661,9 +725,17 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     }
     
     fileprivate func disconnect(completion: @escaping () -> ()) {
-        // Ensure the device is connected.
+        // Cancel pending connection.
+        guard state != .connecting else {
+            state = .disconnected
+            queue.async {
+                completion()
+            }
+            return
+        }
+        // Ensure the device is connectable and connected.
         guard let interval = mock.connectionInterval,
-              state == .connected || state == .connecting else {
+              state == .connected else {
             return
         }
         if #available(iOS 9.0, *), case .connected = state {
@@ -1103,23 +1175,39 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 }
             }
         } else {
-            queue.sync {
-                guard availableWriteWithoutResponseBuffer > 0 else {
+            let decreaseBuffer = { [weak self] in
+                guard let strongSelf = self,
+                    strongSelf.availableWriteWithoutResponseBuffer > 0 else {
                     return
                 }
-                availableWriteWithoutResponseBuffer -= 1
-                _canSendWriteWithoutResponse = false
+                strongSelf.availableWriteWithoutResponseBuffer -= 1
+                strongSelf._canSendWriteWithoutResponse = false
             }
+            if DispatchQueue.main.label == queue.label {
+                decreaseBuffer()
+            } else {
+                queue.sync {
+                    decreaseBuffer()
+                }
+            }
+            
             delegate.peripheral(mock,
                                 didReceiveWriteCommandFor: characteristic,
                                 data: data.subdata(in: 0..<mtu - 3))
             queue.async { [weak self] in
                 if let self = self, self.state == .connected {
-                    self.queue.sync {
+                    let increaseBuffer = {
                         self.availableWriteWithoutResponseBuffer += 1
                         self._canSendWriteWithoutResponse = true
                     }
-                    if #available(iOS 11.0, *) {
+                    if DispatchQueue.main.label == self.queue.label {
+                        increaseBuffer()
+                    } else {
+                        self.queue.sync {
+                            increaseBuffer()
+                        }
+                    }
+                    if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
                         self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
                     }
                 }
@@ -1230,7 +1318,7 @@ public class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         }
     }
     
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     public func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
         fatalError("L2CAP mock is not implemented")
     }

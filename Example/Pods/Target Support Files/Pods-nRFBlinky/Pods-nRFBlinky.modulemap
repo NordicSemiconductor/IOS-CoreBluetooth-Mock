@@ -1,4 +1,4 @@
-module Pods_nRFBlinky {
+framework module Pods_nRFBlinky {
   umbrella header "Pods-nRFBlinky-umbrella.h"
 
   export *

@@ -146,7 +146,7 @@ public protocol CBMPeripheralDelegate: class {
     /// This method is invoked after a failed call to `writeValue(:for:type:), when
     /// peripheral is again ready to send characteristic value updates.
     /// - Parameter peripheral: The peripheral providing this update.
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBMPeripheral)
 
     /// This method returns the result of a `openL2CAPChannel(:)` call.
@@ -154,7 +154,7 @@ public protocol CBMPeripheralDelegate: class {
     ///   - peripheral: The peripheral providing this information.
     ///   - channel: A `CBL2CAPChannel` object.
     ///   - error: If an error occurred, the cause of the failure.
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func peripheral(_ peripheral: CBMPeripheral,
                     didOpen channel: CBML2CAPChannel?, error: Error?)
 }
@@ -224,7 +224,7 @@ public extension CBMPeripheralDelegate {
         // optional method
     }
 
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func peripheral(_ peripheral: CBMPeripheral,
                     didOpen channel: CBML2CAPChannel?, error: Error?) {
         // optional method

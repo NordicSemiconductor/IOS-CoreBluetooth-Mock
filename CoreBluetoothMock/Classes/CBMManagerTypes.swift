@@ -55,9 +55,9 @@ public typealias CBMConnectionEventMatchingOption = CBConnectionEventMatchingOpt
 public typealias CBMPeripheralState = CBPeripheralState
 public typealias CBMCharacteristicWriteType = CBCharacteristicWriteType
 public typealias CBMCharacteristicProperties = CBCharacteristicProperties
-@available(iOS 11.0, *)
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
 public typealias CBML2CAPPSM = CBL2CAPPSM
-@available(iOS 11.0, *)
+@available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
 public typealias CBML2CAPChannel = CBL2CAPChannel
 
 public let CBMCentralManagerScanOptionAllowDuplicatesKey = CBCentralManagerScanOptionAllowDuplicatesKey

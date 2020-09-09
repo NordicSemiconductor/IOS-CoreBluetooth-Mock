@@ -52,7 +52,7 @@ public protocol CBMPeripheral: class {
     /// response. If this value is false, the value will be set to
     /// true after the current writes have been flushed, and
     /// `peripheralIsReady(toSendWriteWithoutResponse:)` will be called.
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     var canSendWriteWithoutResponse: Bool { get }
     
     /// True if the remote device has been authorized to receive data
@@ -155,7 +155,7 @@ public protocol CBMPeripheral: class {
     /// Attempt to open an L2CAP channel to the peripheral using the supplied PSM.
     /// - Parameter PSM: The PSM of the channel to open.
     #if !os(macOS)
-    @available(iOS 11.0, *)
+    @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func openL2CAPChannel(_ PSM: CBML2CAPPSM)
     #endif
 }

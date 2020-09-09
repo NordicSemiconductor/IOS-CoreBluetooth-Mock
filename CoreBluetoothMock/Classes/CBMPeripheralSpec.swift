@@ -157,8 +157,8 @@ public class CBMPeripheralSpec {
     ///
     /// All connected mock central managers will receive
     /// `peripheral(:didDisconnected:error)` callback.
-    /// - Parameter error: The disconnection reason. Use `CBError` or
-    ///                    `CBATTError` errors.
+    /// - Parameter error: The disconnection reason. Use `CBMError` or
+    ///                    `CBMATTError` errors.
     public func simulateDisconnection(withError error: Error = CBMError(.peripheralDisconnected)) {
         CBMCentralManagerMock.peripheral(self, didDisconnectWithError: error)
     }

@@ -93,6 +93,7 @@ class BlinkyManager {
             return
         }
         guard blinky.state != .disconnected else {
+            connectedBlinky = nil
             return
         }
         print("Cancelling connection...")
@@ -146,7 +147,8 @@ extension BlinkyManager: CBCentralManagerDelegate {
             } else {
                 print("Connection failed: No error")
             }
-            blinky.post(.blinkyDidDisconnect(blinky))
+            connectedBlinky = nil
+            blinky.post(.blinkyDidFailToConnect(blinky, error: error))
         }
     }
 
@@ -157,7 +159,7 @@ extension BlinkyManager: CBCentralManagerDelegate {
            blinky.basePeripheral.identifier == peripheral.identifier {
             print("Blinky disconnected")
             connectedBlinky = nil
-            blinky.post(.blinkyDidDisconnect(blinky))
+            blinky.post(.blinkyDidDisconnect(blinky, error: error))
         }
     }
 }
