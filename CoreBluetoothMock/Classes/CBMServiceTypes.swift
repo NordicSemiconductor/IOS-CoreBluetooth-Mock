@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-public class CBMService: CBMAttribute {
+open class CBMService: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
     
@@ -38,23 +38,23 @@ public class CBMService: CBMAttribute {
     internal var _characteristics: [CBMCharacteristic]?
 
     /// A back-pointer to the peripheral this service belongs to.
-    public internal(set) unowned var peripheral: CBMPeripheral
+    open internal(set) unowned var peripheral: CBMPeripheral
     
     /// The type of the service (primary or secondary).
-    public fileprivate(set) var isPrimary: Bool
+    open fileprivate(set) var isPrimary: Bool
     
     /// The Bluetooth UUID of the attribute.
-    public override var uuid: CBMUUID {
+    open override var uuid: CBMUUID {
         return _uuid
     }
     
     /// A list of included services that have so far been discovered in this service.
-    public var includedServices: [CBMService]? {
+    open var includedServices: [CBMService]? {
         return _includedServices
     }
 
     /// A list of characteristics that have so far been discovered in this service.
-    public var characteristics: [CBMCharacteristic]? {
+    open var characteristics: [CBMCharacteristic]? {
         return _characteristics
     }
     
@@ -105,14 +105,14 @@ internal class CBMServiceNative: CBMService {
     
 }
 
-public class CBMServiceMock: CBMService {
+open class CBMServiceMock: CBMService {
 
-    public override var includedServices: [CBMService]? {
+    open override var includedServices: [CBMService]? {
         set { _includedServices = newValue }
         get { return _includedServices }
     }
 
-    public override var characteristics: [CBMCharacteristic]? {
+    open override var characteristics: [CBMCharacteristic]? {
         set { _characteristics = newValue }
         get { return _characteristics }
     }
@@ -128,11 +128,11 @@ public class CBMServiceMock: CBMService {
         self.characteristics = characteristics
     }
     
-    public func contains(_ characteristic: CBMCharacteristicMock) -> Bool {
+    open func contains(_ characteristic: CBMCharacteristicMock) -> Bool {
         return _characteristics?.contains(characteristic) ?? false
     }
     
-    public override func isEqual(_ object: Any?) -> Bool {
+    open override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? CBMServiceMock {
             return identifier == other.identifier
         }
@@ -140,34 +140,34 @@ public class CBMServiceMock: CBMService {
     }
 }
 
-public class CBMCharacteristic: CBMAttribute {
+open class CBMCharacteristic: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
     
     internal var _descriptors: [CBMDescriptor]?
     
     /// The Bluetooth UUID of the attribute.
-    public override var uuid: CBMUUID {
+    open override var uuid: CBMUUID {
         return _uuid
     }
 
     /// A back-pointer to the service this characteristic belongs to.
-    public internal(set) var service: CBMService
+    open internal(set) var service: CBMService
     
     /// The properties of the characteristic.
     public let properties: CBMCharacteristicProperties
 
     /// The value of the characteristic.
-    public internal(set) var value: Data?
+    open internal(set) var value: Data?
 
     /// A list of the descriptors that have so far been discovered
     /// in this characteristic.
-    public var descriptors: [CBMDescriptor]? {
+    open var descriptors: [CBMDescriptor]? {
         return _descriptors
     }
 
     /// Whether the characteristic is currently notifying or not.
-    public internal(set) var isNotifying: Bool
+    open internal(set) var isNotifying: Bool
 
     /// Returns an initialized characteristic.
     /// - Parameters:
@@ -213,9 +213,9 @@ internal class CBMCharacteristicNative: CBMCharacteristic {
     }
 }
 
-public class CBMCharacteristicMock: CBMCharacteristic {
+open class CBMCharacteristicMock: CBMCharacteristic {
 
-    public override var descriptors: [CBMDescriptor]? {
+    open override var descriptors: [CBMDescriptor]? {
         set {
             _descriptors = newValue
             _descriptors?.forEach { $0.characteristic = self }
@@ -234,11 +234,11 @@ public class CBMCharacteristicMock: CBMCharacteristic {
         self.descriptors = descriptors
     }
     
-    public func contains(_ descriptor: CBMDescriptor) -> Bool {
+    open func contains(_ descriptor: CBMDescriptor) -> Bool {
         return _descriptors?.contains(descriptor) ?? false
     }
     
-    public override func isEqual(_ object: Any?) -> Bool {
+    open override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? CBMCharacteristicMock {
             return identifier == other.identifier
         }
@@ -246,20 +246,20 @@ public class CBMCharacteristicMock: CBMCharacteristic {
     }
 }
 
-public class CBMDescriptor: CBMAttribute {
+open class CBMDescriptor: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
     
     /// The Bluetooth UUID of the attribute.
-    public override var uuid: CBMUUID {
+    open override var uuid: CBMUUID {
         return _uuid
     }
     
     /// A back-pointer to the characteristic this descriptor belongs to.
-    public internal(set) var characteristic: CBMCharacteristic
+    open internal(set) var characteristic: CBMCharacteristic
 
     /// The value of the descriptor.
-    public internal(set) var value: Any?
+    open internal(set) var value: Any?
     
     /// Returns <i>true</i> if the descriptor is a Client Configuration
     /// Characteristic Descriptor (CCCD); otherwise <i>false</i>.
@@ -298,13 +298,13 @@ internal class CBMDescriptorNative: CBMDescriptor {
     }
 }
 
-public class CBMDescriptorMock: CBMDescriptor {
+open class CBMDescriptorMock: CBMDescriptor {
     
     public override init(type uuid: CBMUUID) {
         super.init(type: uuid)
     }
     
-    public override func isEqual(_ object: Any?) -> Bool {
+    open override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? CBMDescriptorMock {
             return identifier == other.identifier
         }
@@ -312,7 +312,7 @@ public class CBMDescriptorMock: CBMDescriptor {
     }
 }
 
-public class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock {
+open class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock {
     
     public init() {
         super.init(type: CBMUUID(string: "2902"))
