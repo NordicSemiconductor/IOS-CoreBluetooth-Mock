@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		2253381ACD2C30E9C3B5BC7612DA4321 /* CBMCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F3BBA0A13914BE340CEBAC41E0E5C /* CBMCentralManager.swift */; };
 		2AA89D77E07DD32F98F3B0A6BA02B043 /* Pods-nRFBlinky-nRFBlinky_UITests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A53FE949257853F7E3939C9F803937 /* Pods-nRFBlinky-nRFBlinky_UITests-dummy.m */; };
+		2ED6BFA9263A8A8A008AEEC1 /* CBMAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED6BFA8263A8A8A008AEEC1 /* CBMAttribute.swift */; };
+		2ED6BFAB263A8ACD008AEEC1 /* CBMPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED6BFAA263A8ACD008AEEC1 /* CBMPeer.swift */; };
 		3AF3CCF8EB7F1F8F5E259AA9E12554EA /* CBMCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149DA96AE4B0757FCD58E8C6894F262A /* CBMCentralManagerMock.swift */; };
 		53121987F81496973AC8BE273A85DA90 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
 		65FEEBAFF9B6761B51ED952E0C5F0998 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
@@ -67,6 +69,8 @@
 		1F92E40BA4B115F4A8FF31133C71E5C9 /* Pods-nRFBlinky-nRFBlinky_UITests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFBlinky-nRFBlinky_UITests.modulemap"; sourceTree = "<group>"; };
 		23DDBE0DFE085AC6F53CE75068F0E893 /* Pods-nRFBlinky.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFBlinky.modulemap"; sourceTree = "<group>"; };
 		258D14F03E5A6413193BAC7C1007AF66 /* Pods-nRFBlinky_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFBlinky_Tests-dummy.m"; sourceTree = "<group>"; };
+		2ED6BFA8263A8A8A008AEEC1 /* CBMAttribute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMAttribute.swift; sourceTree = "<group>"; };
+		2ED6BFAA263A8ACD008AEEC1 /* CBMPeer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMPeer.swift; sourceTree = "<group>"; };
 		3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		39531918AF2A1703B9489BDFC4E83686 /* CoreBluetoothMock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CoreBluetoothMock.release.xcconfig; sourceTree = "<group>"; };
 		46EB8394AA6F0039E76CB2A837FD7257 /* CBMPeripheralDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralDelegate.swift; path = CoreBluetoothMock/Classes/CBMPeripheralDelegate.swift; sourceTree = "<group>"; };
@@ -222,6 +226,8 @@
 				DEF1D5BF0862A7B1F8F06A8017889205 /* CBMPeripheralSpec.swift */,
 				6D9A15253A1A9FBF4835709258DC0C05 /* CBMPeripheralSpecDelegate.swift */,
 				74536A842E9D4B9490BE3961C0597A9A /* CBMServiceTypes.swift */,
+				2ED6BFA8263A8A8A008AEEC1 /* CBMAttribute.swift */,
+				2ED6BFAA263A8ACD008AEEC1 /* CBMPeer.swift */,
 				A0D7D9985C3C9310092EF59609CC7FDC /* Pod */,
 				29670088D0537C568039738CDE5E6AA2 /* Support Files */,
 			);
@@ -495,9 +501,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2ED6BFA9263A8A8A008AEEC1 /* CBMAttribute.swift in Sources */,
 				2253381ACD2C30E9C3B5BC7612DA4321 /* CBMCentralManager.swift in Sources */,
 				E8DBD44AD1C9A9EA0640999C91AB59B2 /* CBMCentralManagerDelegate.swift in Sources */,
 				DFACF96DD3561D15D1FF2EB44FC3A7CF /* CBMCentralManagerFactory.swift in Sources */,
+				2ED6BFAB263A8ACD008AEEC1 /* CBMPeer.swift in Sources */,
 				3AF3CCF8EB7F1F8F5E259AA9E12554EA /* CBMCentralManagerMock.swift in Sources */,
 				A9B8EC9173F45870D5492461152A5853 /* CBMCentralManagerNative.swift in Sources */,
 				66E549470BDB5D6D8485998E9CAC6462 /* CBMManagerTypes.swift in Sources */,

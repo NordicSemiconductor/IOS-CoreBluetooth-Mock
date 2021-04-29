@@ -36,7 +36,7 @@ import CoreBluetoothMock
 // using CBCentralManagerFactory, instad of just creating a CBCentralManager.
 
 typealias CBCentralManagerFactory         = CBMCentralManagerFactory
-typealias CBPeer                          = CBMPeer
+//typealias CBPeer                          = CBMPeer
 typealias CBUUID                          = CBMUUID
 typealias CBError                         = CBMError
 typealias CBATTError                      = CBMATTError
@@ -46,7 +46,7 @@ typealias CBCentralManager                = CBMCentralManager
 typealias CBCentralManagerDelegate        = CBMCentralManagerDelegate
 typealias CBPeripheral                    = CBMPeripheral
 typealias CBPeripheralDelegate            = CBMPeripheralDelegate
-typealias CBAttribute                     = CBMAttribute
+//typealias CBAttribute                     = CBMAttribute
 typealias CBService                       = CBMService
 typealias CBCharacteristic                = CBMCharacteristic
 typealias CBCharacteristicWriteType       = CBMCharacteristicWriteType
