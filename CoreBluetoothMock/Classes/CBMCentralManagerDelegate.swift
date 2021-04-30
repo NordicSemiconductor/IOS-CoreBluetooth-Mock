@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-public protocol CBMCentralManagerDelegate: class {
+public protocol CBMCentralManagerDelegate: AnyObject {
 
     /// Invoked whenever the central manager's state has been updated. Commands
     /// should only be issued when the state is `.poweredOn`.

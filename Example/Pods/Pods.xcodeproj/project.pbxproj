@@ -7,108 +7,112 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2253381ACD2C30E9C3B5BC7612DA4321 /* CBMCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB5F3BBA0A13914BE340CEBAC41E0E5C /* CBMCentralManager.swift */; };
+		04A694EE5664E7E5F0F6A9DBD976B01A /* CBMManagerTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78C6B5F0B8A5CB6B555843B40D0AE70 /* CBMManagerTypes.swift */; };
+		0D169D639C0FE3F1AB57E91F3D39BE51 /* CoreBluetoothMock-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FACA62F6A84C45B86F90AA5AD62B9E3 /* CoreBluetoothMock-dummy.m */; };
+		0F8BA092722D468F50BB70882958E641 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		2570C21033CF9CE5BBB4DB598070AAA0 /* CBMPeripheralDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81962DE7EF2E80255C3ED20FE052FD03 /* CBMPeripheralDelegate.swift */; };
 		2AA89D77E07DD32F98F3B0A6BA02B043 /* Pods-nRFBlinky-nRFBlinky_UITests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A53FE949257853F7E3939C9F803937 /* Pods-nRFBlinky-nRFBlinky_UITests-dummy.m */; };
-		3AF3CCF8EB7F1F8F5E259AA9E12554EA /* CBMCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149DA96AE4B0757FCD58E8C6894F262A /* CBMCentralManagerMock.swift */; };
-		53121987F81496973AC8BE273A85DA90 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
-		65FEEBAFF9B6761B51ED952E0C5F0998 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
-		66E549470BDB5D6D8485998E9CAC6462 /* CBMManagerTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D306CA112F99D4A04119AB8F496CE99 /* CBMManagerTypes.swift */; };
-		6DB4A92E01650BECAB1576C7D2B18024 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
-		8A344661C95AC643F96FCEF83CBD3D5A /* CBMPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB286AAB23291DC1F2D5FA8B20CE088 /* CBMPeripheral.swift */; };
-		95ACF3713FBC963CF793FA5ECD4AF0E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
+		37334C4B8A4EA75718F4D24AADC92C78 /* CoreBluetoothMock-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 10677B4C617605253149C862D20F3202 /* CoreBluetoothMock-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3C73047CC66710BE191572F583CF2320 /* CBMCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F829EB7FA3388ECE6827E15D36AD36DB /* CBMCentralManagerMock.swift */; };
+		3E634BE8EB8F5A2B06CF6B73F131374B /* CBMAttribute.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75F3BC5EF08882BB917B4D1FAA7EB4A /* CBMAttribute.swift */; };
+		523064FEE66AFCDCA708BE68FF23C4F6 /* CBMPeer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58C0781F44412FE4ECF625DA56A10EFF /* CBMPeer.swift */; };
+		7147DBA547A3CF3F160FF98EE08EC60E /* CBMPeripheralSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 063CACF6AE8A244DB8BB9B99364F683F /* CBMPeripheralSpec.swift */; };
+		7170E73FE24947C9AA8655E8986FFC25 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		85B79D753F21122DCEFA02F82BB67374 /* CBMPeripheralSpecDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4ABA63368CB4A6217205CBAFE1801A /* CBMPeripheralSpecDelegate.swift */; };
+		9279EBB7F253D755E2D58F66B2CD39FA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
 		992A243F9E07A2C02F2A3D5D1F9FE0BA /* Pods-nRFBlinky_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 77A61BDF33ED282A7D748B4FC5DAE523 /* Pods-nRFBlinky_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		9A8D3BB90C671DD73FCAE1D6C4437583 /* CoreBluetoothMock-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4EC0D494EE58CBD950742F102D032668 /* CoreBluetoothMock-dummy.m */; };
-		A9B8EC9173F45870D5492461152A5853 /* CBMCentralManagerNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842A177D9F23859BA6A61DF539C2E1AB /* CBMCentralManagerNative.swift */; };
-		A9D23DBAF5CA095D5F6D2989586EB893 /* CoreBluetoothMock-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 6AF75960CF6D9A222849D1B6DE891B65 /* CoreBluetoothMock-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AF1A3B07DA08881E4B98BFB7C87AD8D6 /* CBMPeripheralSpecDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9A15253A1A9FBF4835709258DC0C05 /* CBMPeripheralSpecDelegate.swift */; };
-		BB96033B18D62105C4E8C619EE81A315 /* CBMPeripheralSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF1D5BF0862A7B1F8F06A8017889205 /* CBMPeripheralSpec.swift */; };
+		A16B49A86D614688892E3F5EAF37E108 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		A87E2D552D93004428C3CE2BA514D7C5 /* CBMServiceTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398597E67B43674AB5284E35FE21205B /* CBMServiceTypes.swift */; };
+		AB670A8485CAB566CDAB74FAD0DBF5B4 /* CBMCentralManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA22E4FEEEE396E32B5704A0CBA28270 /* CBMCentralManager.swift */; };
 		C54303AB9DFC35AC12E4CEFB0D8DFEA4 /* Pods-nRFBlinky-nRFBlinky_UITests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 136AD593F202ACE109B877B06A30F9B3 /* Pods-nRFBlinky-nRFBlinky_UITests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CFBB308C09203969A136B643FA0CD21A /* CBMCentralManagerNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DA38E0522420CCA909D6F2C3A0657F /* CBMCentralManagerNative.swift */; };
+		D186165054C4187223C434D65F0108C0 /* CBMPeripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117D74662A9941CC8389BF0C7D9519F1 /* CBMPeripheral.swift */; };
 		D1C386D71723D4B1C2A935AD602B0C26 /* Pods-nRFBlinky-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C5B2698EFAB36B4C94DDBD6245C469 /* Pods-nRFBlinky-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DFACF96DD3561D15D1FF2EB44FC3A7CF /* CBMCentralManagerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCF6E929BCE1971ECF9B512C34FD85B3 /* CBMCentralManagerFactory.swift */; };
-		E153724C0F433F55800E61DC925AC8ED /* CBMPeripheralDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46EB8394AA6F0039E76CB2A837FD7257 /* CBMPeripheralDelegate.swift */; };
-		E8DBD44AD1C9A9EA0640999C91AB59B2 /* CBMCentralManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F1EF59353BD0F6ADEB1C6962F267A3 /* CBMCentralManagerDelegate.swift */; };
+		DAF02B9556B10BB943E7F44B341A5081 /* CBMCentralManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4DA242A847514E9C56F842A0AA0BACB /* CBMCentralManagerDelegate.swift */; };
+		E5613DCBF7BD733A9D02BD560C6F9E8F /* CBMCentralManagerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE7AEC502B45A0914306A9BAFB3F3378 /* CBMCentralManagerFactory.swift */; };
 		E937DE5E01D5103CE92C92ED0A96908E /* Pods-nRFBlinky_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 258D14F03E5A6413193BAC7C1007AF66 /* Pods-nRFBlinky_Tests-dummy.m */; };
-		E9E396A83B6DFC213E8A2A3D8EEA5909 /* CBMServiceTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74536A842E9D4B9490BE3961C0597A9A /* CBMServiceTypes.swift */; };
 		EEC425ED3F216525B8F116EAF637262B /* Pods-nRFBlinky-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E184D822F902304BAA7F65D6A90587B /* Pods-nRFBlinky-dummy.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		10F81C548150D544DAF7FB0E14A3F7CF /* PBXContainerItemProxy */ = {
+		1F56B175043B79EA100C4CE373848741 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5647B3702CC9BCAD6F81C5D3E7417452;
+			remoteInfo = CoreBluetoothMock;
+		};
+		6048CC48954907A109C67E97D606A824 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5647B3702CC9BCAD6F81C5D3E7417452;
+			remoteInfo = CoreBluetoothMock;
+		};
+		766E9F5200D13BCC5EB1D1F9CF077403 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = D8DA31B307E5478D785EED0F0F084E24;
 			remoteInfo = "Pods-nRFBlinky";
 		};
-		112394BAFD574B96B1ECA88423AC8E8F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5647B3702CC9BCAD6F81C5D3E7417452;
-			remoteInfo = CoreBluetoothMock;
-		};
-		7C9BB8D0C5CC2F7CF6D1F70ABB3D739C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5647B3702CC9BCAD6F81C5D3E7417452;
-			remoteInfo = CoreBluetoothMock;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		05A53FE949257853F7E3939C9F803937 /* Pods-nRFBlinky-nRFBlinky_UITests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFBlinky-nRFBlinky_UITests-dummy.m"; sourceTree = "<group>"; };
-		0B38A7EB08CC295929C5C821D0E8F9A3 /* CoreBluetoothMock-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "CoreBluetoothMock-Info.plist"; sourceTree = "<group>"; };
+		063CACF6AE8A244DB8BB9B99364F683F /* CBMPeripheralSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralSpec.swift; path = CoreBluetoothMock/Classes/CBMPeripheralSpec.swift; sourceTree = "<group>"; };
+		10677B4C617605253149C862D20F3202 /* CoreBluetoothMock-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CoreBluetoothMock-umbrella.h"; sourceTree = "<group>"; };
+		117D74662A9941CC8389BF0C7D9519F1 /* CBMPeripheral.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheral.swift; path = CoreBluetoothMock/Classes/CBMPeripheral.swift; sourceTree = "<group>"; };
 		136AD593F202ACE109B877B06A30F9B3 /* Pods-nRFBlinky-nRFBlinky_UITests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFBlinky-nRFBlinky_UITests-umbrella.h"; sourceTree = "<group>"; };
-		149DA96AE4B0757FCD58E8C6894F262A /* CBMCentralManagerMock.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerMock.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerMock.swift; sourceTree = "<group>"; };
+		16DA38E0522420CCA909D6F2C3A0657F /* CBMCentralManagerNative.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerNative.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerNative.swift; sourceTree = "<group>"; };
 		186005ABF43807617B23120BFEDA9F21 /* Pods-nRFBlinky-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRFBlinky-frameworks.sh"; sourceTree = "<group>"; };
-		1ADEBA16E046DCDBF7C0A7E47FB18293 /* CoreBluetoothMock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CoreBluetoothMock.debug.xcconfig; sourceTree = "<group>"; };
-		1EB286AAB23291DC1F2D5FA8B20CE088 /* CBMPeripheral.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheral.swift; path = CoreBluetoothMock/Classes/CBMPeripheral.swift; sourceTree = "<group>"; };
+		1DD4739660C83998E920C62CBF1EB686 /* CoreBluetoothMock.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = CoreBluetoothMock.modulemap; sourceTree = "<group>"; };
 		1F92E40BA4B115F4A8FF31133C71E5C9 /* Pods-nRFBlinky-nRFBlinky_UITests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFBlinky-nRFBlinky_UITests.modulemap"; sourceTree = "<group>"; };
 		23DDBE0DFE085AC6F53CE75068F0E893 /* Pods-nRFBlinky.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFBlinky.modulemap"; sourceTree = "<group>"; };
 		258D14F03E5A6413193BAC7C1007AF66 /* Pods-nRFBlinky_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFBlinky_Tests-dummy.m"; sourceTree = "<group>"; };
-		3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		39531918AF2A1703B9489BDFC4E83686 /* CoreBluetoothMock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CoreBluetoothMock.release.xcconfig; sourceTree = "<group>"; };
-		46EB8394AA6F0039E76CB2A837FD7257 /* CBMPeripheralDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralDelegate.swift; path = CoreBluetoothMock/Classes/CBMPeripheralDelegate.swift; sourceTree = "<group>"; };
+		398597E67B43674AB5284E35FE21205B /* CBMServiceTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMServiceTypes.swift; path = CoreBluetoothMock/Classes/CBMServiceTypes.swift; sourceTree = "<group>"; };
+		3E4ABA63368CB4A6217205CBAFE1801A /* CBMPeripheralSpecDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralSpecDelegate.swift; path = CoreBluetoothMock/Classes/CBMPeripheralSpecDelegate.swift; sourceTree = "<group>"; };
 		49C5B2698EFAB36B4C94DDBD6245C469 /* Pods-nRFBlinky-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFBlinky-umbrella.h"; sourceTree = "<group>"; };
 		4E184D822F902304BAA7F65D6A90587B /* Pods-nRFBlinky-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-nRFBlinky-dummy.m"; sourceTree = "<group>"; };
-		4EC0D494EE58CBD950742F102D032668 /* CoreBluetoothMock-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CoreBluetoothMock-dummy.m"; sourceTree = "<group>"; };
+		4FACA62F6A84C45B86F90AA5AD62B9E3 /* CoreBluetoothMock-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "CoreBluetoothMock-dummy.m"; sourceTree = "<group>"; };
 		574235F7BEB93EAB469098C7D5C07A8C /* Pods-nRFBlinky_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRFBlinky_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		58C0781F44412FE4ECF625DA56A10EFF /* CBMPeer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeer.swift; path = CoreBluetoothMock/Classes/CBMPeer.swift; sourceTree = "<group>"; };
 		58D566B721898E1D43CFE4A9BFB4EA88 /* Pods-nRFBlinky.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky.debug.xcconfig"; sourceTree = "<group>"; };
 		601EB604CAC3ECACFB55BDBEDB2B2FF8 /* Pods-nRFBlinky-nRFBlinky_UITests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRFBlinky-nRFBlinky_UITests-frameworks.sh"; sourceTree = "<group>"; };
 		60EDDADB5A72F73CE358CC9DD73E6E4D /* Pods-nRFBlinky-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky-Info.plist"; sourceTree = "<group>"; };
+		6282E601F033ED017A959F70F8E160BE /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		69DE65DBE26968A43D4675CCB5B8F1E4 /* Pods_nRFBlinky_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6AEE914A8D0D12DB5B503675D3960146 /* CoreBluetoothMock.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = CoreBluetoothMock.modulemap; sourceTree = "<group>"; };
-		6AF75960CF6D9A222849D1B6DE891B65 /* CoreBluetoothMock-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CoreBluetoothMock-umbrella.h"; sourceTree = "<group>"; };
-		6D9A15253A1A9FBF4835709258DC0C05 /* CBMPeripheralSpecDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralSpecDelegate.swift; path = CoreBluetoothMock/Classes/CBMPeripheralSpecDelegate.swift; sourceTree = "<group>"; };
 		72D8941B2D1FDDEABD4AE7C02FED240C /* Pods-nRFBlinky_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		73F49D0D11CA3BC68F1FFF1BB879E869 /* Pods-nRFBlinky_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky_Tests.release.xcconfig"; sourceTree = "<group>"; };
-		74536A842E9D4B9490BE3961C0597A9A /* CBMServiceTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMServiceTypes.swift; path = CoreBluetoothMock/Classes/CBMServiceTypes.swift; sourceTree = "<group>"; };
 		75DD36E0C1A14D8060C2AF6DFF30D574 /* Pods-nRFBlinky-nRFBlinky_UITests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky-nRFBlinky_UITests-Info.plist"; sourceTree = "<group>"; };
 		779567A4B02AC0655BAD2A631CED3E38 /* CoreBluetoothMock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreBluetoothMock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		77A61BDF33ED282A7D748B4FC5DAE523 /* Pods-nRFBlinky_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFBlinky_Tests-umbrella.h"; sourceTree = "<group>"; };
+		81962DE7EF2E80255C3ED20FE052FD03 /* CBMPeripheralDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralDelegate.swift; path = CoreBluetoothMock/Classes/CBMPeripheralDelegate.swift; sourceTree = "<group>"; };
 		841F4A2347EB60F32CD0D3903EA8A854 /* Pods-nRFBlinky-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky-acknowledgements.plist"; sourceTree = "<group>"; };
-		842A177D9F23859BA6A61DF539C2E1AB /* CBMCentralManagerNative.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerNative.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerNative.swift; sourceTree = "<group>"; };
 		88D27FB2652F32CA77F55A6A7C490761 /* Pods-nRFBlinky-nRFBlinky_UITests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRFBlinky-nRFBlinky_UITests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		8ADB40C76964B164AA2E3937BB9BFEF5 /* CoreBluetoothMock-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CoreBluetoothMock-prefix.pch"; sourceTree = "<group>"; };
 		8E090B58AD04F7215131769994A091A3 /* Pods-nRFBlinky-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-nRFBlinky-acknowledgements.markdown"; sourceTree = "<group>"; };
 		8E161584725FCAD8B1A028E8DEB9486A /* Pods-nRFBlinky_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky_Tests-Info.plist"; sourceTree = "<group>"; };
+		965AE7892DA571EA5874A64344F752F1 /* CoreBluetoothMock-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "CoreBluetoothMock-Info.plist"; sourceTree = "<group>"; };
 		9C5103A94668BA93B8DCDBD27491209F /* Pods-nRFBlinky.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky.release.xcconfig"; sourceTree = "<group>"; };
-		9D306CA112F99D4A04119AB8F496CE99 /* CBMManagerTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMManagerTypes.swift; path = CoreBluetoothMock/Classes/CBMManagerTypes.swift; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		9E47724F38F58189A2FC36C853941E76 /* Pods-nRFBlinky_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
+		A38A05EC67C277A90E1EA13B6BCA1C9F /* CoreBluetoothMock.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = CoreBluetoothMock.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		AA22E4FEEEE396E32B5704A0CBA28270 /* CBMCentralManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManager.swift; path = CoreBluetoothMock/Classes/CBMCentralManager.swift; sourceTree = "<group>"; };
+		B4DA242A847514E9C56F842A0AA0BACB /* CBMCentralManagerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerDelegate.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerDelegate.swift; sourceTree = "<group>"; };
 		B5ECDC42B563CFCA3D95087F11E165C9 /* Pods_nRFBlinky.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B8073031A6E28CC15412A5B430AF4334 /* CoreBluetoothMock-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CoreBluetoothMock-prefix.pch"; sourceTree = "<group>"; };
+		B75F3BC5EF08882BB917B4D1FAA7EB4A /* CBMAttribute.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMAttribute.swift; path = CoreBluetoothMock/Classes/CBMAttribute.swift; sourceTree = "<group>"; };
+		BE7AEC502B45A0914306A9BAFB3F3378 /* CBMCentralManagerFactory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerFactory.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerFactory.swift; sourceTree = "<group>"; };
 		C348C9192BF2799624BD1BAAF5DFED0C /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig"; sourceTree = "<group>"; };
 		C366D985CC68EF9A7B5BBB3186F44D2D /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig"; sourceTree = "<group>"; };
-		C5E918EBC343E9B8AC3E263F561CFAAE /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		C6B191FE01870F950E66F66A65810125 /* Pods-nRFBlinky-nRFBlinky_UITests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky-nRFBlinky_UITests-acknowledgements.plist"; sourceTree = "<group>"; };
-		DB5F3BBA0A13914BE340CEBAC41E0E5C /* CBMCentralManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManager.swift; path = CoreBluetoothMock/Classes/CBMCentralManager.swift; sourceTree = "<group>"; };
-		DB76E4DD0300A1717645F7D4D97FF61B /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		DB9C81D782A1CD039CF7D5A91C0E26AF /* CoreBluetoothMock.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = CoreBluetoothMock.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		DCF6E929BCE1971ECF9B512C34FD85B3 /* CBMCentralManagerFactory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerFactory.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerFactory.swift; sourceTree = "<group>"; };
-		DEF1D5BF0862A7B1F8F06A8017889205 /* CBMPeripheralSpec.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralSpec.swift; path = CoreBluetoothMock/Classes/CBMPeripheralSpec.swift; sourceTree = "<group>"; };
+		E409B30A13DC7B4D3880C5F30EB389EF /* CoreBluetoothMock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CoreBluetoothMock.release.xcconfig; sourceTree = "<group>"; };
 		E51C3B2EBE3D334E3BD361653A43734F /* Pods-nRFBlinky_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFBlinky_Tests.modulemap"; sourceTree = "<group>"; };
-		F7F1EF59353BD0F6ADEB1C6962F267A3 /* CBMCentralManagerDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerDelegate.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerDelegate.swift; sourceTree = "<group>"; };
+		E78C6B5F0B8A5CB6B555843B40D0AE70 /* CBMManagerTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMManagerTypes.swift; path = CoreBluetoothMock/Classes/CBMManagerTypes.swift; sourceTree = "<group>"; };
+		F29F95E0DB06DAB29BC7FAC729563B63 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		F43A65C066D0704FD6818FEE6D88E8B8 /* CoreBluetoothMock.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CoreBluetoothMock.debug.xcconfig; sourceTree = "<group>"; };
+		F829EB7FA3388ECE6827E15D36AD36DB /* CBMCentralManagerMock.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerMock.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerMock.swift; sourceTree = "<group>"; };
 		FA11D9D2A8BE1D25698FC4DB8F16C15D /* Pods_nRFBlinky_nRFBlinky_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_nRFBlinky_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -117,7 +121,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65FEEBAFF9B6761B51ED952E0C5F0998 /* Foundation.framework in Frameworks */,
+				A16B49A86D614688892E3F5EAF37E108 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,15 +129,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53121987F81496973AC8BE273A85DA90 /* Foundation.framework in Frameworks */,
+				9279EBB7F253D755E2D58F66B2CD39FA /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B7775001E567CDCCD355893A27DF9C61 /* Frameworks */ = {
+		6E32FF01EF1CED2275CE4AD317D60A95 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				95ACF3713FBC963CF793FA5ECD4AF0E8 /* Foundation.framework in Frameworks */,
+				0F8BA092722D468F50BB70882958E641 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,19 +145,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DB4A92E01650BECAB1576C7D2B18024 /* Foundation.framework in Frameworks */,
+				7170E73FE24947C9AA8655E8986FFC25 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0A83BBBA2396431D8CD37EC8F77C4C60 /* Development Pods */ = {
+		010F3A458A711CA3D5350E8237CDB3DE /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				8C9FE8AEAEEC6A8523F252A19EC4503F /* CoreBluetoothMock */,
+				A38A05EC67C277A90E1EA13B6BCA1C9F /* CoreBluetoothMock.podspec */,
+				F29F95E0DB06DAB29BC7FAC729563B63 /* LICENSE */,
+				6282E601F033ED017A959F70F8E160BE /* README.md */,
 			);
-			name = "Development Pods";
+			name = Pod;
 			sourceTree = "<group>";
 		};
 		182FD0D77DB15F326EC7F37857D0215F /* Pods-nRFBlinky_Tests */ = {
@@ -170,21 +176,6 @@
 			);
 			name = "Pods-nRFBlinky_Tests";
 			path = "Target Support Files/Pods-nRFBlinky_Tests";
-			sourceTree = "<group>";
-		};
-		29670088D0537C568039738CDE5E6AA2 /* Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				6AEE914A8D0D12DB5B503675D3960146 /* CoreBluetoothMock.modulemap */,
-				4EC0D494EE58CBD950742F102D032668 /* CoreBluetoothMock-dummy.m */,
-				0B38A7EB08CC295929C5C821D0E8F9A3 /* CoreBluetoothMock-Info.plist */,
-				B8073031A6E28CC15412A5B430AF4334 /* CoreBluetoothMock-prefix.pch */,
-				6AF75960CF6D9A222849D1B6DE891B65 /* CoreBluetoothMock-umbrella.h */,
-				1ADEBA16E046DCDBF7C0A7E47FB18293 /* CoreBluetoothMock.debug.xcconfig */,
-				39531918AF2A1703B9489BDFC4E83686 /* CoreBluetoothMock.release.xcconfig */,
-			);
-			name = "Support Files";
-			path = "Example/Pods/Target Support Files/CoreBluetoothMock";
 			sourceTree = "<group>";
 		};
 		2E0F01A05A92A91CEE151E325A767CA4 /* Products */ = {
@@ -208,35 +199,20 @@
 			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
-		8C9FE8AEAEEC6A8523F252A19EC4503F /* CoreBluetoothMock */ = {
+		578452D2E740E91742655AC8F1636D1F /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				DB5F3BBA0A13914BE340CEBAC41E0E5C /* CBMCentralManager.swift */,
-				F7F1EF59353BD0F6ADEB1C6962F267A3 /* CBMCentralManagerDelegate.swift */,
-				DCF6E929BCE1971ECF9B512C34FD85B3 /* CBMCentralManagerFactory.swift */,
-				149DA96AE4B0757FCD58E8C6894F262A /* CBMCentralManagerMock.swift */,
-				842A177D9F23859BA6A61DF539C2E1AB /* CBMCentralManagerNative.swift */,
-				9D306CA112F99D4A04119AB8F496CE99 /* CBMManagerTypes.swift */,
-				1EB286AAB23291DC1F2D5FA8B20CE088 /* CBMPeripheral.swift */,
-				46EB8394AA6F0039E76CB2A837FD7257 /* CBMPeripheralDelegate.swift */,
-				DEF1D5BF0862A7B1F8F06A8017889205 /* CBMPeripheralSpec.swift */,
-				6D9A15253A1A9FBF4835709258DC0C05 /* CBMPeripheralSpecDelegate.swift */,
-				74536A842E9D4B9490BE3961C0597A9A /* CBMServiceTypes.swift */,
-				A0D7D9985C3C9310092EF59609CC7FDC /* Pod */,
-				29670088D0537C568039738CDE5E6AA2 /* Support Files */,
+				73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */,
 			);
-			name = CoreBluetoothMock;
-			path = ../..;
+			name = iOS;
 			sourceTree = "<group>";
 		};
-		A0D7D9985C3C9310092EF59609CC7FDC /* Pod */ = {
+		587E93355D217D7B92204316A2804795 /* Development Pods */ = {
 			isa = PBXGroup;
 			children = (
-				DB9C81D782A1CD039CF7D5A91C0E26AF /* CoreBluetoothMock.podspec */,
-				C5E918EBC343E9B8AC3E263F561CFAAE /* LICENSE */,
-				DB76E4DD0300A1717645F7D4D97FF61B /* README.md */,
+				ECBF53561E4EAA352482E4427F132A64 /* CoreBluetoothMock */,
 			);
-			name = Pod;
+			name = "Development Pods";
 			sourceTree = "<group>";
 		};
 		AEDF17C5AB34817EE4F87ADFB119F996 /* Pods-nRFBlinky-nRFBlinky_UITests */ = {
@@ -256,19 +232,26 @@
 			path = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests";
 			sourceTree = "<group>";
 		};
-		C0834CEBB1379A84116EF29F93051C60 /* iOS */ = {
+		B0685F89080C3536CF40BB6D740691FA /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */,
+				1DD4739660C83998E920C62CBF1EB686 /* CoreBluetoothMock.modulemap */,
+				4FACA62F6A84C45B86F90AA5AD62B9E3 /* CoreBluetoothMock-dummy.m */,
+				965AE7892DA571EA5874A64344F752F1 /* CoreBluetoothMock-Info.plist */,
+				8ADB40C76964B164AA2E3937BB9BFEF5 /* CoreBluetoothMock-prefix.pch */,
+				10677B4C617605253149C862D20F3202 /* CoreBluetoothMock-umbrella.h */,
+				F43A65C066D0704FD6818FEE6D88E8B8 /* CoreBluetoothMock.debug.xcconfig */,
+				E409B30A13DC7B4D3880C5F30EB389EF /* CoreBluetoothMock.release.xcconfig */,
 			);
-			name = iOS;
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/CoreBluetoothMock";
 			sourceTree = "<group>";
 		};
 		CF1408CF629C7361332E53B88F7BD30C = {
 			isa = PBXGroup;
 			children = (
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
-				0A83BBBA2396431D8CD37EC8F77C4C60 /* Development Pods */,
+				587E93355D217D7B92204316A2804795 /* Development Pods */,
 				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
 				2E0F01A05A92A91CEE151E325A767CA4 /* Products */,
 				3A45CAB5CC6B1759026B856C4F9A8654 /* Targets Support Files */,
@@ -278,9 +261,32 @@
 		D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C0834CEBB1379A84116EF29F93051C60 /* iOS */,
+				578452D2E740E91742655AC8F1636D1F /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		ECBF53561E4EAA352482E4427F132A64 /* CoreBluetoothMock */ = {
+			isa = PBXGroup;
+			children = (
+				B75F3BC5EF08882BB917B4D1FAA7EB4A /* CBMAttribute.swift */,
+				AA22E4FEEEE396E32B5704A0CBA28270 /* CBMCentralManager.swift */,
+				B4DA242A847514E9C56F842A0AA0BACB /* CBMCentralManagerDelegate.swift */,
+				BE7AEC502B45A0914306A9BAFB3F3378 /* CBMCentralManagerFactory.swift */,
+				F829EB7FA3388ECE6827E15D36AD36DB /* CBMCentralManagerMock.swift */,
+				16DA38E0522420CCA909D6F2C3A0657F /* CBMCentralManagerNative.swift */,
+				E78C6B5F0B8A5CB6B555843B40D0AE70 /* CBMManagerTypes.swift */,
+				58C0781F44412FE4ECF625DA56A10EFF /* CBMPeer.swift */,
+				117D74662A9941CC8389BF0C7D9519F1 /* CBMPeripheral.swift */,
+				81962DE7EF2E80255C3ED20FE052FD03 /* CBMPeripheralDelegate.swift */,
+				063CACF6AE8A244DB8BB9B99364F683F /* CBMPeripheralSpec.swift */,
+				3E4ABA63368CB4A6217205CBAFE1801A /* CBMPeripheralSpecDelegate.swift */,
+				398597E67B43674AB5284E35FE21205B /* CBMServiceTypes.swift */,
+				010F3A458A711CA3D5350E8237CDB3DE /* Pod */,
+				B0685F89080C3536CF40BB6D740691FA /* Support Files */,
+			);
+			name = CoreBluetoothMock;
+			path = ../..;
 			sourceTree = "<group>";
 		};
 		F63676E082B6EC6B5406B878027370CC /* Pods-nRFBlinky */ = {
@@ -303,19 +309,19 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		297577318C30B76182F0EED28EE27DB8 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				A9D23DBAF5CA095D5F6D2989586EB893 /* CoreBluetoothMock-umbrella.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3EF167C9F392886605EA7EE212C7F075 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				C54303AB9DFC35AC12E4CEFB0D8DFEA4 /* Pods-nRFBlinky-nRFBlinky_UITests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44FA3F83F02D1E31E20837D03F3A5265 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37334C4B8A4EA75718F4D24AADC92C78 /* CoreBluetoothMock-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,12 +346,12 @@
 /* Begin PBXNativeTarget section */
 		5647B3702CC9BCAD6F81C5D3E7417452 /* CoreBluetoothMock */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5CFBFF5CD4169E9CDA7DBD37C51396CD /* Build configuration list for PBXNativeTarget "CoreBluetoothMock" */;
+			buildConfigurationList = 7331393C8433A298672A1BF9AB9D597E /* Build configuration list for PBXNativeTarget "CoreBluetoothMock" */;
 			buildPhases = (
-				297577318C30B76182F0EED28EE27DB8 /* Headers */,
-				91A48DB9F59688CF440A17B08B2E3562 /* Sources */,
-				B7775001E567CDCCD355893A27DF9C61 /* Frameworks */,
-				AE6F7A8A9825100CAE3F853E8517222F /* Resources */,
+				44FA3F83F02D1E31E20837D03F3A5265 /* Headers */,
+				7A35F6E60F19E5A8DF253DA8D04B892E /* Sources */,
+				6E32FF01EF1CED2275CE4AD317D60A95 /* Frameworks */,
+				364A0FFF6EF71D0E92CA40AF87CED543 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -368,7 +374,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				86CA9AFFB74CB99C4ED9D4BD19D2AF3C /* PBXTargetDependency */,
+				CE80564187BC6655F1FE19D1E4840919 /* PBXTargetDependency */,
 			);
 			name = "Pods-nRFBlinky_Tests";
 			productName = "Pods-nRFBlinky_Tests";
@@ -387,7 +393,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				C0E6F58429CA138F1F32D742209249B9 /* PBXTargetDependency */,
+				4F2A8EBD5FE44E0932443A2BE5E25ADA /* PBXTargetDependency */,
 			);
 			name = "Pods-nRFBlinky-nRFBlinky_UITests";
 			productName = "Pods-nRFBlinky-nRFBlinky_UITests";
@@ -406,7 +412,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B92E3B9B77E12E26C42BB7FD0D05BD36 /* PBXTargetDependency */,
+				10D47D1073BE952CA5E534C4B71B30B9 /* PBXTargetDependency */,
 			);
 			name = "Pods-nRFBlinky";
 			productName = "Pods-nRFBlinky";
@@ -420,7 +426,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1100;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1250;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -451,6 +457,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		364A0FFF6EF71D0E92CA40AF87CED543 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		539F937F3560F68E32CD19ED492D8E49 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -459,13 +472,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A44C3E83324E4DEBE5B98F355A0C3BC8 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AE6F7A8A9825100CAE3F853E8517222F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -491,22 +497,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		91A48DB9F59688CF440A17B08B2E3562 /* Sources */ = {
+		7A35F6E60F19E5A8DF253DA8D04B892E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2253381ACD2C30E9C3B5BC7612DA4321 /* CBMCentralManager.swift in Sources */,
-				E8DBD44AD1C9A9EA0640999C91AB59B2 /* CBMCentralManagerDelegate.swift in Sources */,
-				DFACF96DD3561D15D1FF2EB44FC3A7CF /* CBMCentralManagerFactory.swift in Sources */,
-				3AF3CCF8EB7F1F8F5E259AA9E12554EA /* CBMCentralManagerMock.swift in Sources */,
-				A9B8EC9173F45870D5492461152A5853 /* CBMCentralManagerNative.swift in Sources */,
-				66E549470BDB5D6D8485998E9CAC6462 /* CBMManagerTypes.swift in Sources */,
-				8A344661C95AC643F96FCEF83CBD3D5A /* CBMPeripheral.swift in Sources */,
-				E153724C0F433F55800E61DC925AC8ED /* CBMPeripheralDelegate.swift in Sources */,
-				BB96033B18D62105C4E8C619EE81A315 /* CBMPeripheralSpec.swift in Sources */,
-				AF1A3B07DA08881E4B98BFB7C87AD8D6 /* CBMPeripheralSpecDelegate.swift in Sources */,
-				E9E396A83B6DFC213E8A2A3D8EEA5909 /* CBMServiceTypes.swift in Sources */,
-				9A8D3BB90C671DD73FCAE1D6C4437583 /* CoreBluetoothMock-dummy.m in Sources */,
+				3E634BE8EB8F5A2B06CF6B73F131374B /* CBMAttribute.swift in Sources */,
+				AB670A8485CAB566CDAB74FAD0DBF5B4 /* CBMCentralManager.swift in Sources */,
+				DAF02B9556B10BB943E7F44B341A5081 /* CBMCentralManagerDelegate.swift in Sources */,
+				E5613DCBF7BD733A9D02BD560C6F9E8F /* CBMCentralManagerFactory.swift in Sources */,
+				3C73047CC66710BE191572F583CF2320 /* CBMCentralManagerMock.swift in Sources */,
+				CFBB308C09203969A136B643FA0CD21A /* CBMCentralManagerNative.swift in Sources */,
+				04A694EE5664E7E5F0F6A9DBD976B01A /* CBMManagerTypes.swift in Sources */,
+				523064FEE66AFCDCA708BE68FF23C4F6 /* CBMPeer.swift in Sources */,
+				D186165054C4187223C434D65F0108C0 /* CBMPeripheral.swift in Sources */,
+				2570C21033CF9CE5BBB4DB598070AAA0 /* CBMPeripheralDelegate.swift in Sources */,
+				7147DBA547A3CF3F160FF98EE08EC60E /* CBMPeripheralSpec.swift in Sources */,
+				85B79D753F21122DCEFA02F82BB67374 /* CBMPeripheralSpecDelegate.swift in Sources */,
+				A87E2D552D93004428C3CE2BA514D7C5 /* CBMServiceTypes.swift in Sources */,
+				0D169D639C0FE3F1AB57E91F3D39BE51 /* CoreBluetoothMock-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -521,95 +529,28 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		86CA9AFFB74CB99C4ED9D4BD19D2AF3C /* PBXTargetDependency */ = {
+		10D47D1073BE952CA5E534C4B71B30B9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CoreBluetoothMock;
+			target = 5647B3702CC9BCAD6F81C5D3E7417452 /* CoreBluetoothMock */;
+			targetProxy = 6048CC48954907A109C67E97D606A824 /* PBXContainerItemProxy */;
+		};
+		4F2A8EBD5FE44E0932443A2BE5E25ADA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CoreBluetoothMock;
+			target = 5647B3702CC9BCAD6F81C5D3E7417452 /* CoreBluetoothMock */;
+			targetProxy = 1F56B175043B79EA100C4CE373848741 /* PBXContainerItemProxy */;
+		};
+		CE80564187BC6655F1FE19D1E4840919 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Pods-nRFBlinky";
 			target = D8DA31B307E5478D785EED0F0F084E24 /* Pods-nRFBlinky */;
-			targetProxy = 10F81C548150D544DAF7FB0E14A3F7CF /* PBXContainerItemProxy */;
-		};
-		B92E3B9B77E12E26C42BB7FD0D05BD36 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CoreBluetoothMock;
-			target = 5647B3702CC9BCAD6F81C5D3E7417452 /* CoreBluetoothMock */;
-			targetProxy = 112394BAFD574B96B1ECA88423AC8E8F /* PBXContainerItemProxy */;
-		};
-		C0E6F58429CA138F1F32D742209249B9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CoreBluetoothMock;
-			target = 5647B3702CC9BCAD6F81C5D3E7417452 /* CoreBluetoothMock */;
-			targetProxy = 7C9BB8D0C5CC2F7CF6D1F70ABB3D739C /* PBXContainerItemProxy */;
+			targetProxy = 766E9F5200D13BCC5EB1D1F9CF077403 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		3E9842D66D652CBF7A82B0AABC49C714 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C366D985CC68EF9A7B5BBB3186F44D2D /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		4864275E0DFB2820D7094F0C6FBCC3E6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 58D566B721898E1D43CFE4A9BFB4EA88 /* Pods-nRFBlinky.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		4EBC741460BC710C963D24CAAB3BC925 /* Debug */ = {
+		25AD9454612BF454A1E3DC4CD4FA8C6D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -675,12 +616,169 @@
 			};
 			name = Debug;
 		};
-		588ABC3CC06BEE4F4CDDFA3157FC8017 /* Release */ = {
+		4DCF3EBA05FB611112ED737F47FD563F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C348C9192BF2799624BD1BAAF5DFED0C /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		5BD6E59427D6133A99909C601B377205 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C366D985CC68EF9A7B5BBB3186F44D2D /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		5FCC2599BA4F442076B16CC2AD37603E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E409B30A13DC7B4D3880C5F30EB389EF /* CoreBluetoothMock.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
+				PRODUCT_MODULE_NAME = CoreBluetoothMock;
+				PRODUCT_NAME = CoreBluetoothMock;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.4;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		82AE43B520668C234D5D67522FDC7DDB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 58D566B721898E1D43CFE4A9BFB4EA88 /* Pods-nRFBlinky.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		8F00A2A468C9E8D1ADD5121D18710D22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F43A65C066D0704FD6818FEE6D88E8B8 /* CoreBluetoothMock.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
+				PRODUCT_MODULE_NAME = CoreBluetoothMock;
+				PRODUCT_NAME = CoreBluetoothMock;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.4;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		91AEB8643DA510045BF5E7DAD93C3710 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C5103A94668BA93B8DCDBD27491209F /* Pods-nRFBlinky.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -709,12 +807,11 @@
 			};
 			name = Release;
 		};
-		88D7727D3364F1F97B8174ED6AD37A87 /* Debug */ = {
+		97EBE672CDF9667EACB4014D14CDD5D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C348C9192BF2799624BD1BAAF5DFED0C /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */;
+			baseConfigurationReference = 72D8941B2D1FDDEABD4AE7C02FED240C /* Pods-nRFBlinky_Tests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -723,12 +820,12 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -742,7 +839,7 @@
 			};
 			name = Debug;
 		};
-		A40FB7C4B9460AE765A736AB575EEB32 /* Release */ = {
+		CA547D2C7E9A8A153DC2B27FBE00B112 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -803,75 +900,11 @@
 			};
 			name = Release;
 		};
-		C1C6F420C91A7C748BF877F69B19FD17 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 39531918AF2A1703B9489BDFC4E83686 /* CoreBluetoothMock.release.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
-				PRODUCT_MODULE_NAME = CoreBluetoothMock;
-				PRODUCT_NAME = CoreBluetoothMock;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.3;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		C3F8BB67C28E6161AA129F68588C1B19 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1ADEBA16E046DCDBF7C0A7E47FB18293 /* CoreBluetoothMock.debug.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
-				PRODUCT_MODULE_NAME = CoreBluetoothMock;
-				PRODUCT_NAME = CoreBluetoothMock;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.3;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		DE5441769EA3C2F1EF613AF2DD5CCC5F /* Release */ = {
+		FE5057122D95811711FE445BC89FA34D /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 73F49D0D11CA3BC68F1FFF1BB879E869 /* Pods-nRFBlinky_Tests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -899,39 +932,6 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
-		};
-		F2A6CE60573280108B480A31A63D1F91 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 72D8941B2D1FDDEABD4AE7C02FED240C /* Pods-nRFBlinky_Tests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
@@ -939,17 +939,8 @@
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4EBC741460BC710C963D24CAAB3BC925 /* Debug */,
-				A40FB7C4B9460AE765A736AB575EEB32 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		5CFBFF5CD4169E9CDA7DBD37C51396CD /* Build configuration list for PBXNativeTarget "CoreBluetoothMock" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C3F8BB67C28E6161AA129F68588C1B19 /* Debug */,
-				C1C6F420C91A7C748BF877F69B19FD17 /* Release */,
+				25AD9454612BF454A1E3DC4CD4FA8C6D /* Debug */,
+				CA547D2C7E9A8A153DC2B27FBE00B112 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -957,8 +948,17 @@
 		6C9265098327928E3DBF78BAB936BE0D /* Build configuration list for PBXNativeTarget "Pods-nRFBlinky_Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F2A6CE60573280108B480A31A63D1F91 /* Debug */,
-				DE5441769EA3C2F1EF613AF2DD5CCC5F /* Release */,
+				97EBE672CDF9667EACB4014D14CDD5D8 /* Debug */,
+				FE5057122D95811711FE445BC89FA34D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7331393C8433A298672A1BF9AB9D597E /* Build configuration list for PBXNativeTarget "CoreBluetoothMock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F00A2A468C9E8D1ADD5121D18710D22 /* Debug */,
+				5FCC2599BA4F442076B16CC2AD37603E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -966,8 +966,8 @@
 		BD7DFF485A2B0126A18BD6F13E2D36F9 /* Build configuration list for PBXNativeTarget "Pods-nRFBlinky-nRFBlinky_UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				88D7727D3364F1F97B8174ED6AD37A87 /* Debug */,
-				3E9842D66D652CBF7A82B0AABC49C714 /* Release */,
+				4DCF3EBA05FB611112ED737F47FD563F /* Debug */,
+				5BD6E59427D6133A99909C601B377205 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -975,8 +975,8 @@
 		EA30BB731C08E4BCBBB841B93CB38640 /* Build configuration list for PBXNativeTarget "Pods-nRFBlinky" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4864275E0DFB2820D7094F0C6FBCC3E6 /* Debug */,
-				588ABC3CC06BEE4F4CDDFA3157FC8017 /* Release */,
+				82AE43B520668C234D5D67522FDC7DDB /* Debug */,
+				91AEB8643DA510045BF5E7DAD93C3710 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

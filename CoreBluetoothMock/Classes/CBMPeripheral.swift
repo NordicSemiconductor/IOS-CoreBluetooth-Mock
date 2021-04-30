@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-public protocol CBMPeripheral: class {
+public protocol CBMPeripheral: AnyObject {
     
     /// The unique, persistent identifier associated with the peer.
     var identifier: UUID { get }

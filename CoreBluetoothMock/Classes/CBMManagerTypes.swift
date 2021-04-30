@@ -45,8 +45,9 @@ public enum CBMManagerState: Int {
     case poweredOn
 }
 
-public typealias CBMPeer = CBPeer
-public typealias CBMAttribute = CBAttribute
+// disabled for Xcode 12.5 beta
+//public typealias CBMPeer = CBPeer
+//public typealias CBMAttribute = CBAttribute
 public typealias CBMUUID = CBUUID
 public typealias CBMError = CBError
 public typealias CBMATTError = CBATTError
