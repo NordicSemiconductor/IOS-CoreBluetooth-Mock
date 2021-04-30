@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-public protocol CBMCentralManager: class {
+public protocol CBMCentralManager: AnyObject {
     #if !os(macOS)
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     typealias Feature = CBCentralManager.Feature
