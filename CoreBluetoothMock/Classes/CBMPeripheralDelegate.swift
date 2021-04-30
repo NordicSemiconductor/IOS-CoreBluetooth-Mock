@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-public protocol CBMPeripheralDelegate: class {
+public protocol CBMPeripheralDelegate: AnyObject {
     
     /// This method is invoked when the name of peripheral changes.
     /// - Parameter peripheral: The peripheral providing this update.
