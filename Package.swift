@@ -9,7 +9,7 @@ let package = Package(
   name: "CoreBluetoothMock",
   platforms: [
     .macOS(.v10_13),
-    .iOS(.v8),
+    .iOS(.v9),
     .watchOS(.v4),
     .tvOS(.v11)
   ],
