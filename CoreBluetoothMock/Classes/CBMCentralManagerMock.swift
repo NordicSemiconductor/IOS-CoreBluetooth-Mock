@@ -1193,7 +1193,8 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             
             delegate.peripheral(mock,
                                 didReceiveWriteCommandFor: characteristic,
-                                data: data.subdata(in: 0..<mtu - 3))
+                                data: data.subdata(in: 0..<min(mtu - 3, data.count)))
+
             queue.async { [weak self] in
                 if let self = self, self.state == .connected {
                     let increaseBuffer = {
