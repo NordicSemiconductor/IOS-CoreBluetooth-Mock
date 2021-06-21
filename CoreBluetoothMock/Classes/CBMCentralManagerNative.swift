@@ -388,7 +388,10 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         /// Returns the wrapper for the native CBCharacteristic.
         /// - Parameter characteristic: The native characteristic.
         private func mock(of characteristic: CBCharacteristic) -> CBMCharacteristicNative? {
-            let service = mock(of: characteristic.service)
+            let optService: CBService? = characteristic.service
+            guard let unwrappedService = optService else { return nil }
+
+            let service = mock(of: unwrappedService)
             return (service?._characteristics as? [CBMCharacteristicNative])?
                 .first { $0.characteristic == characteristic }
         }
@@ -396,7 +399,10 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         /// Returns the wrapper for the native CBDescriptor.
         /// - Parameter descriptor: The native descriptor.
         private func mock(of descriptor: CBDescriptor) -> CBMDescriptorNative? {
-            let characteristic = mock(of: descriptor.characteristic)
+            let optCharacteristic: CBCharacteristic? = descriptor.characteristic
+            guard let unwrappedCharacteristic = optCharacteristic else { return nil }
+
+            let characteristic = mock(of: unwrappedCharacteristic)
             return (characteristic?._descriptors as? [CBMDescriptorNative])?
                 .first { $0.descriptor == descriptor }
         }
@@ -419,7 +425,8 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         ///   - action: The action to perform on its mock.
         private func usingMock(of characteristic: CBCharacteristic,
                                action: @escaping (CBMPeripheral, CBMPeripheralDelegate, CBMCharacteristic) -> ()) {
-            usingMock(of: characteristic.service) { p, d, s in
+            let optService: CBService? = characteristic.service
+            usingMock(of: optService!) { p, d, s in
                 if let characteristicMock = self.mock(of: characteristic) {
                     action(p, d, characteristicMock)
                 }
@@ -432,7 +439,8 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         ///   - action: The action to perform on its mock.
         private func usingMock(of descriptor: CBDescriptor,
                                action: @escaping (CBMPeripheral, CBMPeripheralDelegate, CBMDescriptor) -> ()) {
-            usingMock(of: descriptor.characteristic) { p, d, c in
+            let optCharacteristic: CBCharacteristic? = descriptor.characteristic
+            usingMock(of: optCharacteristic!) { p, d, c in
                 if let descriptorMock = self.mock(of: descriptor) {
                     action(p, d, descriptorMock)
                 }
