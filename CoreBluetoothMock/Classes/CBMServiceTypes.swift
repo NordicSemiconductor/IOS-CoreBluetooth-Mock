@@ -38,7 +38,7 @@ open class CBMService: CBMAttribute {
     internal var _characteristics: [CBMCharacteristic]?
 
     /// A back-pointer to the peripheral this service belongs to.
-    open internal(set) unowned var peripheral: CBMPeripheral
+    open internal(set) weak var peripheral: CBMPeripheral?
     
     /// The type of the service (primary or secondary).
     open fileprivate(set) var isPrimary: Bool
@@ -152,7 +152,7 @@ open class CBMCharacteristic: CBMAttribute {
     }
 
     /// A back-pointer to the service this characteristic belongs to.
-    open internal(set) var service: CBMService
+    open internal(set) weak var service: CBMService?
     
     /// The properties of the characteristic.
     public let properties: CBMCharacteristicProperties
@@ -256,7 +256,7 @@ open class CBMDescriptor: CBMAttribute {
     }
     
     /// A back-pointer to the characteristic this descriptor belongs to.
-    open internal(set) var characteristic: CBMCharacteristic
+    open internal(set) weak var characteristic: CBMCharacteristic?
 
     /// The value of the descriptor.
     open internal(set) var value: Any?
