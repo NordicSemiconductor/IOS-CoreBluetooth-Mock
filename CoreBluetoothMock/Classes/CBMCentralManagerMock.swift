@@ -1017,9 +1017,10 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
               let allServices = mock.services else {
             return
         }
-        guard let services = services, services.contains(characteristic.service),
+        guard let services = services, let characteristicService = characteristic.service,
+              services.contains(characteristicService),
               let originalService = allServices.first(where: {
-                  $0.identifier == characteristic.service.identifier
+                $0.identifier == characteristicService.identifier
               }),
               let originalCharacteristic = originalService.characteristics?.first(where: {
                   $0.identifier == characteristic.identifier
@@ -1074,8 +1075,8 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
               let interval = mock.connectionInterval else {
             return
         }
-        guard let services = services,
-              services.contains(characteristic.service) else {
+        guard let services = services, let characteristicService = characteristic.service,
+              services.contains(characteristicService) else {
             return
         }
         switch delegate.peripheral(mock,
@@ -1108,8 +1109,8 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
               let interval = mock.connectionInterval else {
             return
         }
-        guard let services = services,
-              services.contains(descriptor.characteristic.service) else {
+        guard let services = services, let descriptorService = descriptor.characteristic?.service,
+              services.contains(descriptorService) else {
             return
         }
         switch delegate.peripheral(mock,
@@ -1147,8 +1148,8 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
               let mtu = mock.mtu else {
             return
         }
-        guard let services = services,
-              services.contains(characteristic.service) else {
+        guard let services = services, let characteristicService = characteristic.service,
+              services.contains(characteristicService) else {
             return
         }
         
@@ -1224,8 +1225,8 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
               let interval = mock.connectionInterval else {
             return
         }
-        guard let services = services,
-              services.contains(descriptor.characteristic.service) else {
+        guard let services = services, let descriptorService = descriptor.characteristic?.service,
+              services.contains(descriptorService) else {
             return
         }
         
@@ -1272,8 +1273,8 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
               let interval = mock.connectionInterval else {
             return
         }
-        guard let services = services,
-              services.contains(characteristic.service) else {
+        guard let services = services, let characteristicService = characteristic.service,
+              services.contains(characteristicService) else {
             return
         }
         guard enabled != characteristic.isNotifying else {

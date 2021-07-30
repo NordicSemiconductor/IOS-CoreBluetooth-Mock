@@ -285,8 +285,8 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
             return
         }
         if characteristic == buttonCharacteristic {
-            assert(characteristic.service.isPrimary)
-            assert(characteristic.service.peripheral.identifier == basePeripheral.identifier)
+            assert(characteristic.service?.isPrimary ?? false)
+            assert(characteristic.service?.peripheral?.identifier == basePeripheral.identifier)
             assert(characteristic.isNotifying)
             print("Button notifications enabled")
             post(.blinky(self,
@@ -312,7 +312,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
                     //Capture and discover all characteristics for the blinky service
                     assert(service.isPrimary)
                     assert(service.characteristics == nil)
-                    assert(service.peripheral.identifier == peripheral.identifier)
+                    assert(service.peripheral?.identifier == peripheral.identifier)
                     discoverCharacteristicsForBlinkyService(service)
                     return
                 }
