@@ -28,14 +28,12 @@
     "5.1",
     "5.2",
     "5.3",
-    "5.4"
+    "5.4",
+    "5.5"
   ],
   "pod_target_xcconfig": {
-    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64"
+    "BUILD_LIBRARY_FOR_DISTRIBUTION": "YES"
   },
   "source_files": "CoreBluetoothMock/Classes/**/*",
-  "user_target_xcconfig": {
-    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "arm64"
-  },
-  "swift_version": "5.4"
+  "swift_version": "5.5"
 }

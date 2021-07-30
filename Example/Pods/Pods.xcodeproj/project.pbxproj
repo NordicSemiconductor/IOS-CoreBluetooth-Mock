@@ -616,6 +616,36 @@
 			};
 			name = Debug;
 		};
+		40A78B30173A94D6A2E6A4B3409610F9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F43A65C066D0704FD6818FEE6D88E8B8 /* CoreBluetoothMock.debug.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
+				PRODUCT_MODULE_NAME = CoreBluetoothMock;
+				PRODUCT_NAME = CoreBluetoothMock;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
 		4DCF3EBA05FB611112ED737F47FD563F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C348C9192BF2799624BD1BAAF5DFED0C /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */;
@@ -647,6 +677,37 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
+		};
+		569A06C49308D26680DAAC9B6B2267F2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E409B30A13DC7B4D3880C5F30EB389EF /* CoreBluetoothMock.release.xcconfig */;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
+				PRODUCT_MODULE_NAME = CoreBluetoothMock;
+				PRODUCT_NAME = CoreBluetoothMock;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
 		};
 		5BD6E59427D6133A99909C601B377205 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -681,37 +742,6 @@
 			};
 			name = Release;
 		};
-		5FCC2599BA4F442076B16CC2AD37603E /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E409B30A13DC7B4D3880C5F30EB389EF /* CoreBluetoothMock.release.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
-				PRODUCT_MODULE_NAME = CoreBluetoothMock;
-				PRODUCT_NAME = CoreBluetoothMock;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.4;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 		82AE43B520668C234D5D67522FDC7DDB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 58D566B721898E1D43CFE4A9BFB4EA88 /* Pods-nRFBlinky.debug.xcconfig */;
@@ -738,36 +768,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		8F00A2A468C9E8D1ADD5121D18710D22 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = F43A65C066D0704FD6818FEE6D88E8B8 /* CoreBluetoothMock.debug.xcconfig */;
-			buildSettings = {
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
-				PRODUCT_MODULE_NAME = CoreBluetoothMock;
-				PRODUCT_NAME = CoreBluetoothMock;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.4;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -957,8 +957,8 @@
 		7331393C8433A298672A1BF9AB9D597E /* Build configuration list for PBXNativeTarget "CoreBluetoothMock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8F00A2A468C9E8D1ADD5121D18710D22 /* Debug */,
-				5FCC2599BA4F442076B16CC2AD37603E /* Release */,
+				40A78B30173A94D6A2E6A4B3409610F9 /* Debug */,
+				569A06C49308D26680DAAC9B6B2267F2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
