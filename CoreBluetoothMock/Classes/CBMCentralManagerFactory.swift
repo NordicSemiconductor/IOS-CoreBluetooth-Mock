@@ -48,10 +48,10 @@ public class CBMCentralManagerFactory {
     /// - SeeAlso: CBMCentralManagerRestoredStateScanOptionsKey
     public static var simulateStateRestoration: ((_ identifierKey: String) -> [String : Any]?)?
     
+    #if !os(macOS)
     /// Returns a boolean value representing the support for the provided features.
     ///
     /// This method will be called when `supports(:)` method is called.
-    #if !os(macOS)
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
     #endif
