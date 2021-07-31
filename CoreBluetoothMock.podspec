@@ -18,12 +18,12 @@ device and test the app on simulator.
   s.osx.deployment_target = '10.13'
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.0'
-  s.swift_versions = ['4.2', '5.0', '5.1', '5.2', '5.3', '5.4']
+  s.swift_versions = ['4.2', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5']
   s.pod_target_xcconfig = { 'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES' }
 
   s.source_files = 'CoreBluetoothMock/Classes/**/*'
   
   # Regarding the lines below see: https://stackoverflow.com/a/63955114/2115352
-  s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-  s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+  # s.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+  # s.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 end
