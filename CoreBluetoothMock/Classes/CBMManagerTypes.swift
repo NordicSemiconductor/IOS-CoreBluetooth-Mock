@@ -45,9 +45,13 @@ public enum CBMManagerState: Int {
     case poweredOn
 }
 
-// disabled for Xcode 12.5 beta
-//public typealias CBMPeer = CBPeer
-//public typealias CBMAttribute = CBAttribute
+// In Xcode 12.5 the initializers of CBPeer and CBAttribute
+// became private, therefore they cannot be user. A local
+// counterparts have been created in the library.
+// https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/issues/33
+//
+// public typealias CBMPeer = CBPeer
+// public typealias CBMAttribute = CBAttribute
 public typealias CBMUUID = CBUUID
 public typealias CBMError = CBError
 public typealias CBMATTError = CBATTError
