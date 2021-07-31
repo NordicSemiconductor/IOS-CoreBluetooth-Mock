@@ -89,12 +89,13 @@ class FailedConnectionTest: XCTestCase {
         // Select found device.
         Sim.post(.selectPeripheral(at: 0))
 
-        // Wait until blinky is connected and ready.
+        // As the device is now out of range, connection should fail.
         let connected = XCTestExpectation(description: "Connected")
         connected.isInverted = true
         target!.onConnected {
-            connected.fulfill()
+            connected.fulfill() // This should not happen.
         }
+        // As the expectation is inverted, the wait should timeout.
         wait(for: [connected], timeout: 3)
 
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
