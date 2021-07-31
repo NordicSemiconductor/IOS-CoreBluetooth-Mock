@@ -30,6 +30,14 @@
 
 import CoreBluetooth
 
+open class CBMAttribute: NSObject {
+    
+    /// The Bluetooth UUID of the attribute.
+    var uuid: CBMUUID {
+        fatalError()
+    }
+}
+
 open class CBMService: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
@@ -37,17 +45,17 @@ open class CBMService: CBMAttribute {
     internal var _includedServices: [CBMService]?
     internal var _characteristics: [CBMCharacteristic]?
 
-    /// A back-pointer to the peripheral this service belongs to.
     #if swift(>=5.5)
+    /// A back-pointer to the peripheral this service belongs to.
     open internal(set) weak var peripheral: CBMPeripheral?
     #else
+    /// A back-pointer to the peripheral this service belongs to.
     open internal(set) unowned var peripheral: CBMPeripheral
     #endif
     
     /// The type of the service (primary or secondary).
     open fileprivate(set) var isPrimary: Bool
     
-    /// The Bluetooth UUID of the attribute.
     open override var uuid: CBMUUID {
         return _uuid
     }
@@ -150,15 +158,15 @@ open class CBMCharacteristic: CBMAttribute {
     
     internal var _descriptors: [CBMDescriptor]?
     
-    /// The Bluetooth UUID of the attribute.
     open override var uuid: CBMUUID {
         return _uuid
     }
 
-    /// A back-pointer to the service this characteristic belongs to.
     #if swift(>=5.5)
+    /// A back-pointer to the service this characteristic belongs to.
     open internal(set) weak var service: CBMService?
     #else
+    /// A back-pointer to the service this characteristic belongs to.
     open internal(set) unowned var service: CBMService
     #endif
     
@@ -264,15 +272,15 @@ open class CBMDescriptor: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
     
-    /// The Bluetooth UUID of the attribute.
     open override var uuid: CBMUUID {
         return _uuid
     }
     
-    /// A back-pointer to the characteristic this descriptor belongs to.
     #if swift(>=5.5)
+    /// A back-pointer to the characteristic this descriptor belongs to.
     open internal(set) weak var characteristic: CBMCharacteristic?
     #else
+    /// A back-pointer to the characteristic this descriptor belongs to.
     open internal(set) unowned var characteristic: CBMCharacteristic
     #endif
     
