@@ -104,12 +104,50 @@ public protocol CBMCentralManager: AnyObject {
     @available(iOS 7.0, *)
     func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral]
     
+    #if !os(macOS)
     /// Calls `centralManager(:connectionEventDidOccur:for:)` when a connection event
     /// occurs matching any of the given options. Passing nil in the option parameter
     /// clears any prior registered matching options.
     /// - Parameter options: A dictionary specifying connection event options.
-    #if !os(macOS)
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]?)
     #endif
+}
+
+public extension CBMCentralManager {
+    
+    /// Initiates a connection to peripheral. Connection attempts never time out
+    /// and, depending on the outcome, will result in a call to either
+    /// `centralManager(didConnect:)` or `centralManager(didFailToConnect:error:)`.
+    /// Pending attempts are cancelled automatically upon deallocation of peripheral,
+    /// and explicitly via `cancelPeripheralConnection(_:)`.
+    /// - Parameter peripheral: The `CBMPeripheral` to be connected.
+    func connect(_ peripheral: CBMPeripheral) {
+        connect(peripheral, options: nil)
+    }
+    
+    /// Starts scanning for peripherals that are advertising any of the services listed
+    /// in serviceUUIDs. Although strongly discouraged, if serviceUUIDs
+    /// is nil all discovered peripherals will be returned. If the central is
+    /// already scanning with different serviceUUIDs or options, the
+    /// provided parameters will replace them. Applications that have specified the
+    /// `bluetooth-central` background mode are allowed to scan while
+    /// backgrounded, with two caveats: the scan must specify one or more service types
+    /// in serviceUUIDs, and the `CBCentralManagerScanOptionAllowDuplicatesKey`
+    /// scan option will be ignored.
+    /// - Parameter serviceUUIDs: A list of `CBUUID` objects representing the service(s)
+    ///                           to scan for.
+    func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?) {
+        scanForPeripherals(withServices: serviceUUIDs, options: nil)
+    }
+    
+    #if !os(macOS)
+    /// Calls `centralManager(:connectionEventDidOccur:for:)` when a connection event
+    /// occurs and clears any prior registered matching options.
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    func registerForConnectionEvents() {
+        registerForConnectionEvents(options: nil)
+    }
+    #endif
+    
 }

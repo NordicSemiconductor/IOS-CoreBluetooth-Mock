@@ -84,7 +84,7 @@ class BlinkyManager {
         }
         connectedBlinky = blinky
         print("Connecting to Blinky device...")
-        centralManager.connect(blinky.basePeripheral, options: nil)
+        centralManager.connect(blinky.basePeripheral)
     }
 
     /// Cancels existing or pending connection.
