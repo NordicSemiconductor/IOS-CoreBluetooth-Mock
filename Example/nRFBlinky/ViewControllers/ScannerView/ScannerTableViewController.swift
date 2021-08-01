@@ -55,7 +55,6 @@ class ScannerTableViewController: UITableViewController {
             if state == .poweredOn {
                 self.startScan()
             } else {
-                print("Central is not powered on")
                 self.activityIndicator.stopAnimating()
             }
         }
