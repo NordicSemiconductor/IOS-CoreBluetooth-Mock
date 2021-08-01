@@ -50,7 +50,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // Setup the CoreBluetoothMock in debug mode. The mock central manager
             // will be used by UI tests.
             if #available(iOS 13.0, *) {
-                CBMCentralManagerFactory.simulateFeaturesSupport = { features in
+                // Example how the authorization can be set and changed.
+                /*
+                CBMCentralManagerMock.simulateAuthorization(.notDetermined)
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(4)) {
+                    CBMCentralManagerMock.simulateAuthorization(.allowedAlways)
+                }
+                */
+                CBMCentralManagerMock.simulateFeaturesSupport = { features in
                     return features.isSubset(of: .extendedScanAndConnect)
                 }
             }
