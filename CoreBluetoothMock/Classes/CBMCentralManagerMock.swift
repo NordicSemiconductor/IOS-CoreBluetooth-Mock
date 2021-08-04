@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-open class CBMCentralManagerMock: NSObject, CBMCentralManager {
+open class CBMCentralManagerMock: CBMCentralManager {
     /// Mock RSSI deviation.
     ///
     /// Returned RSSI values will be in range
@@ -41,37 +41,50 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     private static var managers: [WeakRef<CBMCentralManagerMock>] = []
     /// A list of peripherals known to the system.
     private static var peripherals: [CBMPeripheralSpec] = []
+    /// The value of current authorization status for using Bluetooth.
+    ///
+    /// As `CBManagerAuthorization` was added in iOS 13, the raw value is kept.
+    internal private(set) static var bluetoothAuthorization: Int? {
+        didSet {
+            notifyManagers()
+        }
+    }
     /// The global state of the Bluetooth adapter on the device.
     fileprivate private(set) static var managerState: CBMManagerState = .poweredOff {
         didSet {
-            // For all existing managers...
-            managers
-                .compactMap { $0.ref }
-                .forEach { manager in
-                    // ...stop scanning if state changed to any other state
-                    // than `.poweredOn`. Also, forget all peripherals.
-                    if managerState != .poweredOn {
-                        manager.isScanning = false
-                        manager.scanFilter = nil
-                        manager.scanOptions = nil
-                        manager.peripherals.values.forEach { $0.managerPoweredOff() }
-                        manager.peripherals.removeAll()
-                    }
-                    // ...and notify delegate.
-                    manager.queue.async {
-                        manager.delegate?.centralManagerDidUpdateState(manager)
-                    }
-                }
-            // Compact the list, if any of managers were disposed.
-            managers.removeAll { $0.ref == nil }
+            notifyManagers()
         }
     }
-    
-    open weak var delegate: CBMCentralManagerDelegate?
-    open var state: CBMManagerState {
-        return initialized ? CBMCentralManagerMock.managerState : .unknown
+    private static func notifyManagers() {
+        // For all existing managers...
+        managers
+            .compactMap { $0.ref }
+            .forEach { manager in
+                // ...stop scanning if state changed to any other state
+                // than `.poweredOn`. Also, forget all peripherals.
+                if manager.state != .poweredOn {
+                    manager._isScanning = false
+                    manager.scanFilter = nil
+                    manager.scanOptions = nil
+                    manager.peripherals.values.forEach { $0.closeManager() }
+                    manager.peripherals.removeAll()
+                }
+                // ...and notify delegate.
+                manager.queue.async {
+                    manager.delegate?.centralManagerDidUpdateState(manager)
+                }
+            }
+        // Compact the list, if any of managers were disposed.
+        managers.removeAll { $0.ref == nil }
     }
-    open private(set) var isScanning: Bool
+    /// Whether the app is currently authorized to use Bluetooth.
+    ///
+    /// If `simulateAuthorization(:)` was not called it is assumed that the
+    /// authorization was granted. However, in this case `CBMCentralManager.authorization`
+    /// will return the value returned by the native API.
+    private static var isAuthorized: Bool {
+        return bluetoothAuthorization == nil || bluetoothAuthorization == 3 // CBManagerAuthorization.allowedAlways
+    }
     private var scanFilter: [CBMUUID]?
     private var scanOptions: [String : Any]?
 
@@ -89,11 +102,12 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         // from that list, making them uninitialized again.
         return CBMCentralManagerMock.managers.contains { $0.ref == self }
     }
+    private var _isScanning: Bool
     
     // MARK: - Initializers
     
     public required override init() {
-        self.isScanning = false
+        self._isScanning = false
         self.queue = DispatchQueue.main
         super.init()
         initialize()
@@ -101,10 +115,10 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     
     public required init(delegate: CBMCentralManagerDelegate?,
                          queue: DispatchQueue?) {
-        self.isScanning = false
+        self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
-        self.delegate = delegate
         super.init()
+        self.delegate = delegate
         initialize()
     }
     
@@ -112,14 +126,13 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     public required init(delegate: CBMCentralManagerDelegate?,
                          queue: DispatchQueue?,
                          options: [String : Any]?) {
-        self.isScanning = false
+        self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
-        self.delegate = delegate
         super.init()
+        self.delegate = delegate
         if let options = options,
            let identifierKey = options[CBMCentralManagerOptionRestoreIdentifierKey] as? String,
-           let dict = CBMCentralManagerFactory
-               .simulateStateRestoration?(identifierKey) {
+           let dict = CBMCentralManagerMock.simulateStateRestoration?(identifierKey) {
             var state: [String : Any] = [:]
             if let peripheralKeys = dict[CBMCentralManagerRestoredStatePeripheralsKey] {
                 state[CBMCentralManagerRestoredStatePeripheralsKey] = peripheralKeys
@@ -167,6 +180,34 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     }
     
     // MARK: - Central manager simulation methods
+    
+    /// Simulates the current authorization state of a Core Bluetooth manager.
+    ///
+    /// When set to `nil` (default), the native value is returned.
+    @available(iOS 13.0, *)
+    public static func simulateAuthorization(_ authorization: CBMManagerAuthorization) {
+        bluetoothAuthorization = authorization.rawValue
+    }
+    
+    /// This simulation method is called when a mock central manager was
+    /// created with an option to restore the state
+    /// (`CBMCentralManagerOptionRestoreIdentifierKey`).
+    ///
+    /// The returned map, if not <i>nil</i>, will be passed to
+    /// `centralManager(:willRestoreState:)` before creation.
+    /// - SeeAlso: CBMCentralManagerRestoredStatePeripheralsKey
+    /// - SeeAlso: CBMCentralManagerRestoredStateScanServicesKey
+    /// - SeeAlso: CBMCentralManagerRestoredStateScanOptionsKey
+    public static var simulateStateRestoration: ((_ identifierKey: String) -> [String : Any]?)?
+    
+    #if !os(macOS)
+    /// Returns a boolean value representing the support for the provided features.
+    ///
+    /// This method will be called when `CBMCentralManager.supports(:)` method is
+    /// called.
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
+    #endif
     
     /// Sets the initial state of the Bluetooth central manager.
     ///
@@ -385,12 +426,40 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     
     // MARK: - CBCentralManager mock methods
     
-    #if !os(macOS)
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public static func supports(_ features: CBMCentralManager.Feature) -> Bool {
-        return CBMCentralManagerFactory.simulateFeaturesSupport?(features) ?? false
+    open override var state: CBMManagerState {
+        guard initialized else {
+            return .unknown
+        }
+        guard CBMCentralManagerMock.isAuthorized else {
+            return .unauthorized
+        }
+        return CBMCentralManagerMock.managerState
     }
-    #endif
+    open override var isScanning: Bool {
+        return _isScanning
+    }
+    
+    @available(iOS, introduced: 13.0, deprecated: 13.1)
+    open override var authorization: CBMManagerAuthorization {
+        if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
+           let authotization = CBMManagerAuthorization(rawValue: rawValue) {
+            return authotization
+        } else {
+            // If `simulateAuthorization(:)` was not called, .allowedAlways is assumed.
+            return .allowedAlways
+        }
+    }
+    
+    @available(iOS 13.1, *)
+    open override class var authorization: CBMManagerAuthorization {
+        if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
+           let authotization = CBMManagerAuthorization(rawValue: rawValue) {
+            return authotization
+        } else {
+            // If `simulateAuthorization(:)` was not called, .allowedAlways is assumed.
+            return .allowedAlways
+        }
+    }
     
     /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
     /// devices. When the `CBCentralManagerScanOptionAllowDuplicatesKey` options
@@ -438,14 +507,14 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
     }
     
-    open func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
-                                   options: [String : Any]?) {
+    open override func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
+                                 options: [String : Any]?) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         if isScanning {
             stopScan()
         }
-        isScanning = true
+        _isScanning = true
         scanFilter = serviceUUIDs
         scanOptions = options
 
@@ -479,15 +548,15 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
             }
     }
     
-    open func stopScan() {
+    open override func stopScan() {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
-        isScanning = false
+        _isScanning = false
         scanFilter = nil
         scanOptions = nil
     }
     
-    open func connect(_ peripheral: CBMPeripheral,
+    open override func connect(_ peripheral: CBMPeripheral,
                         options: [String : Any]?) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
@@ -516,7 +585,7 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
     }
     
-    open func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
+    open override func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         // Ignore peripherals that are not mocks.
@@ -534,7 +603,7 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
     }
     
-    open func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
+    open override func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
         // Starting from iOS 13, this method returns peripherals only in ON state.
         guard ensurePoweredOn() else { return [] }
         // Get the peripherals already known to this central manager.
@@ -564,7 +633,7 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
             }
     }
     
-    open func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
+    open override func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
         // Starting from iOS 13, this method returns peripherals only in ON state.
         guard ensurePoweredOn() else { return [] }
         // Get the connected peripherals with at least one of the given services
@@ -607,7 +676,7 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     }
     
     @available(iOS 13.0, *)
-    open func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]?) {
+    open override func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]?) {
         fatalError("Mock connection events are not implemented")
     }
     
@@ -843,7 +912,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         }
     }
     
-    fileprivate func managerPoweredOff() {
+    fileprivate func closeManager() {
         state = .disconnected
         services = nil
         _canSendWriteWithoutResponse = false

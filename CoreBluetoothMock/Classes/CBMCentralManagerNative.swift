@@ -30,9 +30,7 @@
 
 import CoreBluetooth
 
-public class CBMCentralManagerNative: NSObject, CBMCentralManager {
-    public weak var delegate: CBMCentralManagerDelegate?
-    
+public class CBMCentralManagerNative: CBMCentralManager {
     private var manager: CBCentralManager!
     private var wrapper: CBCentralManagerDelegate!
     private var peripherals: [UUID : CBMPeripheralNative] = [:]
@@ -132,18 +130,28 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
         }
     }
     
-    public var state: CBMManagerState {
+    public override var state: CBMManagerState {
         return CBMManagerState(rawValue: manager.state.rawValue) ?? .unknown
     }
     
     @available(iOS 9.0, *)
-    public var isScanning: Bool {
+    public override var isScanning: Bool {
         return manager.isScanning
+    }
+    
+    @available(iOS, introduced: 13.0, deprecated: 13.1)
+    public override var authorization: CBMManagerAuthorization {
+        return manager.authorization
+    }
+    
+    @available(iOS 13.1, *)
+    public override class var authorization: CBMManagerAuthorization {
+        return CBCentralManager.authorization
     }
     
     #if !os(macOS)
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public static func supports(_ features: CBMCentralManager.Feature) -> Bool {
+    public override class func supports(_ features: CBMCentralManager.Feature) -> Bool {
         return CBCentralManager.supports(features)
     }
     #endif
@@ -174,29 +182,29 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
         self.delegate = delegate
     }
     
-    public func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
-                                   options: [String : Any]?) {
+    public override func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
+                                            options: [String : Any]?) {
         manager.scanForPeripherals(withServices: serviceUUIDs, options: options)
     }
     
-    public func stopScan() {
+    public override func stopScan() {
         manager.stopScan()
     }
     
-    public func connect(_ peripheral: CBMPeripheral, options: [String : Any]?) {
+    public override func connect(_ peripheral: CBMPeripheral, options: [String : Any]?) {
         if let peripheral = peripherals[peripheral.identifier] {
             manager.connect(peripheral.peripheral, options: options)
         }
     }
     
-    public func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
+    public override func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
         if let peripheral = peripherals[peripheral.identifier] {
             manager.cancelPeripheralConnection(peripheral.peripheral)
         }
     }
     
     @available(iOS 7.0, *)
-    public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
+    public override func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
         let retrievedPeripherals = manager.retrievePeripherals(withIdentifiers: identifiers)
         retrievedPeripherals
             .filter { peripherals[$0.identifier] == nil }
@@ -207,7 +215,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     }
     
     @available(iOS 7.0, *)
-    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
+    public override func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
         let retrievedPeripherals = manager.retrieveConnectedPeripherals(withServices: serviceUUIDs)
         retrievedPeripherals
             .filter { peripherals[$0.identifier] == nil }
@@ -219,7 +227,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     
     #if !os(macOS)
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
+    public override func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
         manager.registerForConnectionEvents(options: options)
     }
     #endif
