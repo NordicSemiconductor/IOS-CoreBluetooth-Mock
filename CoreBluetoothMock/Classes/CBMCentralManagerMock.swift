@@ -90,6 +90,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
 
     /// The dispatch queue used for all callbacks.
     fileprivate let queue: DispatchQueue
+    /// Should a simple implementation be used, or not. By default the behavior
+    /// of the mock manager will try to mimic the native manager as much as
+    /// possible, but by setting `CBMCentralManagerSimpleMock` flag in the options
+    /// in the initializer the behavior will be simpler, with no delays, etc.
+    fileprivate let isSimple: Bool
     /// A map of peripherals known to this central manager.
     private var peripherals: [UUID : CBMPeripheralMock] = [:]
     /// A flag set to true few milliseconds after the manager is created.
@@ -102,33 +107,37 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // from that list, making them uninitialized again.
         return CBMCentralManagerMock.managers.contains { $0.ref == self }
     }
+    /// A flag set to true when the manager is scanning for mock Bluetooth LE devices.
     private var _isScanning: Bool
     
     // MARK: - Initializers
     
-    public required override init() {
+    public init() {
         self._isScanning = false
         self.queue = DispatchQueue.main
-        super.init()
+        self.isSimple = false
+        super.init(true)
         initialize()
     }
     
-    public required init(delegate: CBMCentralManagerDelegate?,
-                         queue: DispatchQueue?) {
+    public init(delegate: CBMCentralManagerDelegate?,
+                queue: DispatchQueue?) {
         self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
-        super.init()
+        self.isSimple = false
+        super.init(true)
         self.delegate = delegate
         initialize()
     }
     
     @available(iOS 7.0, *)
-    public required init(delegate: CBMCentralManagerDelegate?,
-                         queue: DispatchQueue?,
-                         options: [String : Any]?) {
+    public init(delegate: CBMCentralManagerDelegate?,
+                queue: DispatchQueue?,
+                options: [String : Any]?) {
         self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
-        super.init()
+        self.isSimple = options?[CBMCentralManagerSimpleMockKey] as? Bool ?? false
+        super.init(true)
         self.delegate = delegate
         if let options = options,
            let identifierKey = options[CBMCentralManagerOptionRestoreIdentifierKey] as? String,
@@ -155,7 +164,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
                   "Call simulatePeripherals(:) before creating central manager")
         }
         // Let's say initialization takes 10 ms. Less or more.
-        queue.asyncAfter(deadline: .now() + .milliseconds(10)) { [weak self] in
+        let delay: DispatchTimeInterval = .milliseconds(isSimple ? 0 : 10)
+        queue.asyncAfter(deadline: .now() + delay) { [weak self] in
             if let self = self {
                 CBMCentralManagerMock.managers.append(WeakRef(self))
                 self.delegate?.centralManagerDidUpdateState(self)
@@ -941,14 +951,15 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 .filter { serviceUUIDs?.contains($0.uuid) ?? true }
                 // Filter those of them, that are not already in discovered services.
                 .filter { s in !services!
-                    .contains(where: { ds in s.identifier == ds.identifier })
+                    .contains { ds in s.identifier == ds.identifier }
                 }
                 // Copy the service info, without included services or characteristics.
                 .map { CBMService(shallowCopy: $0, for: self) }
             let newServicesCount = services!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) { [weak self] in
+            let delay = interval * Double(manager.isSimple ? 1 : newServicesCount)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self, didDiscoverServices: nil)
                 }
@@ -994,14 +1005,15 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     .filter { includedServiceUUIDs?.contains($0.uuid) ?? true }
                     // Filter those of them, that are not already in discovered services.
                     .filter { s in !service._includedServices!
-                        .contains(where: { ds in s.identifier == ds.identifier })
+                        .contains { ds in s.identifier == ds.identifier }
                     }
                     // Copy the service info, without included characteristics.
                     .map { CBMService(shallowCopy: $0, for: self) }
             let newServicesCount = service._includedServices!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) { [weak self] in
+            let delay = interval * Double(manager.isSimple ? 1 : newServicesCount)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,
                                               didDiscoverIncludedServicesFor: service,
@@ -1052,14 +1064,15 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     .filter { characteristicUUIDs?.contains($0.uuid) ?? true }
                     // Filter those of them, that are not already in discovered characteristics.
                     .filter { c in !service._characteristics!
-                        .contains(where: { dc in c.identifier == dc.identifier })
+                        .contains { dc in c.identifier == dc.identifier }
                     }
                     // Copy the characteristic info, without included descriptors or value.
                     .map { CBMCharacteristic(shallowCopy: $0, in: service) }
             let newCharacteristicsCount = service._characteristics!.count - initialSize
             // Characteristics discovery may takes the more time, the more characteristics
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newCharacteristicsCount)) { [weak self] in
+            let delay = interval * Double(manager.isSimple ? 1 : newCharacteristicsCount)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,
                                               didDiscoverCharacteristicsFor: service,
@@ -1110,14 +1123,15 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 originalDescriptors
                     // Filter those of them, that are not already in discovered descriptors.
                     .filter { d in !characteristic._descriptors!
-                        .contains(where: { dd in d.identifier == dd.identifier })
+                        .contains { dd in d.identifier == dd.identifier }
                     }
                     // Copy the descriptors info, without the value.
                     .map { CBMDescriptor(shallowCopy: $0, in: characteristic) }
             let newDescriptorsCount = characteristic._descriptors!.count - initialSize
             // Descriptors discovery may takes the more time, the more descriptors
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newDescriptorsCount)) { [weak self] in
+            let delay = interval * Double(manager.isSimple ? 1 : newDescriptorsCount)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,
                                               didDiscoverDescriptorsFor: characteristic,
@@ -1232,7 +1246,8 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                                        data: data) {
             case .success:
                 let packetsCount = max(1, (data.count + mtu - 2) / (mtu - 3))
-                queue.asyncAfter(deadline: .now() + interval * Double(packetsCount)) { [weak self] in
+                let delay = interval * Double(packetsCount)
+                queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                     if let self = self, self.state == .connected {
                         self.delegate?.peripheral(self,
                                                   didWriteValueFor: characteristic,

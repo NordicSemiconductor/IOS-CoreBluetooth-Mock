@@ -156,24 +156,26 @@ public class CBMCentralManagerNative: CBMCentralManager {
     }
     #endif
     
-    public override init() {
-        super.init()
+    public init() {
+        super.init(true)
         self.wrapper = CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager()
         self.manager.delegate = wrapper
     }
     
-    public init(delegate: CBMCentralManagerDelegate?, queue: DispatchQueue?) {
-        super.init()
+    public init(delegate: CBMCentralManagerDelegate?,
+                queue: DispatchQueue?) {
+        super.init(true)
         self.wrapper = CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager(delegate: wrapper, queue: queue)
         self.delegate = delegate
     }
     
     @available(iOS 7.0, *)
-    public init(delegate: CBMCentralManagerDelegate?, queue: DispatchQueue?,
+    public init(delegate: CBMCentralManagerDelegate?,
+                queue: DispatchQueue?,
                 options: [String : Any]?) {
-        super.init()
+        super.init(true)
         let restoration = options?[CBMCentralManagerOptionRestoreIdentifierKey] != nil
         self.wrapper = restoration ?
             CBMCentralManagerDelegateWrapperWithRestoration(self) :
