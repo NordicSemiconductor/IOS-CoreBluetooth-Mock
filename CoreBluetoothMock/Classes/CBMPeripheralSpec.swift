@@ -63,6 +63,15 @@ public class CBMPeripheralSpec {
     /// Should the mock peripheral appear in scan results when it's
     /// connected.
     public let isAdvertisingWhenConnected: Bool
+    /// A flag indicating that the peripheral can be obtained using
+    /// `CBMCentralManagerMock.retrievePeripherals(withIdentifiers:)`
+    /// without scanning. This is set to true whenever the peripheral
+    /// gets scanned, but can also be forced using `Builder.allowForRetrieval()`
+    /// or `simulateCached()`.
+    ///
+    /// When set to true, it means the system has scanned for this device
+    /// previously and stored its UUID.
+    public internal(set) var isKnown: Bool
     
     /// The device's advertising data.
     /// Make sure to include `CBAdvertisementDataIsConnectable` if
@@ -92,22 +101,25 @@ public class CBMPeripheralSpec {
     internal var virtualConnections: Int
     
     private init(
-            identifier: UUID,
-            name: String?,
-            proximity: CBMProximity,
-            isInitiallyConnected: Bool,
-            isAdvertisingWhenConnected: Bool,
-            advertisementData: [String : Any]?,
-            advertisingInterval: TimeInterval?,
-            services: [CBMServiceMock]?,
-            connectionInterval: TimeInterval?,
-            mtu: Int?,
-            connectionDelegate: CBMPeripheralSpecDelegate?) {
+        identifier: UUID,
+        name: String?,
+        proximity: CBMProximity,
+        isInitiallyConnected: Bool,
+        isAdvertisingWhenConnected: Bool,
+        isKnown: Bool,
+        advertisementData: [String : Any]?,
+        advertisingInterval: TimeInterval?,
+        services: [CBMServiceMock]?,
+        connectionInterval: TimeInterval?,
+        mtu: Int?,
+        connectionDelegate: CBMPeripheralSpecDelegate?
+    ) {
         self.identifier = identifier
         self.name = name
         self.proximity = proximity
         self.virtualConnections = isInitiallyConnected ? 1 : 0
         self.isAdvertisingWhenConnected = isAdvertisingWhenConnected
+        self.isKnown = isKnown
         self.advertisementData = advertisementData
         self.advertisingInterval = advertisingInterval
         self.services = services
@@ -126,8 +138,7 @@ public class CBMPeripheralSpec {
     ///                to `.immediate`.
     public static func simulatePeripheral(identifier: UUID = UUID(),
                                           proximity: CBMProximity = .immediate) -> Builder {
-        return Builder(identifier: identifier,
-                       proximity: proximity)
+        return Builder(identifier: identifier, proximity: proximity)
     }
     
     /// Simulates the situation when another application on the device
@@ -140,7 +151,12 @@ public class CBMPeripheralSpec {
     ///
     /// Connected devices are be available for managers using
     /// `retrieveConnectedPeripherals(withServices:)`.
+    ///
+    /// - Note: The peripheral needs to be in range.
     public func simulateConnection() {
+        guard proximity != .outOfRange else {
+            return
+        }
         CBMCentralManagerMock.peripheralDidConnect(self)
     }
     
@@ -183,7 +199,7 @@ public class CBMPeripheralSpec {
             return
         }
         CBMCentralManagerMock.peripheral(self, didUpdateName: newName,
-                                        andServices: newServices)
+                                         andServices: newServices)
     }
     
     /// Simulates a situation when the peripheral was moved closer
@@ -206,13 +222,24 @@ public class CBMPeripheralSpec {
     ///                     notification or indication is to be sent.
     public func simulateValueUpdate(_ data: Data,
                                     for characteristic: CBMCharacteristicMock) {
-        guard let services = services, services.contains(where: {
+        guard let services = services,
+              services.contains(where: {
                   $0.characteristics?.contains(characteristic) ?? false
               }) else {
             return
         }
         characteristic.value = data
         CBMCentralManagerMock.peripheral(self, didUpdateValueFor: characteristic)
+    }
+    
+    /// Simulates a situation when the iDevice scans for Bluetooth LE devices
+    /// and caches scanned results. Scanned devices become available for retrieval
+    /// using `CBMCentralManager.retrievePeripherals(withIdentifiers:)`.
+    ///
+    /// When scanning is performed by a mock central manager, and the device is
+    /// in range, this gets called automatically.
+    public func simulateCaching() {
+        isKnown = true
     }
     
     public class Builder {
@@ -237,6 +264,13 @@ public class CBMPeripheralSpec {
         /// A flag indicating whether the device is initially connected
         /// to the central (using some other application).
         private var isInitiallyConnected: Bool = false
+        /// A flag indicating that the peripheral can be obtained using
+        /// `CBMCentralManagerMock.retrievePeripherals(withIdentifiers:)`
+        /// without scanning.
+        ///
+        /// When set to true, it means the system has scanned for this device
+        /// previously and stored its UUID.
+        private var isKnown: Bool = false
         
         /// List of services with implementation.
         private var services: [CBMServiceMock]? = nil
@@ -303,6 +337,7 @@ public class CBMPeripheralSpec {
         /// Makes the device connectable, and also marks already connected
         /// by some other application. Such device, if not advertising,
         /// can be obtained using `retrieveConnectedPeripherals(withServices:)`.
+        /// - Note: The peripheral needs to be in range.
         /// - Parameters:
         ///   - name: The device name, returned by Device Name characteristic.
         ///   - services: List of services that will be returned from service
@@ -318,13 +353,25 @@ public class CBMPeripheralSpec {
                               services: [CBMServiceMock],
                               delegate: CBMPeripheralSpecDelegate?,
                               connectionInterval: TimeInterval = 0.045,
-                              mtu: Int = 23)-> Builder {
+                              mtu: Int = 23) -> Builder {
             self.name = name
             self.services = services
             self.connectionDelegate = delegate
             self.connectionInterval = connectionInterval
-            self.mtu = mtu
-            self.isInitiallyConnected = true
+            self.mtu = max(23, min(517, mtu))
+            self.isInitiallyConnected = proximity != .outOfRange
+            self.isKnown = true
+            return self
+        }
+        
+        /// Make the peripheral available through
+        /// `CBMCentralManagerMock.retrievePeripherals(withIdentifiers:)`
+        /// without scanning.
+        ///
+        /// That means, that the manager has perviously scanned and cached the
+        /// peripheral and can obtain it by the identfier.
+        public func allowForRetrieval() -> Builder {
+            self.isKnown = true
             return self
         }
         
@@ -336,6 +383,7 @@ public class CBMPeripheralSpec {
                 proximity: proximity,
                 isInitiallyConnected: isInitiallyConnected,
                 isAdvertisingWhenConnected: isAdvertisingWhenConnected,
+                isKnown: isKnown,
                 advertisementData: advertisementData,
                 advertisingInterval: advertisingInterval,
                 services: services,

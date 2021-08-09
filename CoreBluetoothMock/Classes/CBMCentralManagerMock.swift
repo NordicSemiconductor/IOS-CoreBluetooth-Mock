@@ -478,6 +478,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
         guard mock.proximity != .outOfRange else {
             return
         }
+        // The device has been scanned and cached.
+        mock.isKnown = true
         guard !mock.isConnected || mock.isAdvertisingWhenConnected else {
             return
         }
@@ -557,7 +559,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     open override func connect(_ peripheral: CBMPeripheral,
-                        options: [String : Any]?) {
+                               options: [String : Any]?) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         if let o = options, !o.isEmpty {
@@ -608,13 +610,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
         guard ensurePoweredOn() else { return [] }
         // Get the peripherals already known to this central manager.
         let localPeripherals = peripherals[identifiers]
-        // If all were found, return them.
-        if localPeripherals.count == identifiers.count {
-            return localPeripherals
-        }
+        // Also, look for them among other managers, and copy them to the local
+        // manager.
         let missingIdentifiers = identifiers.filter { peripherals[$0] == nil }
-        // Otherwise, we need to look for them among other managers, and
-        // copy them to the local manager.
         let peripheralsKnownByOtherManagers = missingIdentifiers
             .flatMap { i in
                 CBMCentralManagerMock.managers
@@ -624,8 +622,21 @@ open class CBMCentralManagerMock: CBMCentralManager {
         peripheralsKnownByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
         }
+        // Peripherals that have not been scanned by any manager, but have been
+        // cached by the system and can be retrieved.
+        let stillMissingIdentifiers = identifiers.filter { peripherals[$0] == nil }
+        let peripheralsCached = CBMCentralManagerMock.peripherals
+            // Get only cached peripherals.
+            .filter { $0.isKnown }
+            // Search for those that are still missing.
+            .filter { stillMissingIdentifiers.contains($0.identifier) }
+            // Create a local copy.
+            .map { CBMPeripheralMock(basedOn: $0, by: self) }
+        peripheralsCached.forEach {
+            peripherals[$0.identifier] = $0
+        }
         // Return them in the same order as requested, some may be missing.
-        return (localPeripherals + peripheralsKnownByOtherManagers)
+        return (localPeripherals + peripheralsKnownByOtherManagers + peripheralsCached)
             .sorted {
                 let firstIndex = identifiers.firstIndex(of: $0.identifier)!
                 let secondIndex = identifiers.firstIndex(of: $1.identifier)!
