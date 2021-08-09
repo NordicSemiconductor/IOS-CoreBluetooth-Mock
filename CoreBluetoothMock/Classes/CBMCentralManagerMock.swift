@@ -833,9 +833,11 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
               characteristic.isNotifying else {
             return
         }
-        characteristic.value = originalCharacteristic.value
+
+        let value = originalCharacteristic.value
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, self.state == .connected {
+                characteristic.value = value
                 self.delegate?.peripheral(self,
                                           didUpdateValueFor: characteristic,
                                           error: nil)
