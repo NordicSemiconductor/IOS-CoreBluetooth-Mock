@@ -54,7 +54,7 @@ public enum CBMProximity {
 /// The peripheral instance specification.
 public class CBMPeripheralSpec {
     /// The peripheral identifier.
-    public let identifier: UUID
+    public internal(set) var identifier: UUID
     /// The name of the peripheral usually returned by Device Name
     /// characteristic.
     public internal(set) var name: String?
@@ -240,6 +240,19 @@ public class CBMPeripheralSpec {
     /// in range, this gets called automatically.
     public func simulateCaching() {
         isKnown = true
+    }
+    
+    /// Simulates a change of the devuice's MAC address.
+    ///
+    /// MAC addresses are not available through iOS API. Each MAC gets
+    /// assigned a UUID by which the device can be identified and retrieved
+    /// after it has been scanned and cached.
+    ///
+    /// If a device is connected, this will not cause disconnection.
+    /// - Parameter newIdentifier: The new peripheral identifier.
+    public func simulateMacChange(_ newIdentifier: UUID = UUID()) {
+        isKnown = false
+        identifier = newIdentifier
     }
     
     public class Builder {
