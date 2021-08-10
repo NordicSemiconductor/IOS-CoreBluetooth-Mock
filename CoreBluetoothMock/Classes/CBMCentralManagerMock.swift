@@ -163,12 +163,21 @@ open class CBMCentralManagerMock: CBMCentralManager {
             NSLog("Warning: No simulated peripherals. " +
                   "Call simulatePeripherals(:) before creating central manager")
         }
-        // Let's say initialization takes 10 ms. Less or more.
-        let delay: DispatchTimeInterval = .milliseconds(isSimple ? 0 : 10)
-        queue.asyncAfter(deadline: .now() + delay) { [weak self] in
-            if let self = self {
-                CBMCentralManagerMock.managers.append(WeakRef(self))
-                self.delegate?.centralManagerDidUpdateState(self)
+        if isSimple {
+            CBMCentralManagerMock.managers.append(WeakRef(self))
+            queue.async { [weak self] in
+                if let self = self {
+                    self.delegate?.centralManagerDidUpdateState(self)
+                }
+            }
+        } else {
+            // Let's say initialization takes 10 ms. Less or more.
+            let delay: DispatchTimeInterval = .milliseconds(10)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
+                if let self = self {
+                    CBMCentralManagerMock.managers.append(WeakRef(self))
+                    self.delegate?.centralManagerDidUpdateState(self)
+                }
             }
         }
     }
