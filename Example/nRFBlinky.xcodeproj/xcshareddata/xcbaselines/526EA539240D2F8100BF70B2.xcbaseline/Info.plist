@@ -66,6 +66,18 @@
 				<string>com.apple.platform.iphonesimulator</string>
 			</dict>
 		</dict>
+		<key>86E80DA2-AC8D-4A8A-9314-2806120E4A2C</key>
+		<dict>
+			<key>targetArchitecture</key>
+			<string>arm64</string>
+			<key>targetDevice</key>
+			<dict>
+				<key>modelCode</key>
+				<string>iPhone12,1</string>
+				<key>platformIdentifier</key>
+				<string>com.apple.platform.iphoneos</string>
+			</dict>
+		</dict>
 		<key>AF3F3566-1D4E-424D-945B-8E933D73EF50</key>
 		<dict>
 			<key>targetArchitecture</key>
