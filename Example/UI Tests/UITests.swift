@@ -36,6 +36,7 @@ class UITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    // This test requires the device to be in English language.
     func testConnection() {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
