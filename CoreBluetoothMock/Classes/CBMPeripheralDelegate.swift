@@ -161,7 +161,7 @@ public protocol CBMPeripheralDelegate: AnyObject {
 
 public extension CBMPeripheralDelegate {
     
-    func peripheralDidUpdateName(_ p: CBMPeripheral) {
+    func peripheralDidUpdateName(_ peripheral: CBMPeripheral) {
         // optional method
     }
 
