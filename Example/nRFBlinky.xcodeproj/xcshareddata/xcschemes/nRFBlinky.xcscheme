@@ -45,7 +45,7 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "mocking-enabled"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <Testables>
