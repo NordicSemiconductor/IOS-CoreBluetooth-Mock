@@ -32,8 +32,39 @@ import CoreBluetooth
 
 open class CBMCentralManager: NSObject {
     
-    internal override init() {
-        // Use CBMCentralManagerFactory.instance(...) instead.
+    /// A dummy initializer that allows overriding `CBMCentralManager` class and also
+    /// gives a warninig when trying to migrate from native `CBCentralManager`
+    /// to `CBMCentralManager`. This method does nothing.
+    ///
+    /// If you need to create your own implementation of central manager, call it. See also
+    /// [Issue #55](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/issues/55).
+    ///
+    /// If you migrated to CoreBluetooth Mock and are getting an error with
+    /// instantiating a `CBMCentralBanager` instance, use
+    /// `CBMCentalManagerFactory.instance(...)` instead.
+    ///
+    /// See [documentation](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/#other-required-changes).
+    /// - Parameter dummy: This can be anything.
+    public init(_ dummy: Bool) {
+        // pancakes
+        //
+        //  his.appetite is growing.back
+        //  he.asked(for: pancakes) - making.them(right.now,
+        //  with: apple.slices, the: favourite.kind)
+        //
+        //  [ 91: this.morning, 85: the.night ]
+        //  ( 89, 84, 86, 90-fine )
+        //  [ O₂, O₂, i.fear, me.too ]
+        //
+        //  literal.reality && virtual.care
+        //  new.fermi.paradox(no: matter.what.I(cut:
+        //  the:drake:equation:with:), no: aliens(with: cure))(
+        //
+        //  you.know, these.days, hospitals.and.all,
+        //  but: 91 > 85, the.appetite is back,
+        //  and: I've.made.him.pancakes(of: his.favourite.kind))
+        //
+        // in Swift, by siejkowski, https://swiftpoetry.com/pancakes/
     }
     
     #if !os(macOS)
