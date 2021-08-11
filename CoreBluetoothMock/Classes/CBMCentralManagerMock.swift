@@ -41,6 +41,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
     private static var managers: [WeakRef<CBMCentralManagerMock>] = []
     /// A list of peripherals known to the system.
     private static var peripherals: [CBMPeripheralSpec] = []
+    /// A mutex queue for managing managers.
+    private static let mutex: DispatchQueue = DispatchQueue(label: "Mutex")
     /// The value of current authorization status for using Bluetooth.
     ///
     /// As `CBManagerAuthorization` was added in iOS 13, the raw value is kept.
@@ -57,25 +59,28 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     private static func notifyManagers() {
         // For all existing managers...
-        managers
-            .compactMap { $0.ref }
-            .forEach { manager in
-                // ...stop scanning if state changed to any other state
-                // than `.poweredOn`. Also, forget all peripherals.
-                if manager.state != .poweredOn {
-                    manager._isScanning = false
-                    manager.scanFilter = nil
-                    manager.scanOptions = nil
-                    manager.peripherals.values.forEach { $0.closeManager() }
-                    manager.peripherals.removeAll()
-                }
-                // ...and notify delegate.
-                manager.queue.async {
-                    manager.delegate?.centralManagerDidUpdateState(manager)
-                }
+        let existingManagers = mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers.forEach { manager in
+            // ...stop scanning if state changed to any other state
+            // than `.poweredOn`. Also, forget all peripherals.
+            if manager.state != .poweredOn {
+                manager._isScanning = false
+                manager.scanFilter = nil
+                manager.scanOptions = nil
+                manager.peripherals.values.forEach { $0.closeManager() }
+                manager.peripherals.removeAll()
             }
+            // ...and notify delegate.
+            manager.queue.async {
+                manager.delegate?.centralManagerDidUpdateState(manager)
+            }
+        }
         // Compact the list, if any of managers were disposed.
-        managers.removeAll { $0.ref == nil }
+        mutex.sync {
+            managers.removeAll { $0.ref == nil }
+        }
     }
     /// Whether the app is currently authorized to use Bluetooth.
     ///
@@ -100,7 +105,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // the list of managers.
         // Calling tearDownSimulation() will remove all managers
         // from that list, making them uninitialized again.
-        return CBMCentralManagerMock.managers.contains { $0.ref == self }
+        CBMCentralManagerMock.mutex.sync {
+            CBMCentralManagerMock.managers.contains { $0.ref == self }
+        }
     }
     /// A flag set to true when the manager is scanning for mock Bluetooth LE devices.
     private var _isScanning: Bool
@@ -157,11 +164,15 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         queue.async { [weak self] in
             if let self = self {
-                CBMCentralManagerMock.managers.append(WeakRef(self))
+                CBMCentralManagerMock.mutex.sync {
+                    CBMCentralManagerMock.managers.append(WeakRef(self))
+                }
                 self.delegate?.centralManagerDidUpdateState(self)
             }
         }
     }
+    
+    // MARK: - Central manager simulation methods
     
     /// Removes all active central manager instances and peripherals from the
     /// simulation, resetting it to the initial state.
@@ -173,13 +184,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // .unknown, which will make them invalid.
         managerState = .unknown
         // Remove all central manager instances.
-        managers.removeAll()
+        mutex.sync {
+            managers.removeAll()
+        }
         // Set the manager state to powered Off.
         managerState = .poweredOff
         peripherals.removeAll()
     }
-    
-    // MARK: - Central manager simulation methods
     
     /// Simulates the current authorization state of a Core Bluetooth manager.
     ///
@@ -299,7 +310,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
         guard peripheral.virtualConnections > 0 else {
             return
         }
-        let existingManagers = managers.compactMap { $0.ref }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
         existingManagers.forEach { manager in
             manager.peripherals[peripheral.identifier]?
                 .notifyServicesChanged()
@@ -333,12 +346,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
         guard peripheral.virtualConnections > 0 else {
             return
         }
-        managers
-            .compactMap { $0.ref }
-            .forEach { manager in
-                manager.peripherals[peripheral.identifier]?
-                    .notifyValueChanged(for: characteristic)
-            }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers.forEach { manager in
+            manager.peripherals[peripheral.identifier]?
+                .notifyValueChanged(for: characteristic)
+        }
     }
     
     /// This method simulates a new virtual connection to the given
@@ -371,22 +385,23 @@ open class CBMCentralManagerMock: CBMCentralManager {
         guard peripherals.contains(peripheral) else {
             return
         }
-        managers
-            .compactMap { $0.ref }
-            .forEach { manager in
-                if let target = manager.peripherals[peripheral.identifier],
-                   target.state == .connecting {
-                    target.connect() { result in
-                        switch result {
-                        case .success:
-                            manager.delegate?.centralManager(manager, didConnect: target)
-                        case .failure(let error):
-                            manager.delegate?.centralManager(manager, didFailToConnect: target,
-                                                             error: error)
-                        }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers.forEach { manager in
+            if let target = manager.peripherals[peripheral.identifier],
+               target.state == .connecting {
+                target.connect() { result in
+                    switch result {
+                    case .success:
+                        manager.delegate?.centralManager(manager, didConnect: target)
+                    case .failure(let error):
+                        manager.delegate?.centralManager(manager, didFailToConnect: target,
+                                                         error: error)
                     }
                 }
             }
+        }
     }
     
     /// Simulates the peripheral to disconnect from the device.
@@ -409,18 +424,19 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // immediately.
         peripheral.virtualConnections = 0
         // Notify all central managers.
-        managers
-            .compactMap { $0.ref }
-            .forEach { manager in
-                if let target = manager.peripherals[peripheral.identifier],
-                    target.state == .connected {
-                    target.disconnected(withError: error) { error in
-                        manager.delegate?.centralManager(manager,
-                                                         didDisconnectPeripheral: target,
-                                                         error: error)
-                    }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers.forEach { manager in
+            if let target = manager.peripherals[peripheral.identifier],
+                target.state == .connected {
+                target.disconnected(withError: error) { error in
+                    manager.delegate?.centralManager(manager,
+                                                     didDisconnectPeripheral: target,
+                                                     error: error)
                 }
             }
+        }
         // TODO: notify a user registered for connection events
     }
     
@@ -612,10 +628,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // Also, look for them among other managers, and copy them to the local
         // manager.
         let missingIdentifiers = identifiers.filter { peripherals[$0] == nil }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            CBMCentralManagerMock.managers.compactMap { $0.ref }
+        }
         let peripheralsKnownByOtherManagers = missingIdentifiers
-            .flatMap { i in
-                CBMCentralManagerMock.managers
-                    .compactMap { $0.ref?.peripherals[i] }
+            .flatMap { identifier in
+                existingManagers.compactMap { $0.peripherals[identifier] }
             }
             .map { CBMPeripheralMock(copy: $0, by: self) }
         peripheralsKnownByOtherManagers.forEach {
@@ -652,12 +670,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
             .filter { $0.state == .connected }
         // Other central managers may know some connected peripherals that
         // are not known to the local one.
-        let peripheralsConnectedByOtherManagers = CBMCentralManagerMock.managers
-            // Get only those managers that were not disposed.
-            .filter { $0.ref != nil }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            CBMCentralManagerMock.managers.compactMap { $0.ref }
+        }
+        let peripheralsConnectedByOtherManagers = existingManagers
             // Look for connected peripherals known to other managers.
             .flatMap {
-                $0.ref!.peripherals[serviceUUIDs]
+                $0.peripherals[serviceUUIDs]
                     .filter { $0.state == .connected }
             }
             // Search for ones that are not known to the local manager.
@@ -710,6 +729,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     private var queue: DispatchQueue {
         return manager.queue
     }
+    private let mutex: DispatchQueue = DispatchQueue(label: "Mutex")
     /// The mock peripheral with user-defined implementation.
     private let mock: CBMPeripheralSpec
     /// Size of the outgoing buffer. Only this many packets
@@ -1169,9 +1189,9 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         switch delegate.peripheral(mock,
                                    didReceiveReadRequestFor: characteristic) {
         case .success(let data):
-            characteristic.value = data
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
+                    characteristic.value = data
                     self.delegate?.peripheral(self,
                                               didUpdateValueFor: characteristic,
                                               error: nil)
@@ -1204,9 +1224,9 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         switch delegate.peripheral(mock,
                                    didReceiveReadRequestFor: descriptor) {
         case .success(let data):
-            descriptor.value = data
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
+                    descriptor.value = data
                     self.delegate?.peripheral(self,
                                               didUpdateValueFor: descriptor,
                                               error: nil)
@@ -1266,20 +1286,13 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 }
             }
         } else {
-            let decreaseBuffer = { [weak self] in
-                guard let strongSelf = self,
-                    strongSelf.availableWriteWithoutResponseBuffer > 0 else {
+            // Decrease buffer.
+            mutex.sync {
+                guard self.availableWriteWithoutResponseBuffer > 0 else {
                     return
                 }
-                strongSelf.availableWriteWithoutResponseBuffer -= 1
-                strongSelf._canSendWriteWithoutResponse = false
-            }
-            if DispatchQueue.main.label == queue.label {
-                decreaseBuffer()
-            } else {
-                queue.sync {
-                    decreaseBuffer()
-                }
+                self.availableWriteWithoutResponseBuffer -= 1
+                self._canSendWriteWithoutResponse = false
             }
             
             delegate.peripheral(mock,
@@ -1288,16 +1301,10 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
 
             queue.async { [weak self] in
                 if let self = self, self.state == .connected {
-                    let increaseBuffer = {
+                    // Increase buffer.
+                    self.mutex.sync {
                         self.availableWriteWithoutResponseBuffer += 1
                         self._canSendWriteWithoutResponse = true
-                    }
-                    if DispatchQueue.main.label == self.queue.label {
-                        increaseBuffer()
-                    } else {
-                        self.queue.sync {
-                            increaseBuffer()
-                        }
                     }
                     if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
                         self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
