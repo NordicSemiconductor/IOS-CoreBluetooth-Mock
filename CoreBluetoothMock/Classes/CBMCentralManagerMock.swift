@@ -710,6 +710,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     private var queue: DispatchQueue {
         return manager.queue
     }
+    private let mutex: DispatchQueue = DispatchQueue(label: "Mutex")
     /// The mock peripheral with user-defined implementation.
     private let mock: CBMPeripheralSpec
     /// Size of the outgoing buffer. Only this many packets
@@ -1266,20 +1267,13 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 }
             }
         } else {
-            let decreaseBuffer = { [weak self] in
-                guard let strongSelf = self,
-                    strongSelf.availableWriteWithoutResponseBuffer > 0 else {
+            // Decrease buffer.
+            mutex.sync {
+                guard self.availableWriteWithoutResponseBuffer > 0 else {
                     return
                 }
-                strongSelf.availableWriteWithoutResponseBuffer -= 1
-                strongSelf._canSendWriteWithoutResponse = false
-            }
-            if DispatchQueue.main.label == queue.label {
-                decreaseBuffer()
-            } else {
-                queue.sync {
-                    decreaseBuffer()
-                }
+                self.availableWriteWithoutResponseBuffer -= 1
+                self._canSendWriteWithoutResponse = false
             }
             
             delegate.peripheral(mock,
@@ -1288,16 +1282,10 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
 
             queue.async { [weak self] in
                 if let self = self, self.state == .connected {
-                    let increaseBuffer = {
+                    // Increase buffer.
+                    self.mutex.sync {
                         self.availableWriteWithoutResponseBuffer += 1
                         self._canSendWriteWithoutResponse = true
-                    }
-                    if DispatchQueue.main.label == self.queue.label {
-                        increaseBuffer()
-                    } else {
-                        self.queue.sync {
-                            increaseBuffer()
-                        }
                     }
                     if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
                         self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
