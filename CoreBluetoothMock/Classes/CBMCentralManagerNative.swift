@@ -185,7 +185,7 @@ public class CBMCentralManagerNative: CBMCentralManager {
     }
     
     public override func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
-                                            options: [String : Any]?) {
+                                            options: [String : Any]? = nil) {
         manager.scanForPeripherals(withServices: serviceUUIDs, options: options)
     }
     

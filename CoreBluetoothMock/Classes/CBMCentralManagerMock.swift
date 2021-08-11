@@ -510,7 +510,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     open override func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
-                                 options: [String : Any]?) {
+                                          options: [String : Any]? = nil) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         if isScanning {
@@ -558,8 +558,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         scanOptions = nil
     }
     
-    open override func connect(_ peripheral: CBMPeripheral,
-                               options: [String : Any]?) {
+    open override func connect(_ peripheral: CBMPeripheral, options: [String : Any]? = nil) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         if let o = options, !o.isEmpty {
@@ -687,7 +686,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     @available(iOS 13.0, *)
-    open override func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]?) {
+    open override func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
         fatalError("Mock connection events are not implemented")
     }
     
