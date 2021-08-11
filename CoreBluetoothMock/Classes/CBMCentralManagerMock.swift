@@ -1169,9 +1169,9 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         switch delegate.peripheral(mock,
                                    didReceiveReadRequestFor: characteristic) {
         case .success(let data):
-            characteristic.value = data
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
+                    characteristic.value = data
                     self.delegate?.peripheral(self,
                                               didUpdateValueFor: characteristic,
                                               error: nil)
@@ -1204,9 +1204,9 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         switch delegate.peripheral(mock,
                                    didReceiveReadRequestFor: descriptor) {
         case .success(let data):
-            descriptor.value = data
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
+                    descriptor.value = data
                     self.delegate?.peripheral(self,
                                               didUpdateValueFor: descriptor,
                                               error: nil)
