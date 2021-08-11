@@ -90,11 +90,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
 
     /// The dispatch queue used for all callbacks.
     fileprivate let queue: DispatchQueue
-    /// Should a simple implementation be used, or not. By default the behavior
-    /// of the mock manager will try to mimic the native manager as much as
-    /// possible, but by setting `CBMCentralManagerSimpleMock` flag in the options
-    /// in the initializer the behavior will be simpler, with no delays, etc.
-    fileprivate let isSimple: Bool
     /// A map of peripherals known to this central manager.
     private var peripherals: [UUID : CBMPeripheralMock] = [:]
     /// A flag set to true few milliseconds after the manager is created.
@@ -115,7 +110,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     public init() {
         self._isScanning = false
         self.queue = DispatchQueue.main
-        self.isSimple = false
         super.init(true)
         initialize()
     }
@@ -124,7 +118,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 queue: DispatchQueue?) {
         self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
-        self.isSimple = false
         super.init(true)
         self.delegate = delegate
         initialize()
@@ -136,7 +129,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 options: [String : Any]?) {
         self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
-        self.isSimple = options?[CBMCentralManagerSimpleMockKey] as? Bool ?? false
         super.init(true)
         self.delegate = delegate
         if let options = options,
@@ -163,21 +155,10 @@ open class CBMCentralManagerMock: CBMCentralManager {
             NSLog("Warning: No simulated peripherals. " +
                   "Call simulatePeripherals(:) before creating central manager")
         }
-        if isSimple {
-            CBMCentralManagerMock.managers.append(WeakRef(self))
-            queue.async { [weak self] in
-                if let self = self {
-                    self.delegate?.centralManagerDidUpdateState(self)
-                }
-            }
-        } else {
-            // Let's say initialization takes 10 ms. Less or more.
-            let delay: DispatchTimeInterval = .milliseconds(10)
-            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
-                if let self = self {
-                    CBMCentralManagerMock.managers.append(WeakRef(self))
-                    self.delegate?.centralManagerDidUpdateState(self)
-                }
+        queue.async { [weak self] in
+            if let self = self {
+                CBMCentralManagerMock.managers.append(WeakRef(self))
+                self.delegate?.centralManagerDidUpdateState(self)
             }
         }
     }
@@ -967,7 +948,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             let newServicesCount = services!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
-            let delay = interval * Double(manager.isSimple ? 1 : newServicesCount)
+            let delay = interval * Double(newServicesCount)
             queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self, didDiscoverServices: nil)
@@ -1021,7 +1002,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             let newServicesCount = service._includedServices!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
-            let delay = interval * Double(manager.isSimple ? 1 : newServicesCount)
+            let delay = interval * Double(newServicesCount)
             queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,
@@ -1080,7 +1061,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             let newCharacteristicsCount = service._characteristics!.count - initialSize
             // Characteristics discovery may takes the more time, the more characteristics
             // are discovered.
-            let delay = interval * Double(manager.isSimple ? 1 : newCharacteristicsCount)
+            let delay = interval * Double(newCharacteristicsCount)
             queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,
@@ -1139,7 +1120,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             let newDescriptorsCount = characteristic._descriptors!.count - initialSize
             // Descriptors discovery may takes the more time, the more descriptors
             // are discovered.
-            let delay = interval * Double(manager.isSimple ? 1 : newDescriptorsCount)
+            let delay = interval * Double(newDescriptorsCount)
             queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,

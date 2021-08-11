@@ -79,10 +79,6 @@ public let CBMConnectPeripheralOptionRequiresANCS = CBConnectPeripheralOptionReq
 public let CBMCentralManagerRestoredStatePeripheralsKey  = CBCentralManagerRestoredStatePeripheralsKey
 public let CBMCentralManagerRestoredStateScanServicesKey = CBCentralManagerRestoredStateScanServicesKey
 public let CBMCentralManagerRestoredStateScanOptionsKey  = CBCentralManagerRestoredStateScanOptionsKey
-/// When a `CBMCentralManagerMock` is created with this option, the 10ms delay, which is
-/// normally required for the manager to be initialilze will not be used. Instead, the
-/// manager will be ready immediately.
-public let CBMCentralManagerSimpleMockKey                = "CBMCentralManagerSimpleMockKey"
 
 public let CBMAdvertisementDataLocalNameKey             = CBAdvertisementDataLocalNameKey
 public let CBMAdvertisementDataServiceUUIDsKey          = CBAdvertisementDataServiceUUIDsKey
