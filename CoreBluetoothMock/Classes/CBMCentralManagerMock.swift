@@ -429,7 +429,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         existingManagers.forEach { manager in
             if let target = manager.peripherals[peripheral.identifier],
-                target.state == .connected {
+               target.state == .connected {
                 target.disconnected(withError: error) { error in
                     manager.delegate?.centralManager(manager,
                                                      didDisconnectPeripheral: target,
@@ -841,7 +841,10 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             state = .disconnecting
         }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
-            if let self = self, CBMCentralManagerMock.managerState == .poweredOn {
+            // `tearDownSimulation()` could have been called before this is called.
+            // See https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/issues/25
+            if let self = self, self.state == .disconnecting,
+               CBMCentralManagerMock.managerState == .poweredOn {
                 self.state = .disconnected
                 self.services = nil
                 self._canSendWriteWithoutResponse = false
