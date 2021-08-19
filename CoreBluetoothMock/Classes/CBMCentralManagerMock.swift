@@ -307,6 +307,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         peripheral.services = newServices
 
+        // If there are no connected devices, we're done.
         guard peripheral.virtualConnections > 0 else {
             return
         }
@@ -907,7 +908,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         }
         
         // Keep only services that hadn't changed.
-        services = services!
+        services = oldServices
             .filter { service in
                 mock.services!.contains(where: {
                     $0.identifier == service.identifier
