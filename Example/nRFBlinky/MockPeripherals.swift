@@ -235,12 +235,12 @@ extension CBMServiceMock {
     
 }
 
-public class PowerPackCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
+private class PowerPackCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     private let primaryBatteryLevel: UInt8 = 75
     private let secondaryBatteryLevel: UInt8 = 100
     
-    public func peripheral(_ peripheral: CBMPeripheralSpec,
-                           didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
             -> Result<Data, Error> {
         if characteristic == CBMCharacteristicMock.primaryBatteryLevelCharacteristic {
             return .success(Data([primaryBatteryLevel]))
@@ -251,8 +251,8 @@ public class PowerPackCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
         return .failure(CBMATTError(.invalidHandle))
     }
     
-    public func peripheral(_ peripheral: CBMPeripheralSpec,
-                           didReceiveReadRequestFor descriptor: CBMDescriptorMock)
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveReadRequestFor descriptor: CBMDescriptorMock)
             -> Result<Data, Error> {
         if descriptor.characteristic == CBMCharacteristicMock.primaryBatteryLevelCharacteristic {
             return .success("Primary".data(using: .utf8)!)
