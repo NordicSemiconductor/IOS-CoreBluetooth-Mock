@@ -342,6 +342,42 @@ open class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock
 
 public typealias CBMCCCDescriptorMock = CBMClientCharacteristicConfigurationDescriptorMock
 
+// MARK: - Utilities
+
+internal extension Array where Element == CBMServiceMock {
+    
+    func find(mockOf service: CBMService) -> CBMServiceMock? {
+        return first { $0.identifier == service.identifier }
+    }
+    
+    func find(mockOf characteristic: CBMCharacteristic) -> CBMCharacteristicMock? {
+        guard let service = characteristic.optionalService,
+              let mockService = find(mockOf: service),
+              let mockCharacteristic = mockService.characteristics?.first(where: {
+                $0.identifier == characteristic.identifier
+              }) else {
+            return nil
+        }
+        return mockCharacteristic as? CBMCharacteristicMock
+    }
+    
+    func find(mockOf descriptor: CBMDescriptor) -> CBMDescriptorMock? {
+        guard let characteristic = descriptor.optionalCharacteristic,
+              let service = characteristic.optionalService,
+              let mockService = find(mockOf: service),
+              let mockCharacteristic = mockService.characteristics?.first(where: {
+                $0.identifier == characteristic.identifier
+              }),
+              let mockDescriptor = mockCharacteristic.descriptors?.first(where: {
+                $0.identifier == descriptor.identifier
+              }) else {
+            return nil
+        }
+        return mockDescriptor as? CBMDescriptorMock
+    }
+    
+}
+
 // MARK: - Mocking uninitialized objects
 
 fileprivate let uninitializedPeriperheral   = CBMPeripheralUninitialized()
