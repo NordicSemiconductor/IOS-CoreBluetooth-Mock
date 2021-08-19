@@ -118,30 +118,19 @@ internal class CBMServiceNative: CBMService {
 }
 
 open class CBMServiceMock: CBMService {
-
-    open override var includedServices: [CBMService]? {
-        set { _includedServices = newValue }
-        get { return _includedServices }
-    }
-
-    open override var characteristics: [CBMCharacteristic]? {
-        set { _characteristics = newValue }
-        get { return _characteristics }
-    }
     
     /// Returns a service, initialized with a service type and UUID.
     /// - Parameters:
     ///   - uuid: The Bluetooth UUID of the service.
     ///   - isPrimary: The type of the service (primary or secondary).
+    ///   - includedServices: Optional list of included services.
     ///   - characteristics: Optional list of characteristics.
     public init(type uuid: CBMUUID, primary isPrimary: Bool,
+                includedService: CBMServiceMock...,
                 characteristics: CBMCharacteristicMock...) {
         super.init(type: uuid, primary: isPrimary)
-        self.characteristics = characteristics
-    }
-    
-    open func contains(_ characteristic: CBMCharacteristicMock) -> Bool {
-        return _characteristics?.contains(characteristic) ?? false
+        self._includedServices = includedService
+        self._characteristics = characteristics
     }
     
     open override func isEqual(_ object: Any?) -> Bool {
