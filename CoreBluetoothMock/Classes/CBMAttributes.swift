@@ -245,10 +245,6 @@ open class CBMCharacteristicMock: CBMCharacteristic {
         self.descriptors = descriptors
     }
     
-    open func contains(_ descriptor: CBMDescriptor) -> Bool {
-        return _descriptors?.contains(descriptor) ?? false
-    }
-    
     open override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? CBMCharacteristicMock {
             return identifier == other.identifier
