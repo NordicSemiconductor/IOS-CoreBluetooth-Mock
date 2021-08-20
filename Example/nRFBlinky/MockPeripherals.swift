@@ -236,17 +236,25 @@ extension CBMServiceMock {
 }
 
 private class PowerPackCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
-    private let primaryBatteryLevel: UInt8 = 75
-    private let secondaryBatteryLevel: UInt8 = 100
+    private var primaryBatteryLevel: UInt8 = 75
+    private var secondaryBatteryLevel: UInt8 = 100
+    
+    private var primaryBatteryLevelData: Data {
+        return Data([primaryBatteryLevel])
+    }
+    
+    private var secondaryBatteryLevelData: Data {
+        return Data([secondaryBatteryLevel])
+    }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
             -> Result<Data, Error> {
         if characteristic == CBMCharacteristicMock.primaryBatteryLevelCharacteristic {
-            return .success(Data([primaryBatteryLevel]))
+            return .success(primaryBatteryLevelData)
         }
         if characteristic == CBMCharacteristicMock.secondaryBatteryLevelCharacteristic {
-            return .success(Data([secondaryBatteryLevel]))
+            return .success(secondaryBatteryLevelData)
         }
         return .failure(CBMATTError(.invalidHandle))
     }
