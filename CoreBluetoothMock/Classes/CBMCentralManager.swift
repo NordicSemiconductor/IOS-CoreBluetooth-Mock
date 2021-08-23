@@ -90,6 +90,9 @@ open class CBMCentralManager: NSObject {
     /// This method returns the value set as `CBMCentralManagerMock.simulateAuthorization`
     /// or, if set to `nil`, the native result returned by `CBCentralManager`.
     @available(iOS, introduced: 13.0, deprecated: 13.1)
+    @available(macOS, introduced: 10.15)
+    @available(tvOS, introduced: 13.0, deprecated: 13.1)
+    @available(watchOS, introduced: 6.0, deprecated: 6.1)
     open var authorization: CBMManagerAuthorization {
         if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
            let authotization = CBMManagerAuthorization(rawValue: rawValue) {
@@ -112,7 +115,7 @@ open class CBMCentralManager: NSObject {
     /// - Note:
     /// This method returns the value set as `CBMCentralManagerMock.simulateAuthorization`
     /// or, if set to `nil`, the native result returned by `CBCentralManager`.
-    @available(iOS 13.1, *)
+    @available(iOS 13.1, macOS 10.15, tvOS 13.1, watchOS 6.1, *)
     open class var authorization: CBMManagerAuthorization {
         if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
            let authotization = CBMManagerAuthorization(rawValue: rawValue) {
