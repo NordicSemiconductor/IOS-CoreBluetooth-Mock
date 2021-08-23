@@ -23,7 +23,7 @@ work making Bluetooth-enabled apps difficult to test. As the documentation state
 The *Core Bluetooth Mock* library defines number of **CBM...** classes and constants, that wrap or imitate the corresponding
 **CB...** counterparts from *Core Bluetooth* framework. For example, `CBMCentralManager` has the same API and 
 behavior as `CBCentralManager`, etc. On physical iDevices all calls to `CBMCentralManager` and `CBMPeripheral` are
-forwarded to their native equivalents, but on a simulator a mock implementation that you define is used. 
+forwarded to their native equivalents, but on a simulator a user defined mock implementation is used. 
 
 ## How to start
 
@@ -124,7 +124,7 @@ The last parameter, `forceMock`, when set to *true*, allows to run mock implemen
 
 ### Known issues
 
-- The new `CBMCentralManager` and `CBMPeripheral` are protocols, not classes. That means that, e.g. they cannot 
+- The new `CBMPeripheral` is a protocols, not a class. That means that, e.g. they cannot 
 be used as `Equatable` or `Hashable`. When using in maps, you may need to use the *identifier*. Also, KVO are not yet supported.
 
 ## Defining mock peripherals
@@ -173,18 +173,28 @@ after the device has been reset.
 `CBMPeripheralSpec.simulateValueUpdate(:for:)` - simulates sending a notification or indication from the device. All subscribed
 clients will be notified a connection interval later.
 
+`CBMPeripheralSpec.simulateCaching()` - simulates caching the device by the iDevice. Caching pairs the device's MAC with a 
+random identifier (UUID). A device is also cached whenever it is scanned. Caching makes the device available to be retrieved using 
+`CBMCentralManager.retrievePeripherals(withIdentifiers:)`.
+
+`CBMPeripheralSpec.simulateMacChange(:)` - simulates the device changing its MAC address. The iDevice will not contain any
+cached information about the device, as with the new MAC it is considered to be a new device.
+
 See [AppDelegate.swift](Example/nRFBlinky/MockPeripherals.swift#L48) for reference, where 3 mock peripherals are defined: a test blinky
 device (like in Nordic SDK), an HRM device (GATT behavior not implemented, as the app does not support it), and a Physical Web Beacon,
 a non-connectable device. The 2 latter will not pop up on in the sample app, as it is scanning with Service UUID filter.
 
 ### Advanced
 
-`CBMCentralManagerFactory.simulateStateRestoration` - this closure will be used when you initiate a central manager
+`CBMCentralManagerMock.simulateStateRestoration` - this closure will be used when you initiate a central manager
 with `CBMCentralManagerOptionRestoreIdentifierKey` option. The map returned will be passed to
 `centralManager(:willRestoreState:)` callback in central manager's delegate.
 
-`CBMCentralManagerFactory.simulateFeaturesSupport` - this closure will be used to emulate Bluetooth features supported
+`CBMCentralManagerMock.simulateFeaturesSupport` - this closure will be used to emulate Bluetooth features supported
 by the manager. It is availalbe on iOS 13+, tvOS 13+ or watchOS 6+.
+
+`CBMCentralManagerMock.simulateAuthorization(:)` - Simulates the current authorization state of a Core Bluetooth manager.
+When any value other than `.allowedAlways` is returned, the `CBMCentralManager` will change state to `CBMManagerState.unauthorized`.
 
 ## Sample application: nRF BLINKY
 
@@ -210,14 +220,15 @@ A simplified proprietary service by Nordic Semiconductor, containing two charact
     - Value: **`0`** => Button Released
   
   For full specification, check out 
-  [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v16.0.0/ble_sdk_app_blinky.html?cp=7_1_4_2_2_3).
+  [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/ble_sdk_app_blinky.html?cp=8_1_4_2_2_3).
 
 ## Requirements:
-- An iOS device with BLE capabilities, or a simulator (to run the mock)
-- A [Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits) (unless testing mock)
+- An iOS device with BLE capabilities, or a simulator (to run the mock).
+- A [Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits) (unless testing mock).
 - The Blinky example firmware to flash on the Development Kit. For your conveninence, we have bundled two firmwares in this project under the Firmwares directory.
 - To get the latest firmwares and check the source code, you may go directly to our [Developers website](http://developer.nordicsemi.com/nRF5_SDK/) and download the SDK version you need, then you can find the source code and hex files to the blinky demo in the directory `/examples/ble_peripheral/ble_app_blinky/`
--  More information about the nRFBlinky example firmware can be found in the [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v16.0.0/ble_sdk_app_blinky.html?cp=7_1_4_2_2_3).
+- The LBS (LED Button Service) is also supported in nRF Connect SDK: [here](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/samples/bluetooth/peripheral_lbs/README.html).
+-  More information about the nRFBlinky example firmware can be found in the [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/ble_sdk_app_blinky.html?cp=8_1_4_2_2_3).
 
 ## Installation and usage:
 - Prepare your Development kit.
