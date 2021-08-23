@@ -75,6 +75,12 @@ public protocol CBMPeripheralSpecDelegate {
     ///            using `peripheral(:didDiscoverIncludedServices:)`.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
+                    for service: CBMServiceMock)
+        -> Result<Void, Error>
+    
+    @available(*, deprecated, message: "Use similar method with CBMServiceMock parameter type.")
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
                     for service: CBMService)
         -> Result<Void, Error>
 
@@ -89,6 +95,12 @@ public protocol CBMPeripheralSpecDelegate {
     ///            using `peripheral(:didDiscoverCharacteristics:)`.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
+                    for service: CBMServiceMock)
+        -> Result<Void, Error>
+    
+    @available(*, deprecated, message: "Use similar method with CBMServiceMock parameter type.")
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
                     for service: CBMService)
         -> Result<Void, Error>
 
@@ -100,6 +112,11 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - characteristic: The parent characteristic.
     /// - Returns: Success, or a service discovery error. The error will be reported
     ///            using `peripheral(:didDiscoverDescriptors:)`.
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristicMock)
+        -> Result<Void, Error>
+    
+    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristic)
         -> Result<Void, Error>
@@ -113,6 +130,11 @@ public protocol CBMPeripheralSpecDelegate {
     ///            of a failure, the returned error will be returned to the
     ///            `peripheral(:didUpdateValueFor:error:)`.
     func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
+        -> Result<Data, Error>
+    
+    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor characteristic: CBMCharacteristic)
         -> Result<Data, Error>
 
@@ -124,6 +146,11 @@ public protocol CBMPeripheralSpecDelegate {
     /// - Returns: When success, the descriptor value should be returned. In case
     ///            of a failure, the returned error will be returned to the
     ///            `peripheral(:didUpdateValueFor:error:)`.
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveReadRequestFor descriptor: CBMDescriptorMock)
+        -> Result<Data, Error>
+    
+    @available(*, deprecated, message: "Use similar method with CBMDescriptorMock parameter type.")
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor descriptor: CBMDescriptor)
         -> Result<Data, Error>
@@ -137,6 +164,12 @@ public protocol CBMPeripheralSpecDelegate {
     /// - Returns: Success, or the reason of failure. The returned error will be
     ///            returned to the `peripheral(:didWriteValueFor:error:)`.
     func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveWriteRequestFor characteristic: CBMCharacteristicMock,
+                    data: Data)
+        -> Result<Void, Error>
+    
+    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor characteristic: CBMCharacteristic,
                     data: Data)
         -> Result<Void, Error>
@@ -147,6 +180,11 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - peripheral: The target peripheral specification.
     ///   - characteristic: The target characteristic.
     ///   - data: The data written.
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveWriteCommandFor characteristic: CBMCharacteristicMock,
+                    data: Data)
+    
+    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteCommandFor characteristic: CBMCharacteristic,
                     data: Data)
@@ -160,6 +198,12 @@ public protocol CBMPeripheralSpecDelegate {
     /// - Returns: Success, or the reason of failure. The returned error will be
     ///            returned to the `peripheral(:didWriteValueFor:error:)`.
     func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveWriteRequestFor descriptor: CBMDescriptorMock,
+                    data: Data)
+        -> Result<Void, Error>
+    
+    @available(*, deprecated, message: "Use similar method with CBMDescriptorMock parameter type.")
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor descriptor: CBMDescriptor,
                     data: Data)
         -> Result<Void, Error>
@@ -171,6 +215,12 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - enabled: Whether notifications or indications were enabled or disabled.
     ///   - characteristic: The target characteristic.
     /// - Returns: Success, or the reason of a failure.
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveSetNotifyRequest enabled: Bool,
+                    for characteristic: CBMCharacteristicMock)
+        -> Result<Void, Error>
+    
+    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveSetNotifyRequest enabled: Bool,
                     for characteristic: CBMCharacteristic)
@@ -204,50 +254,102 @@ public extension CBMPeripheralSpecDelegate {
         -> Result<Void, Error> {
             return .success(())
     }
-        
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
+                    for service: CBMServiceMock)
+        -> Result<Void, Error> {
+            return peripheral(p, didReceiveIncludedServiceDiscoveryRequest: serviceUUIDs, for: service as CBMService)
+    }
+    
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
                     for service: CBMService)
         -> Result<Void, Error> {
             return .success(())
-   }
-            
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
+                    for service: CBMServiceMock)
+        -> Result<Void, Error> {
+            return peripheral(p, didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs, for: service as CBMService)
+    }
+    
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristic)
         -> Result<Void, Error> {
             return .success(())
-   }
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristicMock)
+        -> Result<Void, Error> {
+            return peripheral(p, didReceiveDescriptorsDiscoveryRequestFor: characteristic as CBMCharacteristic)
+    }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor characteristic: CBMCharacteristic)
         -> Result<Data, Error> {
             return .failure(CBMATTError(.readNotPermitted))
-   }
-        
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
+        -> Result<Data, Error> {
+            return peripheral(p, didReceiveReadRequestFor: characteristic as CBMCharacteristic)
+    }
+    
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor descriptor: CBMDescriptor)
         -> Result<Data, Error> {
             return .failure(CBMATTError(.readNotPermitted))
     }
-
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveReadRequestFor descriptor: CBMDescriptorMock)
+        -> Result<Data, Error> {
+            return peripheral(p, didReceiveReadRequestFor: descriptor as CBMDescriptor)
+    }
+    
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor characteristic: CBMCharacteristic,
                     data: Data)
         -> Result<Void, Error> {
             return .failure(CBMATTError(.writeNotPermitted))
     }
-
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveWriteRequestFor characteristic: CBMCharacteristicMock,
+                    data: Data)
+        -> Result<Void, Error> {
+            return peripheral(p, didReceiveWriteRequestFor: characteristic as CBMCharacteristic, data: data)
+    }
+    
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteCommandFor characteristic: CBMCharacteristic,
                     data: Data) {
         // Empty default implementation
     }
-
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveWriteCommandFor characteristic: CBMCharacteristicMock,
+                    data: Data) {
+        peripheral(p, didReceiveWriteCommandFor: characteristic as CBMCharacteristic, data: data)
+    }
+    
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor descriptor: CBMDescriptor,
                     data: Data)
         -> Result<Void, Error> {
             return .failure(CBATTError(.writeNotPermitted))
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveWriteRequestFor descriptor: CBMDescriptorMock,
+                    data: Data)
+        -> Result<Void, Error> {
+            return peripheral(p, didReceiveWriteRequestFor: descriptor as CBMDescriptor, data: data)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -264,5 +366,12 @@ public extension CBMPeripheralSpecDelegate {
             } else {
                 return .failure(CBMError(.invalidHandle))
             }
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didReceiveSetNotifyRequest enabled: Bool,
+                    for characteristic: CBMCharacteristicMock)
+        -> Result<Void, Error> {
+            return peripheral(p, didReceiveSetNotifyRequest: enabled, for: characteristic as CBMCharacteristic)
     }
 }

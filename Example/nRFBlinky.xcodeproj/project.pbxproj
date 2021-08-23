@@ -14,6 +14,7 @@
 		2DBB2F44478EB7F4C0DF3AA4 /* BlinkyManagerEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DBB27ABD18F3DAECC075CF2 /* BlinkyManagerEvents.swift */; };
 		526EA53D240D2F8100BF70B2 /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 526EA53C240D2F8100BF70B2 /* UITests.swift */; };
 		52991CE726C26CE90029CD9E /* RetrievingDevicesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52991CE626C26CE90029CD9E /* RetrievingDevicesTest.swift */; };
+		52A128B726CD9AF800DE5F37 /* MultipleInstancesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A128B626CD9AF800DE5F37 /* MultipleInstancesTest.swift */; };
 		52A648F1240E83F000817F2F /* NormalBehaviorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A648F0240E83F000817F2F /* NormalBehaviorTest.swift */; };
 		52A648F9240E95F700817F2F /* MockPeripherals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52B537D723FC129400372948 /* MockPeripherals.swift */; };
 		52A648FB24125D1D00817F2F /* CoreBluetoothTypeAliases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A648FA24125D1D00817F2F /* CoreBluetoothTypeAliases.swift */; };
@@ -64,6 +65,7 @@
 		526EA53C240D2F8100BF70B2 /* UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests.swift; sourceTree = "<group>"; };
 		526EA53E240D2F8100BF70B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		52991CE626C26CE90029CD9E /* RetrievingDevicesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetrievingDevicesTest.swift; sourceTree = "<group>"; };
+		52A128B626CD9AF800DE5F37 /* MultipleInstancesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleInstancesTest.swift; sourceTree = "<group>"; };
 		52A648E0240E7BDF00817F2F /* CoreBluetoothMock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CoreBluetoothMock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		52A648EE240E83F000817F2F /* nRFBlinky_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = nRFBlinky_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		52A648F0240E83F000817F2F /* NormalBehaviorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalBehaviorTest.swift; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 				2DBB22CFA82E35CBA3BB326F /* ResetTest.swift */,
 				52E905CD24DD35A100BB5740 /* FailedConnectionTest.swift */,
 				52991CE626C26CE90029CD9E /* RetrievingDevicesTest.swift */,
+				52A128B626CD9AF800DE5F37 /* MultipleInstancesTest.swift */,
 				2DBB2F5ACA6DCE530B0DDE90 /* EventHelper.swift */,
 				52A648F8240E844700817F2F /* Supporting Files */,
 			);
@@ -615,6 +618,7 @@
 				52991CE726C26CE90029CD9E /* RetrievingDevicesTest.swift in Sources */,
 				2DBB258568F7E07E0DFA3B4E /* EventHelper.swift in Sources */,
 				52E905CE24DD35A100BB5740 /* FailedConnectionTest.swift in Sources */,
+				52A128B726CD9AF800DE5F37 /* MultipleInstancesTest.swift in Sources */,
 				2DBB2D9D87AA009D95C10DEE /* ResetTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

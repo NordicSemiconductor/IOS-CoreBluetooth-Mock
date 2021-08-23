@@ -118,30 +118,19 @@ internal class CBMServiceNative: CBMService {
 }
 
 open class CBMServiceMock: CBMService {
-
-    open override var includedServices: [CBMService]? {
-        set { _includedServices = newValue }
-        get { return _includedServices }
-    }
-
-    open override var characteristics: [CBMCharacteristic]? {
-        set { _characteristics = newValue }
-        get { return _characteristics }
-    }
     
     /// Returns a service, initialized with a service type and UUID.
     /// - Parameters:
     ///   - uuid: The Bluetooth UUID of the service.
     ///   - isPrimary: The type of the service (primary or secondary).
+    ///   - includedServices: Optional list of included services.
     ///   - characteristics: Optional list of characteristics.
     public init(type uuid: CBMUUID, primary isPrimary: Bool,
+                includedService: CBMServiceMock...,
                 characteristics: CBMCharacteristicMock...) {
         super.init(type: uuid, primary: isPrimary)
-        self.characteristics = characteristics
-    }
-    
-    open func contains(_ characteristic: CBMCharacteristicMock) -> Bool {
-        return _characteristics?.contains(characteristic) ?? false
+        self._includedServices = includedService
+        self._characteristics = characteristics
     }
     
     open override func isEqual(_ object: Any?) -> Bool {
@@ -256,10 +245,6 @@ open class CBMCharacteristicMock: CBMCharacteristic {
         self.descriptors = descriptors
     }
     
-    open func contains(_ descriptor: CBMDescriptor) -> Bool {
-        return _descriptors?.contains(descriptor) ?? false
-    }
-    
     open override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? CBMCharacteristicMock {
             return identifier == other.identifier
@@ -352,6 +337,42 @@ open class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock
 }
 
 public typealias CBMCCCDescriptorMock = CBMClientCharacteristicConfigurationDescriptorMock
+
+// MARK: - Utilities
+
+internal extension Array where Element == CBMServiceMock {
+    
+    func find(mockOf service: CBMService) -> CBMServiceMock? {
+        return first { $0.identifier == service.identifier }
+    }
+    
+    func find(mockOf characteristic: CBMCharacteristic) -> CBMCharacteristicMock? {
+        guard let service = characteristic.optionalService,
+              let mockService = find(mockOf: service),
+              let mockCharacteristic = mockService.characteristics?.first(where: {
+                $0.identifier == characteristic.identifier
+              }) else {
+            return nil
+        }
+        return mockCharacteristic as? CBMCharacteristicMock
+    }
+    
+    func find(mockOf descriptor: CBMDescriptor) -> CBMDescriptorMock? {
+        guard let characteristic = descriptor.optionalCharacteristic,
+              let service = characteristic.optionalService,
+              let mockService = find(mockOf: service),
+              let mockCharacteristic = mockService.characteristics?.first(where: {
+                $0.identifier == characteristic.identifier
+              }),
+              let mockDescriptor = mockCharacteristic.descriptors?.first(where: {
+                $0.identifier == descriptor.identifier
+              }) else {
+            return nil
+        }
+        return mockDescriptor as? CBMDescriptorMock
+    }
+    
+}
 
 // MARK: - Mocking uninitialized objects
 

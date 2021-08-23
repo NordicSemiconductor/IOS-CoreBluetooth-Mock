@@ -212,7 +212,11 @@ class RetrievingDevicesTest: XCTestCase {
         // Scan only for HRM device. Other devices may also be in range.
         manager.scanForPeripherals(withServices: [hrmServiceUUID])
         
-        wait(for: [hrmFound, otherFound, hrmNotRetrieved, hrmStillNotRetrieved, hrmRetrieved], timeout: 1.0)
+        wait(for: [
+                hrmFound, otherFound,
+                hrmNotRetrieved, hrmStillNotRetrieved, hrmRetrieved
+             ],
+             timeout: 4.0)
     }
 
 }

@@ -307,6 +307,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         peripheral.services = newServices
 
+        // If there are no connected devices, we're done.
         guard peripheral.virtualConnections > 0 else {
             return
         }
@@ -907,7 +908,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         }
         
         // Keep only services that hadn't changed.
-        services = services!
+        services = oldServices
             .filter { service in
                 mock.services!.contains(where: {
                     $0.identifier == service.identifier
@@ -962,7 +963,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let allServices = mock.services else {
+              let mockServices = mock.services else {
             return
         }
         
@@ -971,7 +972,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         case .success:
             services = services ?? []
             let initialSize = services!.count
-            services = services! + allServices
+            services = services! + mockServices
                 // Filter all device services that match given list (if set).
                 .filter { serviceUUIDs?.contains($0.uuid) ?? true }
                 // Filter those of them, that are not already in discovered services.
@@ -1005,27 +1006,21 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let allServices = mock.services else {
-            return
-        }
-        guard let services = services, services.contains(service),
-              let originalService = allServices.first(where: {
-                  $0.identifier == service.identifier
-              }) else {
-            return
-        }
-        guard let originalIncludedServices = originalService.includedServices else {
+              let services = services, services.contains(service),
+              let mockServices = mock.services,
+              let mockService = mockServices.find(mockOf: service),
+              let mockIncludedServices = mockService.includedServices else {
             return
         }
         
         switch delegate.peripheral(mock,
                                    didReceiveIncludedServiceDiscoveryRequest: includedServiceUUIDs,
-                                   for: service as! CBMServiceMock) {
+                                   for: mockService) {
         case .success:
             service._includedServices = service._includedServices ?? []
             let initialSize = service._includedServices!.count
             service._includedServices = service._includedServices! +
-                originalIncludedServices
+                mockIncludedServices
                     // Filter all included service that match given list (if set).
                     .filter { includedServiceUUIDs?.contains($0.uuid) ?? true }
                     // Filter those of them, that are not already in discovered services.
@@ -1064,27 +1059,21 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let allServices = mock.services else {
-            return
-        }
-        guard let services = services, services.contains(service),
-              let originalService = allServices.first(where: {
-                  $0.identifier == service.identifier
-              }) else {
-            return
-        }
-        guard let originalCharacteristics = originalService.characteristics else {
+              let services = services, services.contains(service),
+              let mockServices = mock.services,
+              let mockService = mockServices.find(mockOf: service),
+              let mockCharacteristics = mockService.characteristics else {
             return
         }
         
         switch delegate.peripheral(mock,
                                    didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs,
-                                   for: service) {
+                                   for: mockService) {
         case .success:
             service._characteristics = service._characteristics ?? []
             let initialSize = service._characteristics!.count
             service._characteristics = service._characteristics! +
-                originalCharacteristics
+                mockCharacteristics
                     // Filter all service characteristics that match given list (if set).
                     .filter { characteristicUUIDs?.contains($0.uuid) ?? true }
                     // Filter those of them, that are not already in discovered characteristics.
@@ -1121,31 +1110,21 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let allServices = mock.services else {
-            return
-        }
-        guard let services = services,
-              let parentService = characteristic.optionalService,
-              services.contains(parentService),
-              let originalService = allServices.first(where: {
-                $0.identifier == parentService.identifier
-              }),
-              let originalCharacteristic = originalService.characteristics?.first(where: {
-                  $0.identifier == characteristic.identifier
-              }) else {
-            return
-        }
-        guard let originalDescriptors = originalCharacteristic.descriptors else {
+              let services = services,
+              let parentService = characteristic.optionalService, services.contains(parentService),
+              let mockServices = mock.services,
+              let mockCharacteristic = mockServices.find(mockOf: characteristic),
+              let mockDescriptors = mockCharacteristic.descriptors else {
             return
         }
         
         switch delegate.peripheral(mock,
-                                   didReceiveDescriptorsDiscoveryRequestFor: characteristic) {
+                                   didReceiveDescriptorsDiscoveryRequestFor: mockCharacteristic) {
         case .success:
             characteristic._descriptors = characteristic._descriptors ?? []
             let initialSize = characteristic._descriptors!.count
             characteristic._descriptors = characteristic._descriptors! +
-                originalDescriptors
+                mockDescriptors
                     // Filter those of them, that are not already in discovered descriptors.
                     .filter { d in !characteristic._descriptors!
                         .contains { dd in d.identifier == dd.identifier }
@@ -1181,16 +1160,15 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
-            return
-        }
-        guard let services = services,
-              let characteristicService = characteristic.optionalService,
-              services.contains(characteristicService) else {
+              let interval = mock.connectionInterval,
+              let services = services,
+              let service = characteristic.optionalService, services.contains(service),
+              let mockServices = mock.services,
+              let mockCharacteristic = mockServices.find(mockOf: characteristic) else {
             return
         }
         switch delegate.peripheral(mock,
-                                   didReceiveReadRequestFor: characteristic) {
+                                   didReceiveReadRequestFor: mockCharacteristic) {
         case .success(let data):
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
@@ -1216,16 +1194,15 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
-            return
-        }
-        guard let services = services,
-              let parentService = descriptor.optionalCharacteristic?.service,
-              services.contains(parentService) else {
+              let interval = mock.connectionInterval,
+              let services = services,
+              let service = descriptor.optionalCharacteristic?.service, services.contains(service),
+              let mockServices = mock.services,
+              let mockDescriptor = mockServices.find(mockOf: descriptor) else {
             return
         }
         switch delegate.peripheral(mock,
-                                   didReceiveReadRequestFor: descriptor) {
+                                   didReceiveReadRequestFor: mockDescriptor) {
         case .success(let data):
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
@@ -1256,18 +1233,17 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let mtu = mock.mtu else {
-            return
-        }
-        guard let services = services,
-              let parentService = characteristic.optionalService,
-              services.contains(parentService) else {
+              let mtu = mock.mtu,
+              let services = services,
+              let service = characteristic.optionalService, services.contains(service),
+              let mockServices = mock.services,
+              let mockCharacteristic = mockServices.find(mockOf: characteristic) else {
             return
         }
         
         if type == .withResponse {
             switch delegate.peripheral(mock,
-                                       didReceiveWriteRequestFor: characteristic,
+                                       didReceiveWriteRequestFor: mockCharacteristic,
                                        data: data) {
             case .success:
                 let packetsCount = max(1, (data.count + mtu - 2) / (mtu - 3))
@@ -1299,7 +1275,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             }
             
             delegate.peripheral(mock,
-                                didReceiveWriteCommandFor: characteristic,
+                                didReceiveWriteCommandFor: mockCharacteristic,
                                 data: data.subdata(in: 0..<min(mtu - 3, data.count)))
 
             queue.async { [weak self] in
@@ -1322,17 +1298,16 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
-            return
-        }
-        guard let services = services,
-              let parentService = descriptor.optionalCharacteristic?.service,
-              services.contains(parentService) else {
+              let interval = mock.connectionInterval,
+              let services = services,
+              let service = descriptor.optionalCharacteristic?.service, services.contains(service),
+              let mockServices = mock.services,
+              let mockDescriptor = mockServices.find(mockOf: descriptor) else {
             return
         }
         
         switch delegate.peripheral(mock,
-                                   didReceiveWriteRequestFor: descriptor,
+                                   didReceiveWriteRequestFor: mockDescriptor,
                                    data: data) {
         case .success:
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
@@ -1371,12 +1346,11 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
-            return
-        }
-        guard let services = services,
-              let parentService = characteristic.optionalService,
-              services.contains(parentService) else {
+              let interval = mock.connectionInterval,
+              let services = services,
+              let service = characteristic.optionalService, services.contains(service),
+              let mockServices = mock.services,
+              let mockCharacteristic = mockServices.find(mockOf: characteristic) else {
             return
         }
         guard enabled != characteristic.isNotifying else {
@@ -1385,7 +1359,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         
         switch delegate.peripheral(mock,
                                    didReceiveSetNotifyRequest: enabled,
-                                   for: characteristic) {
+                                   for: mockCharacteristic) {
         case .success:
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
