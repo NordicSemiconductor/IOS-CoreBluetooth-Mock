@@ -30,6 +30,14 @@
 
 import CoreBluetooth
 
+open class CBMAttribute: NSObject {
+    
+    /// The Bluetooth UUID of the attribute.
+    var uuid: CBMUUID {
+        fatalError()
+    }
+}
+
 open class CBMService: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
@@ -37,13 +45,17 @@ open class CBMService: CBMAttribute {
     internal var _includedServices: [CBMService]?
     internal var _characteristics: [CBMCharacteristic]?
 
+    #if swift(>=5.5)
+    /// A back-pointer to the peripheral this service belongs to.
+    open internal(set) weak var peripheral: CBMPeripheral?
+    #else
     /// A back-pointer to the peripheral this service belongs to.
     open internal(set) unowned var peripheral: CBMPeripheral
+    #endif
     
     /// The type of the service (primary or secondary).
     open fileprivate(set) var isPrimary: Bool
     
-    /// The Bluetooth UUID of the attribute.
     open override var uuid: CBMUUID {
         return _uuid
     }
@@ -106,30 +118,19 @@ internal class CBMServiceNative: CBMService {
 }
 
 open class CBMServiceMock: CBMService {
-
-    open override var includedServices: [CBMService]? {
-        set { _includedServices = newValue }
-        get { return _includedServices }
-    }
-
-    open override var characteristics: [CBMCharacteristic]? {
-        set { _characteristics = newValue }
-        get { return _characteristics }
-    }
     
     /// Returns a service, initialized with a service type and UUID.
     /// - Parameters:
     ///   - uuid: The Bluetooth UUID of the service.
     ///   - isPrimary: The type of the service (primary or secondary).
+    ///   - includedServices: Optional list of included services.
     ///   - characteristics: Optional list of characteristics.
     public init(type uuid: CBMUUID, primary isPrimary: Bool,
+                includedService: CBMServiceMock...,
                 characteristics: CBMCharacteristicMock...) {
         super.init(type: uuid, primary: isPrimary)
-        self.characteristics = characteristics
-    }
-    
-    open func contains(_ characteristic: CBMCharacteristicMock) -> Bool {
-        return _characteristics?.contains(characteristic) ?? false
+        self._includedServices = includedService
+        self._characteristics = characteristics
     }
     
     open override func isEqual(_ object: Any?) -> Bool {
@@ -146,13 +147,23 @@ open class CBMCharacteristic: CBMAttribute {
     
     internal var _descriptors: [CBMDescriptor]?
     
-    /// The Bluetooth UUID of the attribute.
     open override var uuid: CBMUUID {
         return _uuid
     }
 
+    #if swift(>=5.5)
     /// A back-pointer to the service this characteristic belongs to.
-    open internal(set) var service: CBMService
+    open internal(set) weak var service: CBMService?
+    #else
+    /// A back-pointer to the service this characteristic belongs to.
+    open internal(set) unowned var service: CBMService
+    #endif
+    
+    /// Casts the sometimes weak, sometimes unowned service to
+    /// always optional object.
+    internal var optionalService: CBMService? {
+        return service
+    }
     
     /// The properties of the characteristic.
     public let properties: CBMCharacteristicProperties
@@ -234,10 +245,6 @@ open class CBMCharacteristicMock: CBMCharacteristic {
         self.descriptors = descriptors
     }
     
-    open func contains(_ descriptor: CBMDescriptor) -> Bool {
-        return _descriptors?.contains(descriptor) ?? false
-    }
-    
     open override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? CBMCharacteristicMock {
             return identifier == other.identifier
@@ -250,13 +257,23 @@ open class CBMDescriptor: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
     
-    /// The Bluetooth UUID of the attribute.
     open override var uuid: CBMUUID {
         return _uuid
     }
     
+    #if swift(>=5.5)
     /// A back-pointer to the characteristic this descriptor belongs to.
-    open internal(set) var characteristic: CBMCharacteristic
+    open internal(set) weak var characteristic: CBMCharacteristic?
+    #else
+    /// A back-pointer to the characteristic this descriptor belongs to.
+    open internal(set) unowned var characteristic: CBMCharacteristic
+    #endif
+    
+    /// Casts the sometimes weak, sometimes unowned characteristic to
+    /// always optional object.
+    internal var optionalCharacteristic: CBMCharacteristic? {
+        return characteristic
+    }
 
     /// The value of the descriptor.
     open internal(set) var value: Any?
@@ -320,6 +337,42 @@ open class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock
 }
 
 public typealias CBMCCCDescriptorMock = CBMClientCharacteristicConfigurationDescriptorMock
+
+// MARK: - Utilities
+
+internal extension Array where Element == CBMServiceMock {
+    
+    func find(mockOf service: CBMService) -> CBMServiceMock? {
+        return first { $0.identifier == service.identifier }
+    }
+    
+    func find(mockOf characteristic: CBMCharacteristic) -> CBMCharacteristicMock? {
+        guard let service = characteristic.optionalService,
+              let mockService = find(mockOf: service),
+              let mockCharacteristic = mockService.characteristics?.first(where: {
+                $0.identifier == characteristic.identifier
+              }) else {
+            return nil
+        }
+        return mockCharacteristic as? CBMCharacteristicMock
+    }
+    
+    func find(mockOf descriptor: CBMDescriptor) -> CBMDescriptorMock? {
+        guard let characteristic = descriptor.optionalCharacteristic,
+              let service = characteristic.optionalService,
+              let mockService = find(mockOf: service),
+              let mockCharacteristic = mockService.characteristics?.first(where: {
+                $0.identifier == characteristic.identifier
+              }),
+              let mockDescriptor = mockCharacteristic.descriptors?.first(where: {
+                $0.identifier == descriptor.identifier
+              }) else {
+            return nil
+        }
+        return mockDescriptor as? CBMDescriptorMock
+    }
+    
+}
 
 // MARK: - Mocking uninitialized objects
 

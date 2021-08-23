@@ -31,30 +31,12 @@
 import CoreBluetooth
 
 /// The factory that instantiates the `CBMCentralManager` object.
+///
 /// The factory may be used to automatically instantiate either a native
 /// or mock implementation based on the environment. You may also
 /// instantiate the `CBMCentralManagerMock` or `CBMCentralManagerNative` without
 /// using this factory.
 public class CBMCentralManagerFactory {
-    
-    /// This simulation method is called when a mock central manager was
-    /// created with an option to restore the state
-    /// (`CBMCentralManagerOptionRestoreIdentifierKey`).
-    ///
-    /// The returned map, if not <i>nil</i>, will be passed to
-    /// `centralManager(:willRestoreState:)` before creation.
-    /// - SeeAlso: CBMCentralManagerRestoredStatePeripheralsKey
-    /// - SeeAlso: CBMCentralManagerRestoredStateScanServicesKey
-    /// - SeeAlso: CBMCentralManagerRestoredStateScanOptionsKey
-    public static var simulateStateRestoration: ((_ identifierKey: String) -> [String : Any]?)?
-    
-    /// Returns a boolean value representing the support for the provided features.
-    ///
-    /// This method will be called when `supports(:)` method is called.
-    #if !os(macOS)
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
-    #endif
     
     /// Returns the implementation of `CBCentralManager`, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock

@@ -39,7 +39,7 @@ import XCTest
 /// actions.
 class ResetTest: XCTestCase {
 
-    override func setUp() {
+    override func setUpWithError() throws {
         // This method is called AFTER ScannerTableViewController.viewDidLoad()
         // where the BlinkyManager is instantiated.
         // Initially mock Bluetooth adapter is powered Off.
@@ -47,7 +47,7 @@ class ResetTest: XCTestCase {
         CBMCentralManagerMock.simulatePowerOn()
     }
 
-    override func tearDown() {
+    override func tearDownWithError() throws {
         // We can't call CBMCentralManagerMock.tearDownSimulation() here.
         // That would invalidate the BlinkyManager in ScannerTableViewController.
         // The central manager must be reused, so let's just power mock off,

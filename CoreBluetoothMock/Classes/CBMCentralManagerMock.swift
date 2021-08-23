@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-open class CBMCentralManagerMock: NSObject, CBMCentralManager {
+open class CBMCentralManagerMock: CBMCentralManager {
     /// Mock RSSI deviation.
     ///
     /// Returned RSSI values will be in range
@@ -41,37 +41,55 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     private static var managers: [WeakRef<CBMCentralManagerMock>] = []
     /// A list of peripherals known to the system.
     private static var peripherals: [CBMPeripheralSpec] = []
+    /// A mutex queue for managing managers.
+    private static let mutex: DispatchQueue = DispatchQueue(label: "Mutex")
+    /// The value of current authorization status for using Bluetooth.
+    ///
+    /// As `CBManagerAuthorization` was added in iOS 13, the raw value is kept.
+    internal private(set) static var bluetoothAuthorization: Int? {
+        didSet {
+            notifyManagers()
+        }
+    }
     /// The global state of the Bluetooth adapter on the device.
     fileprivate private(set) static var managerState: CBMManagerState = .poweredOff {
         didSet {
-            // For all existing managers...
-            managers
-                .compactMap { $0.ref }
-                .forEach { manager in
-                    // ...stop scanning if state changed to any other state
-                    // than `.poweredOn`. Also, forget all peripherals.
-                    if managerState != .poweredOn {
-                        manager.isScanning = false
-                        manager.scanFilter = nil
-                        manager.scanOptions = nil
-                        manager.peripherals.values.forEach { $0.managerPoweredOff() }
-                        manager.peripherals.removeAll()
-                    }
-                    // ...and notify delegate.
-                    manager.queue.async {
-                        manager.delegate?.centralManagerDidUpdateState(manager)
-                    }
-                }
-            // Compact the list, if any of managers were disposed.
+            notifyManagers()
+        }
+    }
+    private static func notifyManagers() {
+        // For all existing managers...
+        let existingManagers = mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers.forEach { manager in
+            // ...stop scanning if state changed to any other state
+            // than `.poweredOn`. Also, forget all peripherals.
+            if manager.state != .poweredOn {
+                manager._isScanning = false
+                manager.scanFilter = nil
+                manager.scanOptions = nil
+                manager.peripherals.values.forEach { $0.closeManager() }
+                manager.peripherals.removeAll()
+            }
+            // ...and notify delegate.
+            manager.queue.async {
+                manager.delegate?.centralManagerDidUpdateState(manager)
+            }
+        }
+        // Compact the list, if any of managers were disposed.
+        mutex.sync {
             managers.removeAll { $0.ref == nil }
         }
     }
-    
-    open weak var delegate: CBMCentralManagerDelegate?
-    open var state: CBMManagerState {
-        return initialized ? CBMCentralManagerMock.managerState : .unknown
+    /// Whether the app is currently authorized to use Bluetooth.
+    ///
+    /// If `simulateAuthorization(:)` was not called it is assumed that the
+    /// authorization was granted. However, in this case `CBMCentralManager.authorization`
+    /// will return the value returned by the native API.
+    private static var isAuthorized: Bool {
+        return bluetoothAuthorization == nil || bluetoothAuthorization == 3 // CBManagerAuthorization.allowedAlways
     }
-    open private(set) var isScanning: Bool
     private var scanFilter: [CBMUUID]?
     private var scanOptions: [String : Any]?
 
@@ -87,39 +105,42 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         // the list of managers.
         // Calling tearDownSimulation() will remove all managers
         // from that list, making them uninitialized again.
-        return CBMCentralManagerMock.managers.contains { $0.ref == self }
+        CBMCentralManagerMock.mutex.sync {
+            CBMCentralManagerMock.managers.contains { $0.ref == self }
+        }
     }
+    /// A flag set to true when the manager is scanning for mock Bluetooth LE devices.
+    private var _isScanning: Bool
     
     // MARK: - Initializers
     
-    public required override init() {
-        self.isScanning = false
+    public init() {
+        self._isScanning = false
         self.queue = DispatchQueue.main
-        super.init()
+        super.init(true)
         initialize()
     }
     
-    public required init(delegate: CBMCentralManagerDelegate?,
-                         queue: DispatchQueue?) {
-        self.isScanning = false
+    public init(delegate: CBMCentralManagerDelegate?,
+                queue: DispatchQueue?) {
+        self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
+        super.init(true)
         self.delegate = delegate
-        super.init()
         initialize()
     }
     
     @available(iOS 7.0, *)
-    public required init(delegate: CBMCentralManagerDelegate?,
-                         queue: DispatchQueue?,
-                         options: [String : Any]?) {
-        self.isScanning = false
+    public init(delegate: CBMCentralManagerDelegate?,
+                queue: DispatchQueue?,
+                options: [String : Any]?) {
+        self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
+        super.init(true)
         self.delegate = delegate
-        super.init()
         if let options = options,
            let identifierKey = options[CBMCentralManagerOptionRestoreIdentifierKey] as? String,
-           let dict = CBMCentralManagerFactory
-               .simulateStateRestoration?(identifierKey) {
+           let dict = CBMCentralManagerMock.simulateStateRestoration?(identifierKey) {
             var state: [String : Any] = [:]
             if let peripheralKeys = dict[CBMCentralManagerRestoredStatePeripheralsKey] {
                 state[CBMCentralManagerRestoredStatePeripheralsKey] = peripheralKeys
@@ -141,14 +162,17 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
             NSLog("Warning: No simulated peripherals. " +
                   "Call simulatePeripherals(:) before creating central manager")
         }
-        // Let's say initialization takes 10 ms. Less or more.
-        queue.asyncAfter(deadline: .now() + .milliseconds(10)) { [weak self] in
+        queue.async { [weak self] in
             if let self = self {
-                CBMCentralManagerMock.managers.append(WeakRef(self))
+                CBMCentralManagerMock.mutex.sync {
+                    CBMCentralManagerMock.managers.append(WeakRef(self))
+                }
                 self.delegate?.centralManagerDidUpdateState(self)
             }
         }
     }
+    
+    // MARK: - Central manager simulation methods
     
     /// Removes all active central manager instances and peripherals from the
     /// simulation, resetting it to the initial state.
@@ -160,13 +184,41 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         // .unknown, which will make them invalid.
         managerState = .unknown
         // Remove all central manager instances.
-        managers.removeAll()
+        mutex.sync {
+            managers.removeAll()
+        }
         // Set the manager state to powered Off.
         managerState = .poweredOff
         peripherals.removeAll()
     }
     
-    // MARK: - Central manager simulation methods
+    /// Simulates the current authorization state of a Core Bluetooth manager.
+    ///
+    /// When set to `nil` (default), the native value is returned.
+    @available(iOS 13.0, *)
+    public static func simulateAuthorization(_ authorization: CBMManagerAuthorization) {
+        bluetoothAuthorization = authorization.rawValue
+    }
+    
+    /// This simulation method is called when a mock central manager was
+    /// created with an option to restore the state
+    /// (`CBMCentralManagerOptionRestoreIdentifierKey`).
+    ///
+    /// The returned map, if not <i>nil</i>, will be passed to
+    /// `centralManager(:willRestoreState:)` before creation.
+    /// - SeeAlso: CBMCentralManagerRestoredStatePeripheralsKey
+    /// - SeeAlso: CBMCentralManagerRestoredStateScanServicesKey
+    /// - SeeAlso: CBMCentralManagerRestoredStateScanOptionsKey
+    public static var simulateStateRestoration: ((_ identifierKey: String) -> [String : Any]?)?
+    
+    #if !os(macOS)
+    /// Returns a boolean value representing the support for the provided features.
+    ///
+    /// This method will be called when `CBMCentralManager.supports(:)` method is
+    /// called.
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
+    #endif
     
     /// Sets the initial state of the Bluetooth central manager.
     ///
@@ -255,10 +307,13 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
         peripheral.services = newServices
 
+        // If there are no connected devices, we're done.
         guard peripheral.virtualConnections > 0 else {
             return
         }
-        let existingManagers = managers.compactMap { $0.ref }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
         existingManagers.forEach { manager in
             manager.peripherals[peripheral.identifier]?
                 .notifyServicesChanged()
@@ -292,12 +347,13 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         guard peripheral.virtualConnections > 0 else {
             return
         }
-        managers
-            .compactMap { $0.ref }
-            .forEach { manager in
-                manager.peripherals[peripheral.identifier]?
-                    .notifyValueChanged(for: characteristic)
-            }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers.forEach { manager in
+            manager.peripherals[peripheral.identifier]?
+                .notifyValueChanged(for: characteristic)
+        }
     }
     
     /// This method simulates a new virtual connection to the given
@@ -330,22 +386,23 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         guard peripherals.contains(peripheral) else {
             return
         }
-        managers
-            .compactMap { $0.ref }
-            .forEach { manager in
-                if let target = manager.peripherals[peripheral.identifier],
-                   target.state == .connecting {
-                    target.connect() { result in
-                        switch result {
-                        case .success:
-                            manager.delegate?.centralManager(manager, didConnect: target)
-                        case .failure(let error):
-                            manager.delegate?.centralManager(manager, didFailToConnect: target,
-                                                             error: error)
-                        }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers.forEach { manager in
+            if let target = manager.peripherals[peripheral.identifier],
+               target.state == .connecting {
+                target.connect() { result in
+                    switch result {
+                    case .success:
+                        manager.delegate?.centralManager(manager, didConnect: target)
+                    case .failure(let error):
+                        manager.delegate?.centralManager(manager, didFailToConnect: target,
+                                                         error: error)
                     }
                 }
             }
+        }
     }
     
     /// Simulates the peripheral to disconnect from the device.
@@ -368,29 +425,58 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         // immediately.
         peripheral.virtualConnections = 0
         // Notify all central managers.
-        managers
-            .compactMap { $0.ref }
-            .forEach { manager in
-                if let target = manager.peripherals[peripheral.identifier],
-                    target.state == .connected {
-                    target.disconnected(withError: error) { error in
-                        manager.delegate?.centralManager(manager,
-                                                         didDisconnectPeripheral: target,
-                                                         error: error)
-                    }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers.forEach { manager in
+            if let target = manager.peripherals[peripheral.identifier],
+               target.state == .connected {
+                target.disconnected(withError: error) { error in
+                    manager.delegate?.centralManager(manager,
+                                                     didDisconnectPeripheral: target,
+                                                     error: error)
                 }
             }
+        }
         // TODO: notify a user registered for connection events
     }
     
     // MARK: - CBCentralManager mock methods
     
-    #if !os(macOS)
-    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public static func supports(_ features: CBMCentralManager.Feature) -> Bool {
-        return CBMCentralManagerFactory.simulateFeaturesSupport?(features) ?? false
+    open override var state: CBMManagerState {
+        guard initialized else {
+            return .unknown
+        }
+        guard CBMCentralManagerMock.isAuthorized else {
+            return .unauthorized
+        }
+        return CBMCentralManagerMock.managerState
     }
-    #endif
+    open override var isScanning: Bool {
+        return _isScanning
+    }
+    
+    @available(iOS, introduced: 13.0, deprecated: 13.1)
+    open override var authorization: CBMManagerAuthorization {
+        if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
+           let authotization = CBMManagerAuthorization(rawValue: rawValue) {
+            return authotization
+        } else {
+            // If `simulateAuthorization(:)` was not called, .allowedAlways is assumed.
+            return .allowedAlways
+        }
+    }
+    
+    @available(iOS 13.1, *)
+    open override class var authorization: CBMManagerAuthorization {
+        if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
+           let authotization = CBMManagerAuthorization(rawValue: rawValue) {
+            return authotization
+        } else {
+            // If `simulateAuthorization(:)` was not called, .allowedAlways is assumed.
+            return .allowedAlways
+        }
+    }
     
     /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
     /// devices. When the `CBCentralManagerScanOptionAllowDuplicatesKey` options
@@ -409,6 +495,8 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         guard mock.proximity != .outOfRange else {
             return
         }
+        // The device has been scanned and cached.
+        mock.isKnown = true
         guard !mock.isConnected || mock.isAdvertisingWhenConnected else {
             return
         }
@@ -438,14 +526,14 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
     }
     
-    open func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
-                                   options: [String : Any]?) {
+    open override func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
+                                          options: [String : Any]? = nil) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         if isScanning {
             stopScan()
         }
-        isScanning = true
+        _isScanning = true
         scanFilter = serviceUUIDs
         scanOptions = options
 
@@ -479,16 +567,15 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
             }
     }
     
-    open func stopScan() {
+    open override func stopScan() {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
-        isScanning = false
+        _isScanning = false
         scanFilter = nil
         scanOptions = nil
     }
     
-    open func connect(_ peripheral: CBMPeripheral,
-                        options: [String : Any]?) {
+    open override func connect(_ peripheral: CBMPeripheral, options: [String : Any]? = nil) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         if let o = options, !o.isEmpty {
@@ -516,7 +603,7 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
     }
     
-    open func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
+    open override func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         // Ignore peripherals that are not mocks.
@@ -534,29 +621,40 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
         }
     }
     
-    open func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
+    open override func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
         // Starting from iOS 13, this method returns peripherals only in ON state.
         guard ensurePoweredOn() else { return [] }
         // Get the peripherals already known to this central manager.
         let localPeripherals = peripherals[identifiers]
-        // If all were found, return them.
-        if localPeripherals.count == identifiers.count {
-            return localPeripherals
-        }
+        // Also, look for them among other managers, and copy them to the local
+        // manager.
         let missingIdentifiers = identifiers.filter { peripherals[$0] == nil }
-        // Otherwise, we need to look for them among other managers, and
-        // copy them to the local manager.
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            CBMCentralManagerMock.managers.compactMap { $0.ref }
+        }
         let peripheralsKnownByOtherManagers = missingIdentifiers
-            .flatMap { i in
-                CBMCentralManagerMock.managers
-                    .compactMap { $0.ref?.peripherals[i] }
+            .flatMap { identifier in
+                existingManagers.compactMap { $0.peripherals[identifier] }
             }
             .map { CBMPeripheralMock(copy: $0, by: self) }
         peripheralsKnownByOtherManagers.forEach {
             peripherals[$0.identifier] = $0
         }
+        // Peripherals that have not been scanned by any manager, but have been
+        // cached by the system and can be retrieved.
+        let stillMissingIdentifiers = identifiers.filter { peripherals[$0] == nil }
+        let peripheralsCached = CBMCentralManagerMock.peripherals
+            // Get only cached peripherals.
+            .filter { $0.isKnown }
+            // Search for those that are still missing.
+            .filter { stillMissingIdentifiers.contains($0.identifier) }
+            // Create a local copy.
+            .map { CBMPeripheralMock(basedOn: $0, by: self) }
+        peripheralsCached.forEach {
+            peripherals[$0.identifier] = $0
+        }
         // Return them in the same order as requested, some may be missing.
-        return (localPeripherals + peripheralsKnownByOtherManagers)
+        return (localPeripherals + peripheralsKnownByOtherManagers + peripheralsCached)
             .sorted {
                 let firstIndex = identifiers.firstIndex(of: $0.identifier)!
                 let secondIndex = identifiers.firstIndex(of: $1.identifier)!
@@ -564,7 +662,7 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
             }
     }
     
-    open func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
+    open override func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
         // Starting from iOS 13, this method returns peripherals only in ON state.
         guard ensurePoweredOn() else { return [] }
         // Get the connected peripherals with at least one of the given services
@@ -573,12 +671,13 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
             .filter { $0.state == .connected }
         // Other central managers may know some connected peripherals that
         // are not known to the local one.
-        let peripheralsConnectedByOtherManagers = CBMCentralManagerMock.managers
-            // Get only those managers that were not disposed.
-            .filter { $0.ref != nil }
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            CBMCentralManagerMock.managers.compactMap { $0.ref }
+        }
+        let peripheralsConnectedByOtherManagers = existingManagers
             // Look for connected peripherals known to other managers.
             .flatMap {
-                $0.ref!.peripherals[serviceUUIDs]
+                $0.peripherals[serviceUUIDs]
                     .filter { $0.state == .connected }
             }
             // Search for ones that are not known to the local manager.
@@ -607,7 +706,7 @@ open class CBMCentralManagerMock: NSObject, CBMCentralManager {
     }
     
     @available(iOS 13.0, *)
-    open func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]?) {
+    open override func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
         fatalError("Mock connection events are not implemented")
     }
     
@@ -631,6 +730,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     private var queue: DispatchQueue {
         return manager.queue
     }
+    private let mutex: DispatchQueue = DispatchQueue(label: "Mutex")
     /// The mock peripheral with user-defined implementation.
     private let mock: CBMPeripheralSpec
     /// Size of the outgoing buffer. Only this many packets
@@ -742,7 +842,10 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             state = .disconnecting
         }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
-            if let self = self, CBMCentralManagerMock.managerState == .poweredOn {
+            // `tearDownSimulation()` could have been called before this is called.
+            // See https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/issues/25
+            if let self = self, self.state == .disconnecting,
+               CBMCentralManagerMock.managerState == .poweredOn {
                 self.state = .disconnected
                 self.services = nil
                 self._canSendWriteWithoutResponse = false
@@ -805,7 +908,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         }
         
         // Keep only services that hadn't changed.
-        services = services!
+        services = oldServices
             .filter { service in
                 mock.services!.contains(where: {
                     $0.identifier == service.identifier
@@ -833,9 +936,11 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
               characteristic.isNotifying else {
             return
         }
-        characteristic.value = originalCharacteristic.value
+
+        let value = originalCharacteristic.value
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, self.state == .connected {
+                characteristic.value = value
                 self.delegate?.peripheral(self,
                                           didUpdateValueFor: characteristic,
                                           error: nil)
@@ -843,7 +948,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         }
     }
     
-    fileprivate func managerPoweredOff() {
+    fileprivate func closeManager() {
         state = .disconnected
         services = nil
         _canSendWriteWithoutResponse = false
@@ -858,7 +963,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let allServices = mock.services else {
+              let mockServices = mock.services else {
             return
         }
         
@@ -867,19 +972,20 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         case .success:
             services = services ?? []
             let initialSize = services!.count
-            services = services! + allServices
+            services = services! + mockServices
                 // Filter all device services that match given list (if set).
                 .filter { serviceUUIDs?.contains($0.uuid) ?? true }
                 // Filter those of them, that are not already in discovered services.
                 .filter { s in !services!
-                    .contains(where: { ds in s.identifier == ds.identifier })
+                    .contains { ds in s.identifier == ds.identifier }
                 }
                 // Copy the service info, without included services or characteristics.
                 .map { CBMService(shallowCopy: $0, for: self) }
             let newServicesCount = services!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) { [weak self] in
+            let delay = interval * Double(newServicesCount)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self, didDiscoverServices: nil)
                 }
@@ -900,39 +1006,34 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let allServices = mock.services else {
-            return
-        }
-        guard let services = services, services.contains(service),
-              let originalService = allServices.first(where: {
-                  $0.identifier == service.identifier
-              }) else {
-            return
-        }
-        guard let originalIncludedServices = originalService.includedServices else {
+              let services = services, services.contains(service),
+              let mockServices = mock.services,
+              let mockService = mockServices.find(mockOf: service),
+              let mockIncludedServices = mockService.includedServices else {
             return
         }
         
         switch delegate.peripheral(mock,
                                    didReceiveIncludedServiceDiscoveryRequest: includedServiceUUIDs,
-                                   for: service as! CBMServiceMock) {
+                                   for: mockService) {
         case .success:
             service._includedServices = service._includedServices ?? []
             let initialSize = service._includedServices!.count
             service._includedServices = service._includedServices! +
-                originalIncludedServices
+                mockIncludedServices
                     // Filter all included service that match given list (if set).
                     .filter { includedServiceUUIDs?.contains($0.uuid) ?? true }
                     // Filter those of them, that are not already in discovered services.
                     .filter { s in !service._includedServices!
-                        .contains(where: { ds in s.identifier == ds.identifier })
+                        .contains { ds in s.identifier == ds.identifier }
                     }
                     // Copy the service info, without included characteristics.
                     .map { CBMService(shallowCopy: $0, for: self) }
             let newServicesCount = service._includedServices!.count - initialSize
             // Service discovery may takes the more time, the more services
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newServicesCount)) { [weak self] in
+            let delay = interval * Double(newServicesCount)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,
                                               didDiscoverIncludedServicesFor: service,
@@ -958,39 +1059,34 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let allServices = mock.services else {
-            return
-        }
-        guard let services = services, services.contains(service),
-              let originalService = allServices.first(where: {
-                  $0.identifier == service.identifier
-              }) else {
-            return
-        }
-        guard let originalCharacteristics = originalService.characteristics else {
+              let services = services, services.contains(service),
+              let mockServices = mock.services,
+              let mockService = mockServices.find(mockOf: service),
+              let mockCharacteristics = mockService.characteristics else {
             return
         }
         
         switch delegate.peripheral(mock,
                                    didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs,
-                                   for: service) {
+                                   for: mockService) {
         case .success:
             service._characteristics = service._characteristics ?? []
             let initialSize = service._characteristics!.count
             service._characteristics = service._characteristics! +
-                originalCharacteristics
+                mockCharacteristics
                     // Filter all service characteristics that match given list (if set).
                     .filter { characteristicUUIDs?.contains($0.uuid) ?? true }
                     // Filter those of them, that are not already in discovered characteristics.
                     .filter { c in !service._characteristics!
-                        .contains(where: { dc in c.identifier == dc.identifier })
+                        .contains { dc in c.identifier == dc.identifier }
                     }
                     // Copy the characteristic info, without included descriptors or value.
                     .map { CBMCharacteristic(shallowCopy: $0, in: service) }
             let newCharacteristicsCount = service._characteristics!.count - initialSize
             // Characteristics discovery may takes the more time, the more characteristics
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newCharacteristicsCount)) { [weak self] in
+            let delay = interval * Double(newCharacteristicsCount)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,
                                               didDiscoverCharacteristicsFor: service,
@@ -1014,39 +1110,32 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let allServices = mock.services else {
-            return
-        }
-        guard let services = services, services.contains(characteristic.service),
-              let originalService = allServices.first(where: {
-                  $0.identifier == characteristic.service.identifier
-              }),
-              let originalCharacteristic = originalService.characteristics?.first(where: {
-                  $0.identifier == characteristic.identifier
-              }) else {
-            return
-        }
-        guard let originalDescriptors = originalCharacteristic.descriptors else {
+              let services = services,
+              let parentService = characteristic.optionalService, services.contains(parentService),
+              let mockServices = mock.services,
+              let mockCharacteristic = mockServices.find(mockOf: characteristic),
+              let mockDescriptors = mockCharacteristic.descriptors else {
             return
         }
         
         switch delegate.peripheral(mock,
-                                   didReceiveDescriptorsDiscoveryRequestFor: characteristic) {
+                                   didReceiveDescriptorsDiscoveryRequestFor: mockCharacteristic) {
         case .success:
             characteristic._descriptors = characteristic._descriptors ?? []
             let initialSize = characteristic._descriptors!.count
             characteristic._descriptors = characteristic._descriptors! +
-                originalDescriptors
+                mockDescriptors
                     // Filter those of them, that are not already in discovered descriptors.
                     .filter { d in !characteristic._descriptors!
-                        .contains(where: { dd in d.identifier == dd.identifier })
+                        .contains { dd in d.identifier == dd.identifier }
                     }
                     // Copy the descriptors info, without the value.
                     .map { CBMDescriptor(shallowCopy: $0, in: characteristic) }
             let newDescriptorsCount = characteristic._descriptors!.count - initialSize
             // Descriptors discovery may takes the more time, the more descriptors
             // are discovered.
-            queue.asyncAfter(deadline: .now() + interval * Double(newDescriptorsCount)) { [weak self] in
+            let delay = interval * Double(newDescriptorsCount)
+            queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                 if let self = self, self.state == .connected {
                     self.delegate?.peripheral(self,
                                               didDiscoverDescriptorsFor: characteristic,
@@ -1071,19 +1160,19 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
-            return
-        }
-        guard let services = services,
-              services.contains(characteristic.service) else {
+              let interval = mock.connectionInterval,
+              let services = services,
+              let service = characteristic.optionalService, services.contains(service),
+              let mockServices = mock.services,
+              let mockCharacteristic = mockServices.find(mockOf: characteristic) else {
             return
         }
         switch delegate.peripheral(mock,
-                                   didReceiveReadRequestFor: characteristic) {
+                                   didReceiveReadRequestFor: mockCharacteristic) {
         case .success(let data):
-            characteristic.value = data
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
+                    characteristic.value = data
                     self.delegate?.peripheral(self,
                                               didUpdateValueFor: characteristic,
                                               error: nil)
@@ -1105,19 +1194,19 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
-            return
-        }
-        guard let services = services,
-              services.contains(descriptor.characteristic.service) else {
+              let interval = mock.connectionInterval,
+              let services = services,
+              let service = descriptor.optionalCharacteristic?.service, services.contains(service),
+              let mockServices = mock.services,
+              let mockDescriptor = mockServices.find(mockOf: descriptor) else {
             return
         }
         switch delegate.peripheral(mock,
-                                   didReceiveReadRequestFor: descriptor) {
+                                   didReceiveReadRequestFor: mockDescriptor) {
         case .success(let data):
-            descriptor.value = data
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {
+                    descriptor.value = data
                     self.delegate?.peripheral(self,
                                               didUpdateValueFor: descriptor,
                                               error: nil)
@@ -1144,21 +1233,22 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard state == .connected,
               let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
-              let mtu = mock.mtu else {
-            return
-        }
-        guard let services = services,
-              services.contains(characteristic.service) else {
+              let mtu = mock.mtu,
+              let services = services,
+              let service = characteristic.optionalService, services.contains(service),
+              let mockServices = mock.services,
+              let mockCharacteristic = mockServices.find(mockOf: characteristic) else {
             return
         }
         
         if type == .withResponse {
             switch delegate.peripheral(mock,
-                                       didReceiveWriteRequestFor: characteristic,
+                                       didReceiveWriteRequestFor: mockCharacteristic,
                                        data: data) {
             case .success:
                 let packetsCount = max(1, (data.count + mtu - 2) / (mtu - 3))
-                queue.asyncAfter(deadline: .now() + interval * Double(packetsCount)) { [weak self] in
+                let delay = interval * Double(packetsCount)
+                queue.asyncAfter(deadline: .now() + delay) { [weak self] in
                     if let self = self, self.state == .connected {
                         self.delegate?.peripheral(self,
                                                   didWriteValueFor: characteristic,
@@ -1175,37 +1265,25 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 }
             }
         } else {
-            let decreaseBuffer = { [weak self] in
-                guard let strongSelf = self,
-                    strongSelf.availableWriteWithoutResponseBuffer > 0 else {
+            // Decrease buffer.
+            mutex.sync {
+                guard self.availableWriteWithoutResponseBuffer > 0 else {
                     return
                 }
-                strongSelf.availableWriteWithoutResponseBuffer -= 1
-                strongSelf._canSendWriteWithoutResponse = false
-            }
-            if DispatchQueue.main.label == queue.label {
-                decreaseBuffer()
-            } else {
-                queue.sync {
-                    decreaseBuffer()
-                }
+                self.availableWriteWithoutResponseBuffer -= 1
+                self._canSendWriteWithoutResponse = false
             }
             
             delegate.peripheral(mock,
-                                didReceiveWriteCommandFor: characteristic,
-                                data: data.subdata(in: 0..<mtu - 3))
+                                didReceiveWriteCommandFor: mockCharacteristic,
+                                data: data.subdata(in: 0..<min(mtu - 3, data.count)))
+
             queue.async { [weak self] in
                 if let self = self, self.state == .connected {
-                    let increaseBuffer = {
+                    // Increase buffer.
+                    self.mutex.sync {
                         self.availableWriteWithoutResponseBuffer += 1
                         self._canSendWriteWithoutResponse = true
-                    }
-                    if DispatchQueue.main.label == self.queue.label {
-                        increaseBuffer()
-                    } else {
-                        self.queue.sync {
-                            increaseBuffer()
-                        }
                     }
                     if #available(iOS 11.0, tvOS 11.0, watchOS 4.0, *) {
                         self.delegate?.peripheralIsReady(toSendWriteWithoutResponse: self)
@@ -1220,16 +1298,16 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
-            return
-        }
-        guard let services = services,
-              services.contains(descriptor.characteristic.service) else {
+              let interval = mock.connectionInterval,
+              let services = services,
+              let service = descriptor.optionalCharacteristic?.service, services.contains(service),
+              let mockServices = mock.services,
+              let mockDescriptor = mockServices.find(mockOf: descriptor) else {
             return
         }
         
         switch delegate.peripheral(mock,
-                                   didReceiveWriteRequestFor: descriptor,
+                                   didReceiveWriteRequestFor: mockDescriptor,
                                    data: data) {
         case .success:
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
@@ -1268,11 +1346,11 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         guard manager.ensurePoweredOn() else { return }
         guard state == .connected,
               let delegate = mock.connectionDelegate,
-              let interval = mock.connectionInterval else {
-            return
-        }
-        guard let services = services,
-              services.contains(characteristic.service) else {
+              let interval = mock.connectionInterval,
+              let services = services,
+              let service = characteristic.optionalService, services.contains(service),
+              let mockServices = mock.services,
+              let mockCharacteristic = mockServices.find(mockOf: characteristic) else {
             return
         }
         guard enabled != characteristic.isNotifying else {
@@ -1281,7 +1359,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         
         switch delegate.peripheral(mock,
                                    didReceiveSetNotifyRequest: enabled,
-                                   for: characteristic) {
+                                   for: mockCharacteristic) {
         case .success:
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
                 if let self = self, self.state == .connected {

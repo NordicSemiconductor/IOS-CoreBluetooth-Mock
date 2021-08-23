@@ -36,6 +36,7 @@ class UITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    // This test requires the device to be in English language.
     func testConnection() {
         // UI tests must launch the application that they test.
         let app = XCUIApplication()
@@ -44,7 +45,7 @@ class UITests: XCTestCase {
         
         // Start scanning
         let scanner = app.tables["scanResults"]
-        XCTAssert(scanner.cells["nRF Blinky"].waitForExistence(timeout: 0.5))
+        XCTAssert(scanner.cells["nRF Blinky"].waitForExistence(timeout: 2.0))
         
         // Wait for device to appear and tap it.
         XCTAssertEqual(scanner.cells.count, 1)

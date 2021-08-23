@@ -83,7 +83,7 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     }
 
     func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveReadRequestFor characteristic: CBMCharacteristic)
+                    didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
             -> Result<Data, Error> {
         if characteristic.uuid == .ledCharacteristic {
             return .success(ledData)
@@ -93,7 +93,7 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveWriteRequestFor characteristic: CBMCharacteristic,
+                    didReceiveWriteRequestFor characteristic: CBMCharacteristicMock,
                     data: Data) -> Result<Void, Error> {
         if data.count > 0 {
             ledEnabled = data[0] != 0x00
@@ -176,7 +176,7 @@ let thingy = CBMPeripheralSpec
     .advertising(
         advertisementData: [
             CBMAdvertisementDataServiceUUIDsKey : [
-                CBUUID(string: "FEAA")  // Eddystone
+                CBMUUID(string: "FEAA")  // Eddystone
             ],
             CBMAdvertisementDataServiceDataKey : [
                 // Physical Web beacon: 10ee03676f2e676c2f7049576466972
@@ -187,4 +187,107 @@ let thingy = CBMPeripheralSpec
             ]
         ],
         withInterval: 0.100)
+    .build()
+
+// MARK: - A device with 2 batteries
+
+extension CBMUUID {
+    static let batteryService             = CBMUUID(string: "180F")
+    static let batteryLevelCharacteristic = CBMUUID(string: "2A19")
+    static let characteristicUserDesr     = CBMUUID(string: "2901")
+}
+
+// The mocked Power Pack device has 2 batteries: primary and secondary.
+// Battery Service specification allows only one Battery Level
+// characteristic in each service, therefore below we define
+// two Battery Services, one for each battery.
+//
+// The service instance cannot be reused, as each has its own unique
+// identifier, that is used to distinguish them.
+
+extension CBMCharacteristicMock {
+    
+    static let primaryBatteryLevelCharacteristic = CBMCharacteristicMock(
+        type: .batteryLevelCharacteristic,
+        properties: [.notify, .read],
+        descriptors: CBMDescriptorMock(type: .characteristicUserDesr)
+    )
+    
+    static let secondaryBatteryLevelCharacteristic = CBMCharacteristicMock(
+        type: .batteryLevelCharacteristic,
+        properties: [.notify, .read],
+        descriptors: CBMDescriptorMock(type: .characteristicUserDesr)
+    )
+    
+}
+
+extension CBMServiceMock {
+
+    static let primaryBatteryService = CBMServiceMock(
+        type: .batteryService, primary: true,
+        characteristics: .primaryBatteryLevelCharacteristic
+    )
+    
+    static let secondaryBatteryService = CBMServiceMock(
+        type: .batteryService, primary: true,
+        characteristics: .secondaryBatteryLevelCharacteristic
+    )
+    
+}
+
+private class PowerPackCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
+    private var primaryBatteryLevel: UInt8 = 75
+    private var secondaryBatteryLevel: UInt8 = 100
+    
+    private var primaryBatteryLevelData: Data {
+        return Data([primaryBatteryLevel])
+    }
+    
+    private var secondaryBatteryLevelData: Data {
+        return Data([secondaryBatteryLevel])
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
+            -> Result<Data, Error> {
+        if characteristic == CBMCharacteristicMock.primaryBatteryLevelCharacteristic {
+            return .success(primaryBatteryLevelData)
+        }
+        if characteristic == CBMCharacteristicMock.secondaryBatteryLevelCharacteristic {
+            return .success(secondaryBatteryLevelData)
+        }
+        return .failure(CBMATTError(.invalidHandle))
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didReceiveReadRequestFor descriptor: CBMDescriptorMock)
+            -> Result<Data, Error> {
+        if descriptor.characteristic == CBMCharacteristicMock.primaryBatteryLevelCharacteristic {
+            return .success("Primary".data(using: .utf8)!)
+        }
+        if descriptor.characteristic == CBMCharacteristicMock.secondaryBatteryLevelCharacteristic {
+            return .success("Secondary".data(using: .utf8)!)
+        }
+        return .failure(CBMATTError(.invalidHandle))
+    }
+}
+
+let powerPack = CBMPeripheralSpec
+    .simulatePeripheral(proximity: .outOfRange)
+    .advertising(
+        advertisementData: [
+            CBMAdvertisementDataLocalNameKey    : "Power Pack",
+            CBMAdvertisementDataServiceUUIDsKey : [CBMUUID.batteryService],
+            CBMAdvertisementDataIsConnectable   : true as NSNumber
+        ],
+        withInterval: 0.250)
+    .connectable(
+        name: "Power Pack",
+        services: [
+            .primaryBatteryService,
+            .secondaryBatteryService,
+        ],
+        delegate: PowerPackCBMPeripheralSpecDelegate(),
+        connectionInterval: 0.045,
+        mtu: 186)
     .build()

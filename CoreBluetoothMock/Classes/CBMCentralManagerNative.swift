@@ -30,9 +30,7 @@
 
 import CoreBluetooth
 
-public class CBMCentralManagerNative: NSObject, CBMCentralManager {
-    public weak var delegate: CBMCentralManagerDelegate?
-    
+public class CBMCentralManagerNative: CBMCentralManager {
     private var manager: CBCentralManager!
     private var wrapper: CBCentralManagerDelegate!
     private var peripherals: [UUID : CBMPeripheralNative] = [:]
@@ -132,40 +130,52 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
         }
     }
     
-    public var state: CBMManagerState {
+    public override var state: CBMManagerState {
         return CBMManagerState(rawValue: manager.state.rawValue) ?? .unknown
     }
     
     @available(iOS 9.0, *)
-    public var isScanning: Bool {
+    public override var isScanning: Bool {
         return manager.isScanning
+    }
+    
+    @available(iOS, introduced: 13.0, deprecated: 13.1)
+    public override var authorization: CBMManagerAuthorization {
+        return manager.authorization
+    }
+    
+    @available(iOS 13.1, *)
+    public override class var authorization: CBMManagerAuthorization {
+        return CBCentralManager.authorization
     }
     
     #if !os(macOS)
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public static func supports(_ features: CBMCentralManager.Feature) -> Bool {
+    public override class func supports(_ features: CBMCentralManager.Feature) -> Bool {
         return CBCentralManager.supports(features)
     }
     #endif
     
-    public override init() {
-        super.init()
+    public init() {
+        super.init(true)
         self.wrapper = CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager()
         self.manager.delegate = wrapper
     }
     
-    public init(delegate: CBMCentralManagerDelegate?, queue: DispatchQueue?) {
-        super.init()
+    public init(delegate: CBMCentralManagerDelegate?,
+                queue: DispatchQueue?) {
+        super.init(true)
         self.wrapper = CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager(delegate: wrapper, queue: queue)
         self.delegate = delegate
     }
     
     @available(iOS 7.0, *)
-    public init(delegate: CBMCentralManagerDelegate?, queue: DispatchQueue?,
+    public init(delegate: CBMCentralManagerDelegate?,
+                queue: DispatchQueue?,
                 options: [String : Any]?) {
-        super.init()
+        super.init(true)
         let restoration = options?[CBMCentralManagerOptionRestoreIdentifierKey] != nil
         self.wrapper = restoration ?
             CBMCentralManagerDelegateWrapperWithRestoration(self) :
@@ -174,29 +184,29 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
         self.delegate = delegate
     }
     
-    public func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
-                                   options: [String : Any]?) {
+    public override func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
+                                            options: [String : Any]? = nil) {
         manager.scanForPeripherals(withServices: serviceUUIDs, options: options)
     }
     
-    public func stopScan() {
+    public override func stopScan() {
         manager.stopScan()
     }
     
-    public func connect(_ peripheral: CBMPeripheral, options: [String : Any]?) {
+    public override func connect(_ peripheral: CBMPeripheral, options: [String : Any]?) {
         if let peripheral = peripherals[peripheral.identifier] {
             manager.connect(peripheral.peripheral, options: options)
         }
     }
     
-    public func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
+    public override func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
         if let peripheral = peripherals[peripheral.identifier] {
             manager.cancelPeripheralConnection(peripheral.peripheral)
         }
     }
     
     @available(iOS 7.0, *)
-    public func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
+    public override func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
         let retrievedPeripherals = manager.retrievePeripherals(withIdentifiers: identifiers)
         retrievedPeripherals
             .filter { peripherals[$0.identifier] == nil }
@@ -207,7 +217,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     }
     
     @available(iOS 7.0, *)
-    public func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
+    public override func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
         let retrievedPeripherals = manager.retrieveConnectedPeripherals(withServices: serviceUUIDs)
         retrievedPeripherals
             .filter { peripherals[$0.identifier] == nil }
@@ -219,7 +229,7 @@ public class CBMCentralManagerNative: NSObject, CBMCentralManager {
     
     #if !os(macOS)
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
+    public override func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
         manager.registerForConnectionEvents(options: options)
     }
     #endif
@@ -381,22 +391,22 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         
         /// Returns the wrapper for the native CBService.
         /// - Parameter service: The native service.
-        private func mock(of service: CBService) -> CBMServiceNative? {
+        private func mock(of service: CBService?) -> CBMServiceNative? {
             return impl.mockServices?.first { $0.service == service }
         }
         
         /// Returns the wrapper for the native CBCharacteristic.
         /// - Parameter characteristic: The native characteristic.
-        private func mock(of characteristic: CBCharacteristic) -> CBMCharacteristicNative? {
-            let service = mock(of: characteristic.service)
+        private func mock(of characteristic: CBCharacteristic?) -> CBMCharacteristicNative? {
+            let service = mock(of: characteristic?.service)
             return (service?._characteristics as? [CBMCharacteristicNative])?
                 .first { $0.characteristic == characteristic }
         }
         
         /// Returns the wrapper for the native CBDescriptor.
         /// - Parameter descriptor: The native descriptor.
-        private func mock(of descriptor: CBDescriptor) -> CBMDescriptorNative? {
-            let characteristic = mock(of: descriptor.characteristic)
+        private func mock(of descriptor: CBDescriptor?) -> CBMDescriptorNative? {
+            let characteristic = mock(of: descriptor?.characteristic)
             return (characteristic?._descriptors as? [CBMDescriptorNative])?
                 .first { $0.descriptor == descriptor }
         }
@@ -405,7 +415,7 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         /// - Parameters:
         ///   - service: The native service.
         ///   - action: The action to perform on its mock.
-        private func usingMock(of service: CBService,
+        private func usingMock(of service: CBService?,
                                action: @escaping (CBMPeripheral, CBMPeripheralDelegate, CBMService) -> ()) {
             if let delegate = impl.delegate,
                let serviceMock = mock(of: service) {
@@ -417,9 +427,9 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         /// - Parameters:
         ///   - service: The native characteristic.
         ///   - action: The action to perform on its mock.
-        private func usingMock(of characteristic: CBCharacteristic,
+        private func usingMock(of characteristic: CBCharacteristic?,
                                action: @escaping (CBMPeripheral, CBMPeripheralDelegate, CBMCharacteristic) -> ()) {
-            usingMock(of: characteristic.service) { p, d, s in
+            usingMock(of: characteristic?.service) { p, d, s in
                 if let characteristicMock = self.mock(of: characteristic) {
                     action(p, d, characteristicMock)
                 }
@@ -430,9 +440,9 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         /// - Parameters:
         ///   - service: The native descriptor.
         ///   - action: The action to perform on its mock.
-        private func usingMock(of descriptor: CBDescriptor,
+        private func usingMock(of descriptor: CBDescriptor?,
                                action: @escaping (CBMPeripheral, CBMPeripheralDelegate, CBMDescriptor) -> ()) {
-            usingMock(of: descriptor.characteristic) { p, d, c in
+            usingMock(of: descriptor?.characteristic) { p, d, c in
                 if let descriptorMock = self.mock(of: descriptor) {
                     action(p, d, descriptorMock)
                 }

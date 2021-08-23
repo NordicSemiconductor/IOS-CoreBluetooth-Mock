@@ -39,7 +39,7 @@ import XCTest
 /// actions.
 class FailedConnectionTest: XCTestCase {
 
-    override func setUp() {
+    override func setUpWithError() throws {
         // This method is called AFTER ScannerTableViewController.viewDidLoad()
         // where the BlinkyManager is instantiated. A separate mock manager
         // is not created in this test.
@@ -48,7 +48,7 @@ class FailedConnectionTest: XCTestCase {
         CBMCentralManagerMock.simulateInitialState(.poweredOn)
     }
 
-    override func tearDown() {
+    override func tearDownWithError() throws {
         // We can't call CBMCentralManagerMock.tearDownSimulation() here.
         // That would invalidate the BlinkyManager in ScannerTableViewController.
         // The central manager must be reused, so let's just power mock off,
@@ -89,12 +89,13 @@ class FailedConnectionTest: XCTestCase {
         // Select found device.
         Sim.post(.selectPeripheral(at: 0))
 
-        // Wait until blinky is connected and ready.
+        // As the device is now out of range, connection should fail.
         let connected = XCTestExpectation(description: "Connected")
         connected.isInverted = true
         target!.onConnected {
-            connected.fulfill()
+            connected.fulfill() // This should not happen.
         }
+        // As the expectation is inverted, the wait should timeout.
         wait(for: [connected], timeout: 3)
 
         let appDelegate = UIApplication.shared.delegate as! AppDelegate

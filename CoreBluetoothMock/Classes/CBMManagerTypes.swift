@@ -45,9 +45,13 @@ public enum CBMManagerState: Int {
     case poweredOn
 }
 
-// disabled for Xcode 12.5 beta
-//public typealias CBMPeer = CBPeer
-//public typealias CBMAttribute = CBAttribute
+// In Xcode 12.5 the initializers of CBPeer and CBAttribute
+// became private, therefore they cannot be user. A local
+// counterparts have been created in the library.
+// https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/issues/33
+//
+// public typealias CBMPeer = CBPeer
+// public typealias CBMAttribute = CBAttribute
 public typealias CBMUUID = CBUUID
 public typealias CBMError = CBError
 public typealias CBMATTError = CBATTError
@@ -60,6 +64,8 @@ public typealias CBMCharacteristicProperties = CBCharacteristicProperties
 public typealias CBML2CAPPSM = CBL2CAPPSM
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
 public typealias CBML2CAPChannel = CBL2CAPChannel
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+public typealias CBMManagerAuthorization = CBManagerAuthorization
 
 public let CBMCentralManagerScanOptionAllowDuplicatesKey = CBCentralManagerScanOptionAllowDuplicatesKey
 public let CBMCentralManagerOptionShowPowerAlertKey = CBCentralManagerOptionShowPowerAlertKey
