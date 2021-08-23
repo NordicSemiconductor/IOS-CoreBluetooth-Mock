@@ -45,7 +45,7 @@ class UITests: XCTestCase {
         
         // Start scanning
         let scanner = app.tables["scanResults"]
-        XCTAssert(scanner.cells["nRF Blinky"].waitForExistence(timeout: 0.5))
+        XCTAssert(scanner.cells["nRF Blinky"].waitForExistence(timeout: 2.0))
         
         // Wait for device to appear and tap it.
         XCTAssertEqual(scanner.cells.count, 1)
