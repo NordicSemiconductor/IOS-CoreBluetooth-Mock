@@ -195,7 +195,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// Simulates the current authorization state of a Core Bluetooth manager.
     ///
     /// When set to `nil` (default), the native value is returned.
-    @available(iOS 13.0, *)
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     public static func simulateAuthorization(_ authorization: CBMManagerAuthorization) {
         bluetoothAuthorization = authorization.rawValue
     }
@@ -457,6 +457,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     @available(iOS, introduced: 13.0, deprecated: 13.1)
+    @available(macOS, introduced: 10.15)
+    @available(tvOS, introduced: 13.0, deprecated: 13.1)
+    @available(watchOS, introduced: 6.0, deprecated: 6.1)
     open override var authorization: CBMManagerAuthorization {
         if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
            let authotization = CBMManagerAuthorization(rawValue: rawValue) {
@@ -467,7 +470,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
     }
     
-    @available(iOS 13.1, *)
+    @available(iOS 13.1, macOS 10.15, tvOS 13.1, watchOS 6.1, *)
     open override class var authorization: CBMManagerAuthorization {
         if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
            let authotization = CBMManagerAuthorization(rawValue: rawValue) {
@@ -705,10 +708,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
              + peripheralsConnectedByOtherApps
     }
     
-    @available(iOS 13.0, *)
+    #if !os(macOS)
+    @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     open override func registerForConnectionEvents(options: [CBMConnectionEventMatchingOption : Any]? = nil) {
         fatalError("Mock connection events are not implemented")
     }
+    #endif
     
     fileprivate func ensurePoweredOn() -> Bool {
         guard state == .poweredOn else {
@@ -736,7 +741,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     /// Size of the outgoing buffer. Only this many packets
     /// can be written without response in a loop, without
     /// waiting for `canSendWriteWithoutResponse`.
-    private let bufferSize =  20
+    private let bufferSize = 20
     /// The supervision timeout is a time after which a device realizes
     /// that a connected peer has disconnected, had there been no signal
     /// from it.
@@ -747,7 +752,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     
     /// A flag set to <i>true</i> when the device was scanned
     /// at least once.
-    fileprivate var wasScanned: Bool   = false
+    fileprivate var wasScanned: Bool = false
     /// A flag set to <i>true</i> when the device was connected
     /// and iOS had chance to read device name.
     fileprivate var wasConnected: Bool = false

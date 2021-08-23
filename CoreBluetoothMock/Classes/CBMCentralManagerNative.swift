@@ -140,11 +140,14 @@ public class CBMCentralManagerNative: CBMCentralManager {
     }
     
     @available(iOS, introduced: 13.0, deprecated: 13.1)
+    @available(macOS, introduced: 10.15)
+    @available(tvOS, introduced: 13.0, deprecated: 13.1)
+    @available(watchOS, introduced: 6.0, deprecated: 6.1)
     public override var authorization: CBMManagerAuthorization {
         return manager.authorization
     }
     
-    @available(iOS 13.1, *)
+    @available(iOS 13.1, macOS 10.15, tvOS 13.1, watchOS 6.1, *)
     public override class var authorization: CBMManagerAuthorization {
         return CBCentralManager.authorization
     }
