@@ -141,11 +141,15 @@ open class CBMServiceMock: CBMService {
     ///   - includedServices: Optional array of included services.
     ///   - characteristics: Optional aray of characteristics.
     public init(type uuid: CBMUUID, primary isPrimary: Bool,
-                includedService: [CBMServiceMock],
-                characteristics: [CBMCharacteristicMock]) {
+                includedService: [CBMServiceMock]? = nil,
+                characteristics: [CBMCharacteristicMock]? = nil) {
         super.init(type: uuid, primary: isPrimary)
-        self._includedServices = includedService
-        self._characteristics = characteristics
+        if let includedService = includedService {
+            self._includedServices = includedService
+        }
+        if let characteristics = characteristics {
+            self._characteristics = characteristics
+        }
     }
 
     open override func isEqual(_ object: Any?) -> Bool {
