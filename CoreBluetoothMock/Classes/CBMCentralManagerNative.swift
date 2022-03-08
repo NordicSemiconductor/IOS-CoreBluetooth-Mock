@@ -212,7 +212,6 @@ public class CBMCentralManagerNative: CBMCentralManager {
     public override func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
         let retrievedPeripherals = manager.retrievePeripherals(withIdentifiers: identifiers)
         retrievedPeripherals
-            .filter { peripherals[$0.identifier] == nil }
             .forEach { peripherals[$0.identifier] = CBMPeripheralNative($0) }
         return peripherals
             .filter { identifiers.contains($0.key) }
@@ -223,7 +222,6 @@ public class CBMCentralManagerNative: CBMCentralManager {
     public override func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
         let retrievedPeripherals = manager.retrieveConnectedPeripherals(withServices: serviceUUIDs)
         retrievedPeripherals
-            .filter { peripherals[$0.identifier] == nil }
             .forEach { peripherals[$0.identifier] = CBMPeripheralNative($0) }
         return peripherals
             .filter { entry in retrievedPeripherals.contains(where: { $0.identifier == entry.key }) }
