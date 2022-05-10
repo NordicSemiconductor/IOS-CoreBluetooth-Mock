@@ -12,7 +12,7 @@
 "K05-ZQ-Swb.title" = "Skaner";
 
 /* Class = "UILabel"; text = "If not, connect it to a PC or a charger using a micro USB cable. Coin cell battery is on the bottom side of the dev kit."; ObjectID = "MCd-9i-lIO"; */
-"MCd-9i-lIO.text" = "Jeśli jest, podłącz do źródła prądu przy użyciu kable micro USB. Bateria znajduje się po spodniej stronie płytki.";
+"MCd-9i-lIO.text" = "Jeśli jest, podłącz do źródła prądu przy użyciu kabla micro USB. Bateria znajduje się po spodniej stronie płytki.";
 
 /* Class = "UILabel"; text = "1. Make sure it's switched on."; ObjectID = "bcI-yv-RmI"; */
 "bcI-yv-RmI.text" = "1. Upewnij się, że jest włączone.";
