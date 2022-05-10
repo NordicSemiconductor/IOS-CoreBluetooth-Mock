@@ -410,7 +410,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1330;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					526EA539240D2F8100BF70B2 = {
