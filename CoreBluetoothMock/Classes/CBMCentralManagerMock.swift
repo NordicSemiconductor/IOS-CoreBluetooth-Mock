@@ -983,6 +983,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 // Filter those of them, that are not already in discovered services.
                 .filter { s in !services!
                     .contains { ds in s.identifier == ds.identifier }
+                  || initialSize == 0
                 }
                 // Copy the service info, without included services or characteristics.
                 .map { CBMService(shallowCopy: $0, for: self) }
@@ -1031,6 +1032,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     // Filter those of them, that are not already in discovered services.
                     .filter { s in !service._includedServices!
                         .contains { ds in s.identifier == ds.identifier }
+                      || initialSize == 0
                     }
                     // Copy the service info, without included characteristics.
                     .map { CBMService(shallowCopy: $0, for: self) }
@@ -1084,6 +1086,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     // Filter those of them, that are not already in discovered characteristics.
                     .filter { c in !service._characteristics!
                         .contains { dc in c.identifier == dc.identifier }
+                      || initialSize == 0
                     }
                     // Copy the characteristic info, without included descriptors or value.
                     .map { CBMCharacteristic(shallowCopy: $0, in: service) }
@@ -1133,6 +1136,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     // Filter those of them, that are not already in discovered descriptors.
                     .filter { d in !characteristic._descriptors!
                         .contains { dd in d.identifier == dd.identifier }
+                      || initialSize == 0
                     }
                     // Copy the descriptors info, without the value.
                     .map { CBMDescriptor(shallowCopy: $0, in: characteristic) }
