@@ -979,11 +979,10 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             let initialSize = services!.count
             services = services! + mockServices
                 // Filter all device services that match given list (if set).
-                .filter { serviceUUIDs?.contains($0.uuid) ?? true }
+                .filter { serviceUUIDs?.contains($0.uuid) ?? true || initialSize == 0 }
                 // Filter those of them, that are not already in discovered services.
                 .filter { s in !services!
                     .contains { ds in s.identifier == ds.identifier }
-                  || initialSize == 0
                 }
                 // Copy the service info, without included services or characteristics.
                 .map { CBMService(shallowCopy: $0, for: self) }
@@ -1028,11 +1027,10 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             service._includedServices = service._includedServices! +
                 mockIncludedServices
                     // Filter all included service that match given list (if set).
-                    .filter { includedServiceUUIDs?.contains($0.uuid) ?? true }
+                    .filter { includedServiceUUIDs?.contains($0.uuid) ?? true || initialSize == 0 }
                     // Filter those of them, that are not already in discovered services.
                     .filter { s in !service._includedServices!
                         .contains { ds in s.identifier == ds.identifier }
-                      || initialSize == 0
                     }
                     // Copy the service info, without included characteristics.
                     .map { CBMService(shallowCopy: $0, for: self) }
@@ -1082,11 +1080,10 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             service._characteristics = service._characteristics! +
                 mockCharacteristics
                     // Filter all service characteristics that match given list (if set).
-                    .filter { characteristicUUIDs?.contains($0.uuid) ?? true }
+                    .filter { characteristicUUIDs?.contains($0.uuid) ?? true || initialSize == 0 }
                     // Filter those of them, that are not already in discovered characteristics.
                     .filter { c in !service._characteristics!
                         .contains { dc in c.identifier == dc.identifier }
-                      || initialSize == 0
                     }
                     // Copy the characteristic info, without included descriptors or value.
                     .map { CBMCharacteristic(shallowCopy: $0, in: service) }
@@ -1136,7 +1133,6 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     // Filter those of them, that are not already in discovered descriptors.
                     .filter { d in !characteristic._descriptors!
                         .contains { dd in d.identifier == dd.identifier }
-                      || initialSize == 0
                     }
                     // Copy the descriptors info, without the value.
                     .map { CBMDescriptor(shallowCopy: $0, in: characteristic) }
