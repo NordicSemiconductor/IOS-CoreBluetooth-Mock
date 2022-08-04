@@ -76,7 +76,7 @@ public class CBMPeripheralSpec {
     /// The device's advertising data.
     /// Make sure to include `CBAdvertisementDataIsConnectable` if
     /// the device is connectable.
-    public let advertisementData: [String : Any]?
+    public var advertisementData: [String : Any]?
     /// The advertising interval.
     public let advertisingInterval: TimeInterval?
     
