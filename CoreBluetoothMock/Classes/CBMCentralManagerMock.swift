@@ -1372,7 +1372,11 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     self.delegate?.peripheral(self,
                                               didUpdateNotificationStateFor: characteristic,
                                               error: nil)
-                }
+                    mockCharacteristic.isNotifying = enabled
+                    self.mock.connectionDelegate?.peripheral(self.mock,
+                                    didUpdateNotificationStateFor: mockCharacteristic,
+                                    error: nil)
+                  }
             }
         case .failure(let error):
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
@@ -1380,6 +1384,9 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     self.delegate?.peripheral(self,
                                               didUpdateNotificationStateFor: characteristic,
                                               error: error)
+                    self.mock.connectionDelegate?.peripheral(self.mock,
+                                    didUpdateNotificationStateFor: mockCharacteristic,
+                                    error: error)
                 }
             }
         }        
