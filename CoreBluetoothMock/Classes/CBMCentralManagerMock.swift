@@ -111,6 +111,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     /// A flag set to true when the manager is scanning for mock Bluetooth LE devices.
     private var _isScanning: Bool
+    /// store for each mock identifier its timer, so we ensure to run once for advertizing
+    static var timers: [UUID : Timer] = [:]
     
     // MARK: - Initializers
     
@@ -493,6 +495,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
               let advertisementData = mock.advertisementData,
               isScanning else {
             timer.invalidate()
+            if let index = CBMCentralManagerMock.timers.firstIndex(where: { $0.value == timer }) {
+              CBMCentralManagerMock.timers.remove(at: index)
+            }
             return
         }
         guard mock.proximity != .outOfRange else {
@@ -558,13 +563,16 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     //
                     // Timer works only on queues with a active run loop.
                     DispatchQueue.main.async {
-                        Timer.scheduledTimer(
-                            timeInterval: mock.advertisingInterval!,
-                            target: self,
-                            selector: #selector(self.notify(timer:)),
-                            userInfo: mock,
-                            repeats: true
-                        )
+                      if CBMCentralManagerMock.timers[mock.identifier] == nil {
+                          CBMCentralManagerMock.timers[mock.identifier] =
+                            Timer.scheduledTimer(
+                                timeInterval: mock.advertisingInterval!,
+                                target: self,
+                                selector: #selector(self.notify(timer:)),
+                                userInfo: mock,
+                                repeats: true
+                            )
+                        }
                     }
                 }
             }
