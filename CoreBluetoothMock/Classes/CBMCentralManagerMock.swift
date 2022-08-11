@@ -531,6 +531,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
         let allowDuplicates = scanOptions?[CBMCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? false as NSNumber
         if !allowDuplicates.boolValue {
             timer.invalidate()
+            if let index = CBMCentralManagerMock.timers.firstIndex(where: { $0.value == timer }) {
+              CBMCentralManagerMock.timers.remove(at: index)
+            }
         }
     }
     
