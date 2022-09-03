@@ -33,14 +33,14 @@ import CoreBluetooth
 open class CBMCentralManager: NSObject {
     
     /// A dummy initializer that allows overriding `CBMCentralManager` class and also
-    /// gives a warninig when trying to migrate from native `CBCentralManager`
+    /// gives a warning when trying to migrate from native `CBCentralManager`
     /// to `CBMCentralManager`. This method does nothing.
     ///
     /// If you need to create your own implementation of central manager, call it. See also
     /// [Issue #55](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/issues/55).
     ///
     /// If you migrated to CoreBluetooth Mock and are getting an error with
-    /// instantiating a `CBMCentralBanager` instance, use
+    /// instantiating a `CBMCentralManager` instance, use
     /// `CBMCentalManagerFactory.instance(...)` instead.
     ///
     /// See [documentation](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/#other-required-changes).
@@ -202,7 +202,7 @@ open class CBMCentralManager: NSObject {
     
     /// Cancels an active or pending local connection to a peripheral.
     ///
-    /// This method is nonblocking, and any `CBMPeripheral` class commands
+    /// This method is non-blocking, and any `CBMPeripheral` class commands
     /// that are still pending to peripheral may not complete. Because
     /// other apps may still have a connection to the peripheral, canceling
     /// a local connection doesn’t guarantee that the underlying physical

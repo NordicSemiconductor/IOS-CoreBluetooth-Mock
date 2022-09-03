@@ -68,7 +68,7 @@ class MultipleInstancesTest: XCTestCase {
         // Create an instance of a mock CBMCentralManager.
         let manager = CBMCentralManagerMock()
         
-        // Define the CBMPeripheralDelegate, which will wait until the serivces are
+        // Define the CBMPeripheralDelegate, which will wait until the services are
         // discovered and will discover characteristics.
         let peripheralDelegate = CBMPeripheralDelegateProxy()
         peripheralDelegate.didDiscoverServices = { peripheral, error in

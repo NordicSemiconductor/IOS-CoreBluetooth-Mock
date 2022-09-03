@@ -75,7 +75,7 @@ The library support [CocoaPods](https://github.com/CocoaPods/CocoaPods), [Cartha
 The library can also be included as SPM package. Simply add it in Xcode: *File -> Swift Packages -> Add package dependency*, 
 type *https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git* and set required version, branch or commit.
 
-If you have *Swift.package* file, inculde the following dependency:
+If you have *Swift.package* file, include the following dependency:
 ```swift
 dependencies: [
     // [...]
@@ -136,7 +136,7 @@ properties to simulate central manager behavior:
 ### Basic
 
 `CBMCentralManagerMock.simulateInitialState(_ state: CBMManagerState)` -  this method should be called before
-any central manager instance was created. It defines the intial state of the mock central manager. By default, the manager is powered off.
+any central manager instance was created. It defines the initial state of the mock central manager. By default, the manager is powered off.
 
 `CBMCentralManager.simulatePowerOn()` - turns on the mock central manager.
 
@@ -149,7 +149,7 @@ mock peripheral. This method should be called when the manager is powered off, o
 clears the list of managers and peripherals bringing the mock manager to initial state.
 
 See [AppDelegate.swift](Example/nRFBlinky/AppDelegate.swift#L48) for reference. In the sample app the mock implementation is
-used only in UI Tests, which lauch the app with `mocking-enabled` parameter (see [here](Example/UI%20Tests/UITests.swift#L42)),
+used only in UI Tests, which launch the app with `mocking-enabled` parameter (see [here](Example/UI%20Tests/UITests.swift#L42)),
 but can be easily modified to use it every time it is launched on a simulator or a device.
 
 ### Peripheral specs
@@ -191,7 +191,7 @@ with `CBMCentralManagerOptionRestoreIdentifierKey` option. The map returned will
 `centralManager(:willRestoreState:)` callback in central manager's delegate.
 
 `CBMCentralManagerMock.simulateFeaturesSupport` - this closure will be used to emulate Bluetooth features supported
-by the manager. It is availalbe on iOS 13+, tvOS 13+ or watchOS 6+.
+by the manager. It is available on iOS 13+, tvOS 13+ or watchOS 6+.
 
 `CBMCentralManagerMock.simulateAuthorization(:)` - Simulates the current authorization state of a Core Bluetooth manager.
 When any value other than `.allowedAlways` is returned, the `CBMCentralManager` will change state to `CBMManagerState.unauthorized`.
@@ -225,7 +225,7 @@ A simplified proprietary service by Nordic Semiconductor, containing two charact
 ## Requirements:
 - An iOS device with BLE capabilities, or a simulator (to run the mock).
 - A [Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits) (unless testing mock).
-- The Blinky example firmware to flash on the Development Kit. For your conveninence, we have bundled two firmwares in this project under the Firmwares directory.
+- The Blinky example firmware to flash on the Development Kit. For your convenience, we have bundled two firmwares in this project under the Firmwares directory.
 - To get the latest firmwares and check the source code, you may go directly to our [Developers website](http://developer.nordicsemi.com/nRF5_SDK/) and download the SDK version you need, then you can find the source code and hex files to the blinky demo in the directory `/examples/ble_peripheral/ble_app_blinky/`
 - The LBS (LED Button Service) is also supported in nRF Connect SDK: [here](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/samples/bluetooth/peripheral_lbs/README.html).
 -  More information about the nRFBlinky example firmware can be found in the [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/ble_sdk_app_blinky.html?cp=8_1_4_2_2_3).

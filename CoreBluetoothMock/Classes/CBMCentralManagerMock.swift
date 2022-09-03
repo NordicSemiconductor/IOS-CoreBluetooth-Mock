@@ -237,7 +237,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///
     /// This method may only be called before any central manager was created
     /// or when Bluetooth state is `.poweredOff`. Existing list of peripherals
-    /// will be overritten.
+    /// will be overridden.
     /// - Parameter peripherals: Peripherals specifications.
     public static func simulatePeripherals(_ peripherals: [CBMPeripheralSpec]) {
         guard managers.isEmpty || managerState == .poweredOff else {
@@ -473,8 +473,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
     @available(iOS 13.1, macOS 10.15, tvOS 13.1, watchOS 6.1, *)
     open override class var authorization: CBMManagerAuthorization {
         if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
-           let authotization = CBMManagerAuthorization(rawValue: rawValue) {
-            return authotization
+           let authorization = CBMManagerAuthorization(rawValue: rawValue) {
+            return authorization
         } else {
             // If `simulateAuthorization(:)` was not called, .allowedAlways is assumed.
             return .allowedAlways
