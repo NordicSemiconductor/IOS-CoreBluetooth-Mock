@@ -76,7 +76,7 @@ open class CBMService: CBMAttribute {
     ///   - isPrimary: The type of the service (primary or secondary).
     init(type uuid: CBMUUID, primary isPrimary: Bool) {
         self.identifier = UUID()
-        self.peripheral = uninitializedPeriperheral
+        self.peripheral = uninitializedPeripheral
         self._uuid = uuid
         self.isPrimary = isPrimary
     }
@@ -395,7 +395,7 @@ internal extension Array where Element == CBMServiceMock {
 
 // MARK: - Mocking uninitialized objects
 
-fileprivate let uninitializedPeriperheral   = CBMPeripheralUninitialized()
+fileprivate let uninitializedPeripheral   = CBMPeripheralUninitialized()
 fileprivate let uninitializedService        = CBMServiceUninitialized()
 fileprivate let uninitializedCharacteristic = CBMCharacteristicUninitialized()
 
