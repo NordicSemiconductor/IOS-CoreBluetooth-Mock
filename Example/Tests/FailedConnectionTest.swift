@@ -102,5 +102,4 @@ class FailedConnectionTest: XCTestCase {
         let navigationController = appDelegate.window!.rootViewController as! UINavigationController
         navigationController.popViewController(animated: true)
     }
-
 }

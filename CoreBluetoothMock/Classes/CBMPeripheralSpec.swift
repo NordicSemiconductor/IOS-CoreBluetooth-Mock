@@ -242,7 +242,7 @@ public class CBMPeripheralSpec {
         isKnown = true
     }
     
-    /// Simulates a change of the devuice's MAC address.
+    /// Simulates a change of the device's MAC address.
     ///
     /// MAC addresses are not available through iOS API. Each MAC gets
     /// assigned a UUID by which the device can be identified and retrieved
