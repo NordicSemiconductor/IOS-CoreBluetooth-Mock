@@ -638,8 +638,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     open override func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
         // Starting from iOS 13, this method returns peripherals only in ON state.
         guard ensurePoweredOn() else { return [] }
-        // Get the peripherals already known to this central manager.
-        let localPeripherals = peripherals[identifiers]
         // Also, look for them among other managers, and copy them to the local
         // manager.
         let missingIdentifiers = identifiers.filter { peripherals[$0] == nil }
@@ -667,8 +665,10 @@ open class CBMCentralManagerMock: CBMCentralManager {
         peripheralsCached.forEach {
             peripherals[$0.identifier] = $0
         }
+        // Now, with updated peripherals, get those known to this central manager.
+        let localPeripherals = peripherals[identifiers]
         // Return them in the same order as requested, some may be missing.
-        return (localPeripherals + peripheralsKnownByOtherManagers + peripheralsCached)
+        return localPeripherals
             .sorted {
                 let firstIndex = identifiers.firstIndex(of: $0.identifier)!
                 let secondIndex = identifiers.firstIndex(of: $1.identifier)!
