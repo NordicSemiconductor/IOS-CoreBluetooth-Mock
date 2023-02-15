@@ -1376,7 +1376,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     self.mock.connectionDelegate?.peripheral(self.mock,
                                     didUpdateNotificationStateFor: mockCharacteristic,
                                     error: nil)
-                  }
+                }
             }
         case .failure(let error):
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
