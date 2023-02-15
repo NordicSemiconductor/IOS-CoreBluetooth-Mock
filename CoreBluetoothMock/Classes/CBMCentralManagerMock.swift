@@ -1383,7 +1383,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                     self.delegate?.peripheral(self,
                                               didUpdateNotificationStateFor: characteristic,
                                               error: nil)
-                  }
+                }
             }
         case .failure(let error):
             queue.asyncAfter(deadline: .now() + interval) { [weak self] in
