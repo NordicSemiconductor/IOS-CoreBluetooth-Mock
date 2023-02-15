@@ -99,6 +99,11 @@ public class CBMPeripheralSpec {
     /// multiple apps. When this drops to 0, the device is physically
     /// disconnected.
     internal var virtualConnections: Int
+    /// This flag indicates whether the device was connected and cached
+    /// by the system.
+    ///
+    /// On the first connection iOS reads and caches Device Name characteristic.
+    internal var wasConnected: Bool
     
     private init(
         identifier: UUID,
@@ -126,6 +131,7 @@ public class CBMPeripheralSpec {
         self.connectionInterval = connectionInterval
         self.mtu = mtu
         self.connectionDelegate = connectionDelegate
+        self.wasConnected = isInitiallyConnected
     }
     
     /// Creates a `MockPeripheral.Builder` instance.
