@@ -231,7 +231,8 @@ public protocol CBMPeripheralSpecDelegate {
     /// - Parameters:
     ///   - peripheral: The target peripheral specification.
     ///   - characteristic: The target characteristic.
-    ///   - error: 
+    ///   - error: Error returned from
+    ///            ``peripheral(_:didReceiveSetNotifyRequest:for:)-9r03q``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didUpdateNotificationStateFor characteristic: CBMCharacteristicMock,
                     error: Error?)
