@@ -764,9 +764,6 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     /// A flag set to <i>true</i> when the device was scanned
     /// at least once.
     fileprivate var wasScanned: Bool = false
-    /// A flag set to <i>true</i> when the device was connected
-    /// and iOS had chance to read device name.
-    fileprivate var wasConnected: Bool = false
     
     open var delegate: CBMPeripheralDelegate?
     
@@ -778,7 +775,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         // return nil. When scanning continued, the Local Name from the
         // advertisement data is returned. When the device was connected, the
         // central reads the Device Name characteristic and returns cached value.
-        return wasConnected ?
+        return mock.wasConnected ?
             mock.name :
             wasScanned ?
                 mock.advertisementData?[CBMAdvertisementDataLocalNameKey] as? String :
@@ -831,6 +828,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
                 if case .success = result {
                     self.state = .connected
                     self._canSendWriteWithoutResponse = true
+                    self.mock.wasConnected = true
                     self.mock.virtualConnections += 1
                 } else {
                     self.state = .disconnected
