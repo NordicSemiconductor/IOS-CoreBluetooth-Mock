@@ -208,8 +208,8 @@ public protocol CBMPeripheralSpecDelegate {
                     data: Data)
         -> Result<Void, Error>
 
-    /// This method will be called when notifications or indications were enabled
-    /// or disabled on the given characteristic using a mock central manager.
+    /// This method will be called when client requested enabling or disabling notifications or
+    /// indications on the given characteristic using a mock central manager.
     /// - Parameters:
     ///   - peripheral: The target peripheral specification.
     ///   - enabled: Whether notifications or indications were enabled or disabled.
@@ -225,6 +225,16 @@ public protocol CBMPeripheralSpecDelegate {
                     didReceiveSetNotifyRequest enabled: Bool,
                     for characteristic: CBMCharacteristic)
         -> Result<Void, Error>
+  
+    /// This method will be called when notifications or indications were enabled
+    /// or disabled on the given characteristic using a mock central manager.
+    /// - Parameters:
+    ///   - peripheral: The target peripheral specification.
+    ///   - characteristic: The target characteristic.
+    ///   - error: 
+    func peripheral(_ peripheral: CBMPeripheralSpec,
+                    didUpdateNotificationStateFor characteristic: CBMCharacteristicMock,
+                    error: Error?)
 }
 
 public extension CBMPeripheralSpecDelegate {
@@ -374,4 +384,11 @@ public extension CBMPeripheralSpecDelegate {
         -> Result<Void, Error> {
             return peripheral(p, didReceiveSetNotifyRequest: enabled, for: characteristic as CBMCharacteristic)
     }
+  
+    func peripheral(_ p: CBMPeripheralSpec,
+                    didUpdateNotificationStateFor characteristic: CBMCharacteristicMock,
+                    error: Error?) {
+        // Empty default implementation
+    }
+
 }
