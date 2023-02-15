@@ -210,6 +210,11 @@ public protocol CBMPeripheralSpecDelegate {
 
     /// This method will be called when client requested enabling or disabling notifications or
     /// indications on the given characteristic using a mock central manager.
+    ///
+    /// Value updates initiated from this method using ``CBMPeripheralSpec/simulateValueUpdate(_:for:)``
+    /// will be ignored until
+    ///  ``CBMPeripheralSpecDelegate/peripheral(_:didUpdateNotificationStateFor:error:)-4aash``
+    /// is received.
     /// - Parameters:
     ///   - peripheral: The target peripheral specification.
     ///   - enabled: Whether notifications or indications were enabled or disabled.
@@ -228,6 +233,10 @@ public protocol CBMPeripheralSpecDelegate {
   
     /// This method will be called when notifications or indications were enabled
     /// or disabled on the given characteristic using a mock central manager.
+    ///
+    /// It is safe to send value updates using
+    /// ``CBMPeripheralSpec/simulateValueUpdate(_:for:)`` from this method if
+    /// ``CBMCharacteristic/isNotifying`` is `true`.
     /// - Parameters:
     ///   - peripheral: The target peripheral specification.
     ///   - characteristic: The target characteristic.
