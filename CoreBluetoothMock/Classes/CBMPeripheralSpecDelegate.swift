@@ -225,10 +225,6 @@ public protocol CBMPeripheralSpecDelegate {
                     didReceiveSetNotifyRequest enabled: Bool,
                     for characteristic: CBMCharacteristic)
         -> Result<Void, Error>
-  
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didUpdateNotificationStateFor characteristic: CBMCharacteristicMock,
-                    error: Error?)
 }
 
 public extension CBMPeripheralSpecDelegate {
@@ -377,12 +373,6 @@ public extension CBMPeripheralSpecDelegate {
                     for characteristic: CBMCharacteristicMock)
         -> Result<Void, Error> {
             return peripheral(p, didReceiveSetNotifyRequest: enabled, for: characteristic as CBMCharacteristic)
-    }
-  
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didUpdateNotificationStateFor characteristic: CBMCharacteristicMock,
-                    error: Error?) {
-        // Empty default implementation
     }
 
 }
