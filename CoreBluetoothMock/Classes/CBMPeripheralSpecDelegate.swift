@@ -374,5 +374,4 @@ public extension CBMPeripheralSpecDelegate {
         -> Result<Void, Error> {
             return peripheral(p, didReceiveSetNotifyRequest: enabled, for: characteristic as CBMCharacteristic)
     }
-
 }
