@@ -557,7 +557,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 // If no Service UUID was used, or the device matches at least one service,
                 // report it to the delegate (call will be delayed using a Timer).
                 let services = mock.advertisementData![CBMAdvertisementDataServiceUUIDsKey] as? [CBMUUID]
-                if serviceUUIDs == nil ||
+                if serviceUUIDs?.isEmpty ?? true ||
                    services?.contains(where: serviceUUIDs!.contains) ?? false {
                     // The timer will be called multiple times, even if
                     // CBCentralManagerScanOptionAllowDuplicatesKey was not set.
