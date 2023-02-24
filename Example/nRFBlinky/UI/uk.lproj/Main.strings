@@ -12,7 +12,7 @@
 "K05-ZQ-Swb.title" = "Сканер";
 
 /* Class = "UILabel"; text = "If not, connect it to a PC or a charger using a micro USB cable. Coin cell battery is on the bottom side of the dev kit."; ObjectID = "MCd-9i-lIO"; */
-"MCd-9i-lIO.text" = "Якщо ні, то підключіть пристрiй до комп'ютера, або до зарядного пристрою, за допомогою кабелю micro USB.   Пігулка (мініатюрний елемент живлення) знаходиться на нижньому боці комплекту розробника.";
+"MCd-9i-lIO.text" = "Якщо ні, то підключіть пристрiй до комп'ютера, або до зарядного пристрою, за допомогою кабелю micro USB.   Батарейка ( мініатюрний елемент живлення) знаходиться на нижньому боці комплекту розробника.";
 
 /* Class = "UILabel"; text = "1. Make sure it's switched on."; ObjectID = "bcI-yv-RmI"; */
 "bcI-yv-RmI.text" = "1. Переконайтеся, що він ввімкнений.";
@@ -36,7 +36,7 @@
 "qKS-C3-Jkd.headerTitle" = "Кнопка";
 
 /* Class = "UILabel"; text = "2. Make sure the coin cell battery has power."; ObjectID = "rmw-BF-cDo"; */
-"rmw-BF-cDo.text" = "2. Переконайтеся, що пігулка (мініатюрний елемент живлення) має заряд.";
+"rmw-BF-cDo.text" = "2. Переконайтеся, що батарейка (мініатюрний елемент живлення) має заряд.";
 
 /* Class = "UILabel"; text = "OFF"; ObjectID = "sXe-8K-21Q"; */
 "sXe-8K-21Q.text" = "НЕВІДОМО";
