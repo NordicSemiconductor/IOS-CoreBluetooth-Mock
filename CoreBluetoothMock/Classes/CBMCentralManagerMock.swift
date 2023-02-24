@@ -127,19 +127,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
             // temporary timer that will call the initial data.
             if config.delay > 0 {
                 advertisementTimers[config] = Timer.scheduledTimer(
-                    withTimeInterval: config.delay,
-                    repeats: false) { _ in
-                        notify(config, for: mock)
-                        
-                        if config.interval > 0 {
-                            advertisementTimers[config] = Timer.scheduledTimer(
-                                timeInterval: config.interval,
-                                target: self,
-                                selector: #selector(self.notify(timer:)),
-                                userInfo: (mock, config),
-                                repeats: true)
-                        }
-                    }
+                    timeInterval: config.delay,
+                    target: self,
+                    selector: #selector(self.schedule(timer:)),
+                    userInfo: (mock, config),
+                    repeats: false)
             } else {
                 advertisementTimers[config] = Timer.scheduledTimer(
                     timeInterval: config.interval,
@@ -158,6 +150,27 @@ open class CBMCentralManagerMock: CBMCentralManager {
             advertisementTimers
                 .removeValue(forKey: config)?
                 .invalidate()
+        }
+    }
+    
+    /// This timer is fired when the initial delay has passed and the device starts
+    /// advertising with a advertisement config.
+    ///
+    /// The peripheral specification and advertising configuration is set as `userInfo`.
+    /// - Parameter timer: The timer that is fired.
+    @objc private static func schedule(timer: Timer) {
+        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, AdvertisementConfig) else {
+            return
+        }
+        notify(config, for: mock)
+        
+        if config.interval > 0 {
+            advertisementTimers[config] = Timer.scheduledTimer(
+                timeInterval: config.interval,
+                target: self,
+                selector: #selector(self.notify(timer:)),
+                userInfo: (mock, config),
+                repeats: true)
         }
     }
     
