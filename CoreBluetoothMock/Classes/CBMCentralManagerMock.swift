@@ -1067,7 +1067,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             let initialSize = services!.count
             services = services! + mockServices
                 // Filter all device services that match given list (if set).
-                .filter { serviceUUIDs?.isEmpty ?? serviceUUIDs?.contains($0.uuid) ?? true }
+                .filter { serviceUUIDs == nil || serviceUUIDs!.isEmpty || serviceUUIDs!.contains($0.uuid) }
                 // Filter those of them, that are not already in discovered services.
                 .filter { s in !services!
                     .contains { ds in s.identifier == ds.identifier }
@@ -1115,7 +1115,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             service._includedServices = service._includedServices! +
                 mockIncludedServices
                     // Filter all included service that match given list (if set).
-                    .filter { includedServiceUUIDs?.isEmpty ?? includedServiceUUIDs?.contains($0.uuid) ?? true }
+                    .filter { includedServiceUUIDs == nil || includedServiceUUIDs!.isEmpty || includedServiceUUIDs!.contains($0.uuid) }
                     // Filter those of them, that are not already in discovered services.
                     .filter { s in !service._includedServices!
                         .contains { ds in s.identifier == ds.identifier }
@@ -1168,7 +1168,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             service._characteristics = service._characteristics! +
                 mockCharacteristics
                     // Filter all service characteristics that match given list (if set).
-                    .filter { characteristicUUIDs?.isEmpty ?? characteristicUUIDs?.contains($0.uuid) ?? true }
+                    .filter { characteristicUUIDs == nil || characteristicUUIDs!.isEmpty || characteristicUUIDs!.contains($0.uuid) }
                     // Filter those of them, that are not already in discovered characteristics.
                     .filter { c in !service._characteristics!
                         .contains { dc in c.identifier == dc.identifier }
