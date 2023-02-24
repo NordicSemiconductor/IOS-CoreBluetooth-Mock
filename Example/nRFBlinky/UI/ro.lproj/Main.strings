@@ -39,7 +39,7 @@
 "rmw-BF-cDo.text" = "2. Asigura-te că bateria de tip moneda e încărcată.";
 
 /* Class = "UILabel"; text = "OFF"; ObjectID = "sXe-8K-21Q"; */
-"sXe-8K-21Q.text" = "NECUNOSCUT";
+"sXe-8K-21Q.text" = "OPRIT";
 
 /* Class = "UILabel"; text = "Nordic Blinky"; ObjectID = "ufl-Iw-mhn"; */
 "ufl-Iw-mhn.text" = "Nordic Blinky";
