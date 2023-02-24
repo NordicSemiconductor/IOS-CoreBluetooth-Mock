@@ -40,7 +40,14 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// A list of all mock managers instantiated by user.
     private static var managers: [WeakRef<CBMCentralManagerMock>] = []
     /// A list of peripherals known to the system.
-    private static var peripherals: [CBMPeripheralSpec] = []
+    private static var peripherals: [CBMPeripheralSpec] = [] {
+        didSet {
+            stopAdvertising()
+            initializeAdvertising()
+        }
+    }
+    /// A map of all current advertisements of all simulated peripherals.
+    private static var advertisementTimers: [AdvertisementConfig : Timer] = [:]
     /// A mutex queue for managing managers.
     private static let mutex: DispatchQueue = DispatchQueue(label: "Mutex")
     /// The value of current authorization status for using Bluetooth.
@@ -82,6 +89,169 @@ open class CBMCentralManagerMock: CBMCentralManager {
             managers.removeAll { $0.ref == nil }
         }
     }
+    
+    /// Restarts advertising for all mock peripherals.
+    ///
+    /// The advertisement delays will be counted from the moment they are started.
+    private static func initializeAdvertising() {
+        peripherals
+            .compactMap { peripheral in peripheral.advertisement?.map { config in (peripheral, config) } }
+            .flatMap { $0 }
+            .forEach { peripheral, config in
+                startAdvertising(config, for: peripheral)
+            }
+    }
+    
+    /// Stops all advertising.
+    private static func stopAdvertising() {
+        advertisementTimers.forEach { $0.value.invalidate() }
+        advertisementTimers.removeAll()
+    }
+    
+    /// Starts the given advertisement.
+    ///
+    /// The advertisement delay will be counted from moment it is started.
+    /// - Parameters:
+    ///   - config: Advertisement configuration to start.
+    ///   - mock: The advertising mock peripheral.
+    private static func startAdvertising(_ config: AdvertisementConfig, for mock: CBMPeripheralSpec) {
+        // A valid advertising config is a single time advertisement (delay > 0),
+        // or a periodic one (interval > 0) (or both - delayed periodic advertisement).
+        // Not to be mistaken with "Periodic Advertisement" from Advertising Extension.
+        guard config.delay > 0 || config.interval > 0 else {
+            return
+        }
+        // Timer works only on queues with a active run loop.
+        DispatchQueue.main.async {
+            // If the first advertising is to be delayed, create a
+            // temporary timer that will call the initial data.
+            if config.delay > 0 {
+                advertisementTimers[config] = Timer.scheduledTimer(
+                    timeInterval: config.delay,
+                    target: self,
+                    selector: #selector(self.schedule(timer:)),
+                    userInfo: (mock, config),
+                    repeats: false)
+            } else {
+                advertisementTimers[config] = Timer.scheduledTimer(
+                    timeInterval: config.interval,
+                    target: self,
+                    selector: #selector(self.notify(timer:)),
+                    userInfo: (mock, config),
+                    repeats: true)
+            }
+        }
+    }
+    
+    /// Stops all advertising of the given peripheral.
+    /// - Parameter mock: The mock peripheral that changed advertising set.
+    private static func stopAdvertising(of mock: CBMPeripheralSpec) {
+        mock.advertisement?.forEach { config in
+            advertisementTimers
+                .removeValue(forKey: config)?
+                .invalidate()
+        }
+    }
+    
+    /// This timer is fired when the initial delay has passed and the device starts
+    /// advertising with a advertisement config.
+    ///
+    /// The peripheral specification and advertising configuration is set as `userInfo`.
+    /// - Parameter timer: The timer that is fired.
+    @objc private static func schedule(timer: Timer) {
+        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, AdvertisementConfig) else {
+            return
+        }
+        notify(config, for: mock)
+        
+        if config.interval > 0 {
+            advertisementTimers[config] = Timer.scheduledTimer(
+                timeInterval: config.interval,
+                target: self,
+                selector: #selector(self.notify(timer:)),
+                userInfo: (mock, config),
+                repeats: true)
+        }
+    }
+    
+    /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
+    /// devices.
+    ///
+    /// The peripheral specification and advertising configuration is set as `userInfo`.
+    /// - Parameter timer: The timer that is fired.
+    @objc private static func notify(timer: Timer) {
+        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, AdvertisementConfig) else {
+            return
+        }
+        notify(config, for: mock)
+    }
+    
+    /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
+    /// devices.
+    ///
+    /// The scanned peripheral is set as `userInfo`.
+    /// - Parameters:
+    ///   - config: Advertisement configuration to start.
+    ///   - mock: The advertising mock peripheral.
+    private static func notify(_ config: AdvertisementConfig, for mock: CBMPeripheralSpec) {
+        // If a peripheral is out of range, the packet gets missed.
+        guard mock.proximity != .outOfRange else {
+            return
+        }
+        // If the device is connected and does not advetise in that state, skip.
+        guard !mock.isConnected || config.isAdvertisingWhenConnected else {
+            return
+        }
+        let services = config.data[CBMAdvertisementDataServiceUUIDsKey] as? [CBMUUID]
+        // Notify managers...
+        let existingManagers = CBMCentralManagerMock.mutex.sync {
+            managers.compactMap { $0.ref }
+        }
+        existingManagers
+            // that are scanning with no UUID filter, empty filter, or with at least one service in common.
+            .filter { manager in
+                manager.isScanning && (
+                    manager.scanFilter?.isEmpty ?? true ||
+                    services?.contains(where: manager.scanFilter!.contains) ?? false
+                )
+            }
+            // For each scanning manager do the following:
+            .forEach { manager in
+                // The device has been scanned and cached.
+                mock.isKnown = true
+                // Get or create local peripheral instance.
+                if manager.peripherals[mock.identifier] == nil {
+                    manager.peripherals[mock.identifier] = CBMPeripheralMock(basedOn: mock, by: manager)
+                }
+                let peripheral = manager.peripherals[mock.identifier]!
+                
+                // If the Allow Duplicates flag was not set and the device was already reported,
+                // don't report it for th second time
+                let allowDuplicates = manager.scanOptions?[CBMCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? false as NSNumber
+                if !peripheral.wasScanned || allowDuplicates.boolValue {
+                    // Remember the scanned name from the last advertising packet.
+                    peripheral.lastAdvertisedName = config.data[CBAdvertisementDataLocalNameKey] as? String ?? peripheral.lastAdvertisedName
+                    // Emulate RSSI based on proximity. Apply some deviation.
+                    let rssi = mock.proximity.RSSI
+                    let delta = CBMCentralManagerMock.rssiDeviation
+                    let deviation = Int.random(in: -delta...delta)
+                    manager.delegate?.centralManager(manager, didDiscover: peripheral,
+                                                     advertisementData: config.data,
+                                                     rssi: (rssi + deviation) as NSNumber)
+                    // The first scan result is returned without a name.
+                    // This flag must then be called after it has been reported.
+                    // Setting this flag will cause the advertising name to be
+                    // returned from CBPeripheral.name.
+                    peripheral.wasScanned = true
+                }
+            }
+        // When an connectable advertising packet was received from a device check if there
+        // are any pending connections.
+        let isConnectable = config.data[CBMAdvertisementDataIsConnectable] as? NSNumber ?? false as NSNumber
+        if isConnectable.boolValue {
+            peripheralBecameAvailable(mock)
+        }
+    }
     /// Whether the app is currently authorized to use Bluetooth.
     ///
     /// If `simulateAuthorization(:)` was not called it is assumed that the
@@ -111,8 +281,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     /// A flag set to true when the manager is scanning for mock Bluetooth LE devices.
     private var _isScanning: Bool
-    /// store for each mock identifier its timer, so we ensure to run once for advertizing
-    static var timers: [UUID : Timer] = [:]
     
     // MARK: - Initializers
     
@@ -290,9 +458,10 @@ open class CBMCentralManagerMock: CBMCentralManager {
         if proximity == .outOfRange {
             self.peripheral(peripheral,
                             didDisconnectWithError: CBMError(.connectionTimeout))
-        } else {
-            self.peripheralBecameAvailable(peripheral)
-        }
+        } // else {
+            // If a device got in range an advertising packet will be received
+            // at some point. Any pending connections will succeed at that time.
+        //}
     }
     
     /// Simulates a situation when the device changes its services.
@@ -358,6 +527,23 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
     }
     
+    /// Simulates a change in advertising packets for the given peripheral.
+    ///
+    /// The full advertising set is replaced with a new one and all timers are restarted.
+    /// - Parameters:
+    ///   - peripheral: The peripheral that changed advertising.
+    ///   - advertisement: The new advertising set.
+    internal static func peripheral(_ peripheral: CBMPeripheralSpec,
+                                    didChangeAdvertisement advertisement: [AdvertisementConfig]?) {
+        // Stop current advertising of the given device.
+        stopAdvertising(of: peripheral)
+        // Set new advertising set.
+        peripheral.advertisement = advertisement
+        peripheral.advertisement?.forEach { config in
+            startAdvertising(config, for: peripheral)
+        }
+    }
+    
     /// This method simulates a new virtual connection to the given
     /// peripheral, as if some other application connected to it.
     ///
@@ -384,10 +570,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// If there is a pending connection request, it will connect.
     /// - Parameter peripheral: The peripheral that came in range. 
     internal static func peripheralBecameAvailable(_ peripheral: CBMPeripheralSpec) {
-        // Is the peripheral simulated?
-        guard peripherals.contains(peripheral) else {
-            return
-        }
         let existingManagers = CBMCentralManagerMock.mutex.sync {
             managers.compactMap { $0.ref }
         }
@@ -483,102 +665,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
     }
     
-    /// This is a Timer callback, that's called to emulate scanning for Bluetooth LE
-    /// devices. When the `CBCentralManagerScanOptionAllowDuplicatesKey` options
-    /// was set when scanning was started, the timer will repeat every advertising
-    /// interval until scanning is stopped.
-    ///
-    /// The scanned peripheral is set as `userInfo`.
-    /// - Parameter timer: The timer that is fired.
-    @objc private func notify(timer: Timer) {
-        guard let mock = timer.userInfo as? CBMPeripheralSpec,
-              let advertisementData = mock.advertisementData,
-              isScanning else {
-            timer.invalidate()
-            if let index = CBMCentralManagerMock.timers.firstIndex(where: { $0.value == timer }) {
-              CBMCentralManagerMock.timers.remove(at: index)
-            }
-            return
-        }
-        guard mock.proximity != .outOfRange else {
-            return
-        }
-        // The device has been scanned and cached.
-        mock.isKnown = true
-        guard !mock.isConnected || mock.isAdvertisingWhenConnected else {
-            return
-        }
-        // Get or create local peripheral instance.
-        if peripherals[mock.identifier] == nil {
-            peripherals[mock.identifier] = CBMPeripheralMock(basedOn: mock,
-                                                             by: self)
-        }
-        let peripheral = peripherals[mock.identifier]!
-        
-        // Emulate RSSI based on proximity. Apply some deviation.
-        let rssi = mock.proximity.RSSI
-        let delta = CBMCentralManagerMock.rssiDeviation
-        let deviation = Int.random(in: -delta...delta)
-        delegate?.centralManager(self, didDiscover: peripheral,
-                                 advertisementData: advertisementData,
-                                 rssi: (rssi + deviation) as NSNumber)
-        // The first scan result is returned without a name.
-        // This flag must then be called after it has been reported.
-        // Setting this flag will cause the advertising name to be
-        // returned from CBPeripheral.name.
-        peripheral.wasScanned = true
-        
-        let allowDuplicates = scanOptions?[CBMCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? false as NSNumber
-        if !allowDuplicates.boolValue {
-            timer.invalidate()
-            if let index = CBMCentralManagerMock.timers.firstIndex(where: { $0.value == timer }) {
-              CBMCentralManagerMock.timers.remove(at: index)
-            }
-        }
-    }
-    
     open override func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
                                           options: [String : Any]? = nil) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
-        if isScanning {
-            stopScan()
-        }
         _isScanning = true
         scanFilter = serviceUUIDs
         scanOptions = options
-
-        CBMCentralManagerMock.peripherals
-            // For all advertising peripherals,
-            .filter { $0.advertisementData   != nil
-                   && $0.advertisingInterval != nil
-                   && $0.advertisingInterval! > 0 }
-            .forEach { mock in
-                // If no Service UUID was used, or the device matches at least one service,
-                // report it to the delegate (call will be delayed using a Timer).
-                let services = mock.advertisementData![CBMAdvertisementDataServiceUUIDsKey] as? [CBMUUID]
-                if serviceUUIDs?.isEmpty ?? true ||
-                   services?.contains(where: serviceUUIDs!.contains) ?? false {
-                    // The timer will be called multiple times, even if
-                    // CBCentralManagerScanOptionAllowDuplicatesKey was not set.
-                    // In that case, the timer will be invalidated after the
-                    // device has been reported for the first time.
-                    //
-                    // Timer works only on queues with a active run loop.
-                    DispatchQueue.main.async {
-                      if CBMCentralManagerMock.timers[mock.identifier] == nil {
-                          CBMCentralManagerMock.timers[mock.identifier] =
-                            Timer.scheduledTimer(
-                                timeInterval: mock.advertisingInterval!,
-                                target: self,
-                                selector: #selector(self.notify(timer:)),
-                                userInfo: mock,
-                                repeats: true
-                            )
-                        }
-                    }
-                }
-            }
     }
     
     open override func stopScan() {
@@ -587,6 +680,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         _isScanning = false
         scanFilter = nil
         scanOptions = nil
+        peripherals.values.forEach { $0.wasScanned = false }
     }
     
     open override func connect(_ peripheral: CBMPeripheral, options: [String : Any]? = nil) {
@@ -606,15 +700,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
         guard peripherals.values.contains(mock) else {
             return
         }
-        mock.connect() { result in
-            switch result {
-            case .success:
-                self.delegate?.centralManager(self, didConnect: mock)
-            case .failure(let error):
-                self.delegate?.centralManager(self, didFailToConnect: mock,
-                                              error: error)
-            }
-        }
+        // Connection is pending.
+        mock.state = .connecting
     }
     
     open override func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
@@ -761,9 +848,11 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     private var availableWriteWithoutResponseBuffer: Int
     private var _canSendWriteWithoutResponse: Bool = false
     
-    /// A flag set to <i>true</i> when the device was scanned
-    /// at least once.
+    /// A flag set to `true` when the device was scanned for the first time during
+    /// a single scan. This is to ensure that th result is not delivered twice unless
+    /// `CBMCentralManagerScanOptionAllowDuplicatesKey` flag is set.
     fileprivate var wasScanned: Bool = false
+    fileprivate var lastAdvertisedName: String? = nil
     
     open var delegate: CBMPeripheralDelegate?
     
@@ -771,22 +860,14 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         return mock.identifier
     }
     open var name: String? {
-        // If the device wasn't connected and has just been scanned first time,
-        // return nil. When scanning continued, the Local Name from the
-        // advertisement data is returned. When the device was connected, the
-        // central reads the Device Name characteristic and returns cached value.
-        return mock.wasConnected ?
-            mock.name :
-            wasScanned ?
-                mock.advertisementData?[CBMAdvertisementDataLocalNameKey] as? String :
-                nil
+        return mock.wasConnected ? mock.name : lastAdvertisedName
     }
     @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     open var canSendWriteWithoutResponse: Bool {
         return _canSendWriteWithoutResponse
     }
     open private(set) var ancsAuthorized: Bool = false
-    open private(set) var state: CBMPeripheralState = .disconnected
+    open fileprivate(set) var state: CBMPeripheralState = .disconnected
     open private(set) var services: [CBMService]? = nil
     
     // MARK: Initializers
@@ -809,11 +890,9 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     
     fileprivate func connect(completion: @escaping (Result<Void, Error>) -> ()) {
         // Ensure the device is disconnected.
-        guard state == .disconnected || state == .connecting else {
+        guard state == .connecting else {
             return
         }
-        // Connection is pending.
-        state = .connecting
         // Ensure the device is connectable and in range.
         guard let delegate = mock.connectionDelegate,
               let interval = mock.connectionInterval,
