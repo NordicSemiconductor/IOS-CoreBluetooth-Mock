@@ -64,7 +64,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
         return basePeripheral.state
     }
     
-    /// Creates teh BlinkyPeripheral based on the received peripheral and advertising data.
+    /// Creates the BlinkyPeripheral based on the received peripheral and advertising data.
     /// The device name is obtained from the advertising data, instead of CBPeripheral's name
     /// property to avoid caching problems.
     /// - Parameters:
@@ -83,8 +83,8 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
         super.init()
         peripheral.delegate = self
 
-        _ = manager.onStateChange { [unowned self] state in
-            if state != .poweredOn {
+        _ = manager.onStateChange { [weak self] state in
+            if let self = self, state != .poweredOn {
                 self.post(.blinkyDidDisconnect(self, error: nil))
             }
         }
