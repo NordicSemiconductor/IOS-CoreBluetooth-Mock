@@ -232,9 +232,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     peripheral.wasScanned = true
                 }
             }
-        // When an advertising packet was received from a device check if there
+        // When an connectable advertising packet was received from a device check if there
         // are any pending connections.
-        peripheralBecameAvailable(mock)
+        let isConnectable = config.data[CBMAdvertisementDataIsConnectable] as? NSNumber ?? false as NSNumber
+        if isConnectable.boolValue {
+            peripheralBecameAvailable(mock)
+        }
     }
     /// Whether the app is currently authorized to use Bluetooth.
     ///
@@ -554,10 +557,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// If there is a pending connection request, it will connect.
     /// - Parameter peripheral: The peripheral that came in range. 
     internal static func peripheralBecameAvailable(_ peripheral: CBMPeripheralSpec) {
-        // Is the peripheral simulated?
-        guard peripherals.contains(peripheral) else {
-            return
-        }
         let existingManagers = CBMCentralManagerMock.mutex.sync {
             managers.compactMap { $0.ref }
         }
