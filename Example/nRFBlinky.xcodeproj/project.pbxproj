@@ -35,6 +35,7 @@
 		7B2BC15014F59F63362D632E /* Pods_nRFBlinky.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D451FCAEA31E307D873AF9E /* Pods_nRFBlinky.framework */; };
 		9C3DAF3BDCE839F729AB18D4 /* Pods_nRFBlinky_nRFBlinky_UITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAE5CCCE10D0C6B6720ACAB6 /* Pods_nRFBlinky_nRFBlinky_UITests.framework */; };
 		C6364701431B98C1DECD43DF /* Pods_nRFBlinky_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D967657A32EC3FE966B803EE /* Pods_nRFBlinky_Tests.framework */; };
+		F0A6C9F229A9100200FA75EB /* AdvertisingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A6C9F129A9100200FA75EB /* AdvertisingTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +130,7 @@
 		D967657A32EC3FE966B803EE /* Pods_nRFBlinky_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF2A391A629B418AF377967D /* CoreBluetoothMock.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CoreBluetoothMock.podspec; path = ../CoreBluetoothMock.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		E20CFB7929AACA783363B9F4 /* Pods-nRFBlinky.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.release.xcconfig"; sourceTree = "<group>"; };
+		F0A6C9F129A9100200FA75EB /* AdvertisingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisingTest.swift; sourceTree = "<group>"; };
 		FAE5CCCE10D0C6B6720ACAB6 /* Pods_nRFBlinky_nRFBlinky_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_nRFBlinky_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDD05DB6B9B51CA381BE6886 /* Pods-nRFBlinky.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky.debug.xcconfig"; path = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -182,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				52A648F0240E83F000817F2F /* NormalBehaviorTest.swift */,
+				F0A6C9F129A9100200FA75EB /* AdvertisingTest.swift */,
 				2DBB22CFA82E35CBA3BB326F /* ResetTest.swift */,
 				52E905CD24DD35A100BB5740 /* FailedConnectionTest.swift */,
 				52991CE626C26CE90029CD9E /* RetrievingDevicesTest.swift */,
@@ -618,6 +621,7 @@
 				52991CE726C26CE90029CD9E /* RetrievingDevicesTest.swift in Sources */,
 				2DBB258568F7E07E0DFA3B4E /* EventHelper.swift in Sources */,
 				52E905CE24DD35A100BB5740 /* FailedConnectionTest.swift in Sources */,
+				F0A6C9F229A9100200FA75EB /* AdvertisingTest.swift in Sources */,
 				52A128B726CD9AF800DE5F37 /* MultipleInstancesTest.swift in Sources */,
 				2DBB2D9D87AA009D95C10DEE /* ResetTest.swift in Sources */,
 			);
