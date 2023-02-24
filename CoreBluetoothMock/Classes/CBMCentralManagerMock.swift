@@ -835,8 +835,9 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     private var availableWriteWithoutResponseBuffer: Int
     private var _canSendWriteWithoutResponse: Bool = false
     
-    /// A flag set to <i>true</i> when the device was scanned
-    /// at least once.
+    /// A flag set to `true` when the device was scanned for the first time during
+    /// a single scan. This is to ensure that th result is not delivered twice unless
+    /// `CBMCentralManagerScanOptionAllowDuplicatesKey` flag is set.
     fileprivate var wasScanned: Bool = false
     fileprivate var lastAdvertisedName: String? = nil
     
