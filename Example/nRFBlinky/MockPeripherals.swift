@@ -186,7 +186,18 @@ let thingy = CBMPeripheralSpec
                 CBMUUID(string: "FEAA") : Data(base64Encoded: "EO4DZ28uZ2wvcElXZGaXIA==")
             ]
         ],
-        withInterval: 0.100)
+        withInterval: 0.250,
+        alsoWhenConnected: true)
+    .advertising(
+        advertisementData: [
+            CBMAdvertisementDataServiceUUIDsKey : [
+                CBMUUID(string: "EF680100-9B35-4933-9B10-52FFA9740042")],
+            CBMAdvertisementDataIsConnectable : true as NSNumber,
+            CBMAdvertisementDataManufacturerDataKey : Data([0x59, 0x00, 0x5E, 0x91, 0xD9, 0xC3]),
+            CBMAdvertisementDataLocalNameKey : "Thingy:52",
+        ],
+        withInterval: 0.100,
+        delay: 2.0)
     .build()
 
 // MARK: - A device with 2 batteries
