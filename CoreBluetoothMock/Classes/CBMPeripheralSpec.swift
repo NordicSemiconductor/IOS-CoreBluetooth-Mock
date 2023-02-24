@@ -51,6 +51,47 @@ public enum CBMProximity {
     }
 }
 
+public struct AdvertisementConfig {
+    /// ID used for hash.
+    internal let id: UUID = UUID()
+    
+    /// The device's advertising data.
+    public let data: [String : Any]
+    /// The advertising interval.
+    ///
+    /// If the intetval is 0, the advertisement will be fired only once. In that case use the `delay`
+    /// parameter to specify when the advertisement is to be sent.
+    public let interval: TimeInterval
+    /// The delay of the first advertising packet of that type.
+    ///
+    /// If the delay is 0, the library will mock advertisements in regular intervals.
+    ///
+    /// The delay is counted from the time the mock peripheral was added to the simulation
+    /// using ``CBMCentralManagerMock/simulatePeripherals(_:)``.
+    ///
+    /// - Note: The devices are advertising also when there are no central managers scanning.
+    public let delay: TimeInterval
+    /// Should the mock peripheral appear in scan results when it's
+    /// connected.
+    public let isAdvertisingWhenConnected: Bool
+    
+    /// Creates an advertising configuration.
+    /// - Parameters:
+    ///   - data: The data that will be advertised. Only the iOS-supported keys are available.
+    ///   - interval: The advertising ingterval in seconds.
+    ///   - delay: The delay to the first packet, in seconds.
+    ///   - isAdvertisingWhenConnected: Whether the device advertises also when in
+    ///                                 connected state.
+    public init(data: [String : Any],
+                interval: TimeInterval, delay: TimeInterval = 0.0,
+                isAdvertisingWhenConnected: Bool = false) {
+        self.data = data
+        self.interval = interval
+        self.delay = delay
+        self.isAdvertisingWhenConnected = isAdvertisingWhenConnected
+    }
+}
+
 /// The peripheral instance specification.
 public class CBMPeripheralSpec {
     /// The peripheral identifier.
@@ -60,9 +101,6 @@ public class CBMPeripheralSpec {
     public internal(set) var name: String?
     /// How far the device is.
     public internal(set) var proximity: CBMProximity
-    /// Should the mock peripheral appear in scan results when it's
-    /// connected.
-    public let isAdvertisingWhenConnected: Bool
     /// A flag indicating that the peripheral can be obtained using
     /// `CBMCentralManagerMock.retrievePeripherals(withIdentifiers:)`
     /// without scanning. This is set to true whenever the peripheral
@@ -73,12 +111,30 @@ public class CBMPeripheralSpec {
     /// previously and stored its UUID.
     public internal(set) var isKnown: Bool
     
+    /// Advertisement configuration.
+    ///
+    /// A device can advertise with multiple packets with different advertising interval.
+    /// - Since: 0.15.0
+    public internal(set) var advertisement: [AdvertisementConfig]?
+    
     /// The device's advertising data.
     /// Make sure to include `CBAdvertisementDataIsConnectable` if
     /// the device is connectable.
-    public let advertisementData: [String : Any]?
+    @available(*, deprecated, message: "Use advertisement configurations instead")
+    public var advertisementData: [String : Any]? {
+        return advertisement?.first?.data
+    }
     /// The advertising interval.
-    public let advertisingInterval: TimeInterval?
+    @available(*, deprecated, message: "Use advertisement configurations instead")
+    public var advertisingInterval: TimeInterval? {
+        return advertisement?.first?.interval
+    }
+    /// Should the mock peripheral appear in scan results when it's
+    /// connected.
+    @available(*, deprecated, message: "Use advertisement configurations instead")
+    public var isAdvertisingWhenConnected: Bool {
+        return advertisement?.first?.isAdvertisingWhenConnected ?? false
+    }
     
     /// List of services with implementation.
     public internal(set) var services: [CBMServiceMock]?
@@ -110,10 +166,8 @@ public class CBMPeripheralSpec {
         name: String?,
         proximity: CBMProximity,
         isInitiallyConnected: Bool,
-        isAdvertisingWhenConnected: Bool,
         isKnown: Bool,
-        advertisementData: [String : Any]?,
-        advertisingInterval: TimeInterval?,
+        advertisement: [AdvertisementConfig]?,
         services: [CBMServiceMock]?,
         connectionInterval: TimeInterval?,
         mtu: Int?,
@@ -123,10 +177,8 @@ public class CBMPeripheralSpec {
         self.name = name
         self.proximity = proximity
         self.virtualConnections = isInitiallyConnected ? 1 : 0
-        self.isAdvertisingWhenConnected = isAdvertisingWhenConnected
         self.isKnown = isKnown
-        self.advertisementData = advertisementData
-        self.advertisingInterval = advertisingInterval
+        self.advertisement = advertisement
         self.services = services
         self.connectionInterval = connectionInterval
         self.mtu = mtu
@@ -150,7 +202,7 @@ public class CBMPeripheralSpec {
     /// Simulates the situation when another application on the device
     /// connects to the device.
     ///
-    /// If `isAdvertisingWhenConnected` flag is set to <i>false</i>, the
+    /// If `isAdvertisingWhenConnected` flag is set to `false`, the
     /// device will stop showing up on scan results.
     ///
     /// A manager registered for connection event will receive an event.
@@ -238,6 +290,14 @@ public class CBMPeripheralSpec {
         CBMCentralManagerMock.peripheral(self, didUpdateValueFor: characteristic)
     }
     
+    /// Simulates a change in the advertising packet.
+    ///
+    /// The delays in the config will be applied from the time this method is called.
+    /// - Parameter advertisement: The new advertrising configuration.
+    public func simulateAdvertisementChange(_ advertisement: [AdvertisementConfig]?) {
+        CBMCentralManagerMock.peripheral(self, didChangeAdvertisement: advertisement)
+    }
+    
     /// Simulates a situation when the iDevice scans for Bluetooth LE devices
     /// and caches scanned results. Scanned devices become available for retrieval
     /// using `CBMCentralManager.retrievePeripherals(withIdentifiers:)`.
@@ -265,21 +325,11 @@ public class CBMPeripheralSpec {
         /// The peripheral identifier.
         private var identifier: UUID
         /// The name of the peripheral cached during previous session.
-        /// This may be <i>nil<i/> to simulate a newly discovered devices.
+        /// This may be `nil<i/> to simulate a newly discovered devices.
         private var name: String?
         /// How far the device is.
         private var proximity: CBMProximity
-             
-        /// The device's advertising data.
-        /// Make sure to include `CBAdvertisementDataIsConnectable` with
-        /// value <i>true</i> if the device is connectable.
-        private var advertisementData: [String : Any]? = nil
-        /// The advertising interval, in seconds.
-        private var advertisingInterval: TimeInterval? = 0.100
         
-        /// Should the mock peripheral appear in scan results when it's
-        /// connected.
-        private var isAdvertisingWhenConnected: Bool = false
         /// A flag indicating whether the device is initially connected
         /// to the central (using some other application).
         private var isInitiallyConnected: Bool = false
@@ -291,6 +341,8 @@ public class CBMPeripheralSpec {
         /// previously and stored its UUID.
         private var isKnown: Bool = false
         
+        /// The device's advertising data.
+        private var advertisement: [AdvertisementConfig]? = nil
         /// List of services with implementation.
         private var services: [CBMServiceMock]? = nil
         /// The connection interval, in seconds.
@@ -311,18 +363,30 @@ public class CBMPeripheralSpec {
         /// interval.
         /// - Parameters:
         ///   - advertisementData: The advertising data.
-        ///   - interval: Advertising interval, in seconds.
-        ///   - advertisingWhenConnected: If <i>true</i>, the device will also
+        ///   - interval: Advertising interval, in seconds. Use 0 for one time advertisements.
+        ///   - delay: The delay of the first packet of that type, counted from when the peripheral
+        ///            is added to the simulation.
+        ///   - advertisingWhenConnected: If `true`, the device will also
         ///                               be returned in scan results when
         ///                               connected. By default set to
-        ///                               <i>false</i>.
+        ///                               `false`.
         /// - Returns: The builder.
+        /// - Since: Starting from version 0.15.0 this method may be called multiple times
+        ///          if the device advertises with muiltiple different packets.
         public func advertising(advertisementData: [String : Any],
                                 withInterval interval: TimeInterval = 0.100,
+                                delay: TimeInterval = 0.0,
                                 alsoWhenConnected advertisingWhenConnected: Bool = false) -> Builder {
-            self.advertisementData = advertisementData
-            self.advertisingInterval = interval
-            self.isAdvertisingWhenConnected = advertisingWhenConnected
+            if self.advertisement == nil {
+                self.advertisement = []
+            }
+            self.advertisement!.append(
+                AdvertisementConfig(
+                    data: advertisementData,
+                    interval: interval,
+                    delay: delay,
+                    isAdvertisingWhenConnected: advertisingWhenConnected)
+            )
             return self
         }
         
@@ -401,10 +465,8 @@ public class CBMPeripheralSpec {
                 name: name,
                 proximity: proximity,
                 isInitiallyConnected: isInitiallyConnected,
-                isAdvertisingWhenConnected: isAdvertisingWhenConnected,
                 isKnown: isKnown,
-                advertisementData: advertisementData,
-                advertisingInterval: advertisingInterval,
+                advertisement: advertisement,
                 services: services,
                 connectionInterval: connectionInterval,
                 mtu: mtu,
@@ -418,6 +480,18 @@ extension CBMPeripheralSpec: Equatable {
     
     public static func == (lhs: CBMPeripheralSpec, rhs: CBMPeripheralSpec) -> Bool {
         return lhs.identifier == rhs.identifier
+    }
+    
+}
+
+extension AdvertisementConfig: Hashable {
+    
+    public static func == (lhs: AdvertisementConfig, rhs: AdvertisementConfig) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
     
 }
