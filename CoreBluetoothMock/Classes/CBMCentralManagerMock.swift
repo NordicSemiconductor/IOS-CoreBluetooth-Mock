@@ -210,8 +210,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
         existingManagers
             // that are scanning with no UUID filter, empty filter, or with at least one service in common.
             .filter { manager in
-                manager.isScanning && (
-                    manager.scanFilter?.isEmpty ?? true ||
+                return manager.isScanning && (
+                    manager.scanFilter == nil || manager.scanFilter!.isEmpty ||
                     services?.contains(where: manager.scanFilter!.contains) ?? false
                 )
             }
