@@ -81,12 +81,12 @@
 		58D566B721898E1D43CFE4A9BFB4EA88 /* Pods-nRFBlinky.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky.debug.xcconfig"; sourceTree = "<group>"; };
 		601EB604CAC3ECACFB55BDBEDB2B2FF8 /* Pods-nRFBlinky-nRFBlinky_UITests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-nRFBlinky-nRFBlinky_UITests-frameworks.sh"; sourceTree = "<group>"; };
 		60EDDADB5A72F73CE358CC9DD73E6E4D /* Pods-nRFBlinky-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky-Info.plist"; sourceTree = "<group>"; };
-		69DE65DBE26968A43D4675CCB5B8F1E4 /* Pods-nRFBlinky_Tests */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-nRFBlinky_Tests"; path = Pods_nRFBlinky_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		69DE65DBE26968A43D4675CCB5B8F1E4 /* Pods_nRFBlinky_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		72D8941B2D1FDDEABD4AE7C02FED240C /* Pods-nRFBlinky_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		73F49D0D11CA3BC68F1FFF1BB879E869 /* Pods-nRFBlinky_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		75DD36E0C1A14D8060C2AF6DFF30D574 /* Pods-nRFBlinky-nRFBlinky_UITests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky-nRFBlinky_UITests-Info.plist"; sourceTree = "<group>"; };
-		779567A4B02AC0655BAD2A631CED3E38 /* CoreBluetoothMock */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = CoreBluetoothMock; path = CoreBluetoothMock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		779567A4B02AC0655BAD2A631CED3E38 /* CoreBluetoothMock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreBluetoothMock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		77A61BDF33ED282A7D748B4FC5DAE523 /* Pods-nRFBlinky_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-nRFBlinky_Tests-umbrella.h"; sourceTree = "<group>"; };
 		841F4A2347EB60F32CD0D3903EA8A854 /* Pods-nRFBlinky-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-nRFBlinky-acknowledgements.plist"; sourceTree = "<group>"; };
 		84ADBC783A37459B217DE2AE93720862 /* CoreBluetoothMock-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CoreBluetoothMock-umbrella.h"; sourceTree = "<group>"; };
@@ -103,7 +103,7 @@
 		B35E61EC37FC39079B00175308A7E788 /* CBMCentralManagerDelegateProxy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerDelegateProxy.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerDelegateProxy.swift; sourceTree = "<group>"; };
 		B4B7683D563C49086EC2DD61F6343EF9 /* CBMManagerTypes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMManagerTypes.swift; path = CoreBluetoothMock/Classes/CBMManagerTypes.swift; sourceTree = "<group>"; };
 		B596E8A912A66AD857068DEACABAB737 /* CBMPeripheralSpecDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralSpecDelegate.swift; path = CoreBluetoothMock/Classes/CBMPeripheralSpecDelegate.swift; sourceTree = "<group>"; };
-		B5ECDC42B563CFCA3D95087F11E165C9 /* Pods-nRFBlinky */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-nRFBlinky"; path = Pods_nRFBlinky.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5ECDC42B563CFCA3D95087F11E165C9 /* Pods_nRFBlinky.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B88417BD798BFF8098CD991205A4C454 /* CBMPeripheralDelegateProxy.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheralDelegateProxy.swift; path = CoreBluetoothMock/Classes/CBMPeripheralDelegateProxy.swift; sourceTree = "<group>"; };
 		B99137A6A607953F9DD3F061B39BE2B0 /* CBMCentralManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManager.swift; path = CoreBluetoothMock/Classes/CBMCentralManager.swift; sourceTree = "<group>"; };
 		C348C9192BF2799624BD1BAAF5DFED0C /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 		E51C3B2EBE3D334E3BD361653A43734F /* Pods-nRFBlinky_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFBlinky_Tests.modulemap"; sourceTree = "<group>"; };
 		E6162EA64C5ED57205DC70075E58C951 /* CBMPeripheral.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheral.swift; path = CoreBluetoothMock/Classes/CBMPeripheral.swift; sourceTree = "<group>"; };
 		F3F0C24F969499580018F86CF5FEA9E0 /* CBMCentralManagerFactory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerFactory.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerFactory.swift; sourceTree = "<group>"; };
-		FA11D9D2A8BE1D25698FC4DB8F16C15D /* Pods-nRFBlinky-nRFBlinky_UITests */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = "Pods-nRFBlinky-nRFBlinky_UITests"; path = Pods_nRFBlinky_nRFBlinky_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA11D9D2A8BE1D25698FC4DB8F16C15D /* Pods_nRFBlinky_nRFBlinky_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_nRFBlinky_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,10 +209,10 @@
 		78F1E97CBA31CFC06DE9857FBC265263 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				779567A4B02AC0655BAD2A631CED3E38 /* CoreBluetoothMock */,
-				B5ECDC42B563CFCA3D95087F11E165C9 /* Pods-nRFBlinky */,
-				FA11D9D2A8BE1D25698FC4DB8F16C15D /* Pods-nRFBlinky-nRFBlinky_UITests */,
-				69DE65DBE26968A43D4675CCB5B8F1E4 /* Pods-nRFBlinky_Tests */,
+				779567A4B02AC0655BAD2A631CED3E38 /* CoreBluetoothMock.framework */,
+				B5ECDC42B563CFCA3D95087F11E165C9 /* Pods_nRFBlinky.framework */,
+				FA11D9D2A8BE1D25698FC4DB8F16C15D /* Pods_nRFBlinky_nRFBlinky_UITests.framework */,
+				69DE65DBE26968A43D4675CCB5B8F1E4 /* Pods_nRFBlinky_Tests.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -362,7 +362,7 @@
 			);
 			name = CoreBluetoothMock;
 			productName = CoreBluetoothMock;
-			productReference = 779567A4B02AC0655BAD2A631CED3E38 /* CoreBluetoothMock */;
+			productReference = 779567A4B02AC0655BAD2A631CED3E38 /* CoreBluetoothMock.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		7AC722D61390476FAC05FA5E388C0381 /* Pods-nRFBlinky_Tests */ = {
@@ -381,7 +381,7 @@
 			);
 			name = "Pods-nRFBlinky_Tests";
 			productName = Pods_nRFBlinky_Tests;
-			productReference = 69DE65DBE26968A43D4675CCB5B8F1E4 /* Pods-nRFBlinky_Tests */;
+			productReference = 69DE65DBE26968A43D4675CCB5B8F1E4 /* Pods_nRFBlinky_Tests.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		CD3FFBF5C2F9F871EAF22AF6B1B85B05 /* Pods-nRFBlinky-nRFBlinky_UITests */ = {
@@ -400,7 +400,7 @@
 			);
 			name = "Pods-nRFBlinky-nRFBlinky_UITests";
 			productName = Pods_nRFBlinky_nRFBlinky_UITests;
-			productReference = FA11D9D2A8BE1D25698FC4DB8F16C15D /* Pods-nRFBlinky-nRFBlinky_UITests */;
+			productReference = FA11D9D2A8BE1D25698FC4DB8F16C15D /* Pods_nRFBlinky_nRFBlinky_UITests.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		D8DA31B307E5478D785EED0F0F084E24 /* Pods-nRFBlinky */ = {
@@ -419,7 +419,7 @@
 			);
 			name = "Pods-nRFBlinky";
 			productName = Pods_nRFBlinky;
-			productReference = B5ECDC42B563CFCA3D95087F11E165C9 /* Pods-nRFBlinky */;
+			productReference = B5ECDC42B563CFCA3D95087F11E165C9 /* Pods_nRFBlinky.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -428,8 +428,8 @@
 		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1240;
-				LastUpgradeCheck = 1330;
+				LastSwiftUpdateCheck = 1300;
+				LastUpgradeCheck = 1420;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -554,43 +554,12 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		02631BEEDC7CB9717D937DEE7F97498E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 58D566B721898E1D43CFE4A9BFB4EA88 /* Pods-nRFBlinky.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		14CE259BE80CA9097E4E8B19654E92FD /* Debug */ = {
+		048B92D904E08B826AE0D1196B51CC8E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 72D8941B2D1FDDEABD4AE7C02FED240C /* Pods-nRFBlinky_Tests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -601,7 +570,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.modulemap";
@@ -618,10 +587,12 @@
 			};
 			name = Debug;
 		};
-		24FAFC2D2A5C4A7CA9A6950C18D345ED /* Debug */ = {
+		40ECD0ED1D23BF963BD5EF81FCAEC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F76267EE984B91517FCCAC8AAC65CDE /* CoreBluetoothMock.debug.xcconfig */;
+			baseConfigurationReference = C348C9192BF2799624BD1BAAF5DFED0C /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -630,25 +601,93 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
-				PRODUCT_MODULE_NAME = CoreBluetoothMock;
-				PRODUCT_NAME = CoreBluetoothMock;
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.6;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
-		25AD9454612BF454A1E3DC4CD4FA8C6D /* Debug */ = {
+		4F9E1F99FF2125BDC957506263ADC28B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 58D566B721898E1D43CFE4A9BFB4EA88 /* Pods-nRFBlinky.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		7C68DC7A5A70625CB5D07C0678AF409B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 73F49D0D11CA3BC68F1FFF1BB879E869 /* Pods-nRFBlinky_Tests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		903A0004D3E6651EFD5D2E16214D101B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -683,6 +722,135 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		A6AF771858D60946D7C1860871B96985 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C366D985CC68EF9A7B5BBB3186F44D2D /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B14FCEB38301481FDD5BB6961BAF3270 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DFE592CEF601DC267B934D167A4EC7FC /* CoreBluetoothMock.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
+				PRODUCT_MODULE_NAME = CoreBluetoothMock;
+				PRODUCT_NAME = CoreBluetoothMock;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.6;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B4EFE046ACF8F37157F6E322C7FCFC28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -701,7 +869,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -714,10 +882,11 @@
 			};
 			name = Debug;
 		};
-		9B379CAFD332DB01A3163CD48CFA6706 /* Release */ = {
+		D9A95D46EE918E157C21346C08CB5C27 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DFE592CEF601DC267B934D167A4EC7FC /* CoreBluetoothMock.release.xcconfig */;
+			baseConfigurationReference = 2F76267EE984B91517FCCAC8AAC65CDE /* CoreBluetoothMock.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -729,7 +898,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/CoreBluetoothMock/CoreBluetoothMock.modulemap";
 				PRODUCT_MODULE_NAME = CoreBluetoothMock;
@@ -739,17 +908,17 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
 				SWIFT_VERSION = 5.6;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Debug;
 		};
-		B0250523C518D1C70B938EE0FF0F3B39 /* Release */ = {
+		EDEE61CC60142CEA74257CB61DCC41D4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9C5103A94668BA93B8DCDBD27491209F /* Pods-nRFBlinky.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
@@ -760,169 +929,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky/Pods-nRFBlinky.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		C13517240AAD0229C21DC9BAE59ADA1C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 73F49D0D11CA3BC68F1FFF1BB879E869 /* Pods-nRFBlinky_Tests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky_Tests/Pods-nRFBlinky_Tests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		CA547D2C7E9A8A153DC2B27FBE00B112 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"POD_CONFIGURATION_RELEASE=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/../build";
-			};
-			name = Release;
-		};
-		D2F28FA499F044C488223596A0167F5A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C348C9192BF2799624BD1BAAF5DFED0C /* Pods-nRFBlinky-nRFBlinky_UITests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		E9CE4A918EBDA19A41D25B2AEAFB21D5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = C366D985CC68EF9A7B5BBB3186F44D2D /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -943,8 +953,8 @@
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				25AD9454612BF454A1E3DC4CD4FA8C6D /* Debug */,
-				CA547D2C7E9A8A153DC2B27FBE00B112 /* Release */,
+				B4EFE046ACF8F37157F6E322C7FCFC28 /* Debug */,
+				903A0004D3E6651EFD5D2E16214D101B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -952,8 +962,8 @@
 		57E1A644F2B99A8C9AC4B78EF3D4BFF5 /* Build configuration list for PBXNativeTarget "Pods-nRFBlinky-nRFBlinky_UITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D2F28FA499F044C488223596A0167F5A /* Debug */,
-				E9CE4A918EBDA19A41D25B2AEAFB21D5 /* Release */,
+				40ECD0ED1D23BF963BD5EF81FCAEC87E /* Debug */,
+				A6AF771858D60946D7C1860871B96985 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -961,8 +971,8 @@
 		7C4ECF60CAC6EF8192FD895C01CAAF60 /* Build configuration list for PBXNativeTarget "Pods-nRFBlinky" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				02631BEEDC7CB9717D937DEE7F97498E /* Debug */,
-				B0250523C518D1C70B938EE0FF0F3B39 /* Release */,
+				4F9E1F99FF2125BDC957506263ADC28B /* Debug */,
+				EDEE61CC60142CEA74257CB61DCC41D4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -970,8 +980,8 @@
 		A84FDE584C6C2FDA833006067E22421C /* Build configuration list for PBXNativeTarget "Pods-nRFBlinky_Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				14CE259BE80CA9097E4E8B19654E92FD /* Debug */,
-				C13517240AAD0229C21DC9BAE59ADA1C /* Release */,
+				048B92D904E08B826AE0D1196B51CC8E /* Debug */,
+				7C68DC7A5A70625CB5D07C0678AF409B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -979,8 +989,8 @@
 		EFC8CB23333E34A8328021FFC8A8AEE8 /* Build configuration list for PBXNativeTarget "CoreBluetoothMock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				24FAFC2D2A5C4A7CA9A6950C18D345ED /* Debug */,
-				9B379CAFD332DB01A3163CD48CFA6706 /* Release */,
+				D9A95D46EE918E157C21346C08CB5C27 /* Debug */,
+				B14FCEB38301481FDD5BB6961BAF3270 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
