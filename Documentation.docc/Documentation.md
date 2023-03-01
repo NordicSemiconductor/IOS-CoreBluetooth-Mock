@@ -99,11 +99,11 @@ let blinky = CBMPeripheralSpec
     .build()
 ```
 
-Such mocked peripherals must be added to the simulation using
+Such mock peripherals must be added to the simulation using
 ``CBMCentralManagerMock/simulatePeripherals(_:)``. 
 
 ```swift
-CBMCentralManagerMock.simulatePeripherals[blinky]
+CBMCentralManagerMock.simulatePeripherals([blinky])
 ```
 
 From that moment simulated advertising starts and the device can be scanned or retrieved 
@@ -111,33 +111,93 @@ just like physical devices.
 
 ### Advertising
 
-A mock peripheral may advertise with static data with a fixed advertising interval, using a
-one-time advertisements or change advertising during the simulation.
+A mock peripheral may advertise with:
+* static data with a fixed advertising interval, 
+* *one-time* advertisements (`interval` set to 0),
+
+Both types of advertisements can be delayed using the `delay` parameter.
 
 The initial advertising configuration is set up using
 ``CBMPeripheralSpec/Builder/advertising(advertisementData:withInterval:delay:alsoWhenConnected:)``, 
 which can be called multiple times, if required.
 
-The advertisement data of each mock peripheral can be changed during the simulation using 
+The advertisement data can be changed during the simulation using
 ``CBMPeripheralSpec/simulateAdvertisementChange(_:)``.
 
 ### Connection
 
 The
-``CBMPeripheralSpec/Builder/connectable(name:services:delegate:connectionInterval:mtu:)``
-method allows to specify a ``CBMPeripheralSpecDelegate``. This object defines the behavior of the
+``CBMPeripheralSpec/Builder/connectable(name:services:delegate:connectionInterval:mtu:)`` or 
+``CBMPeripheralSpec/Builder/connected(name:services:delegate:connectionInterval:mtu:)``
+methods allows to specify a ``CBMPeripheralSpecDelegate``. This object defines the behavior of the
 mock peripheral, how will it respond to Bluetooth LE requests, a hard reset, etc. The implementation
 should mimic the behavoir of the real device as much as possible to make the tests reliable.
 
+To test how the app handles connection interruptions, the mock connection can be terminated using
+``CBMPeripheralSpec/simulateReset()``, ``CBMPeripheralSpec/simulateDisconnection(withError:)`` or
+``CBMPeripheralSpec/simulateProximityChange(_:)`` with parameter ``CBMProximity/outOfRange``.
+
+## Simulation
+
+``CBMPeripheralSpec/simulateConnection()`` - simulates a situation when another app on the iDevice
+connected to this peripheral. The device will stop advertising (unless `advertisingWhenConnected` 
+flag was set) and will be available using
+``CBMCentralManager/retrieveConnectedPeripherals(withServices:)``.
+
+``CBMPeripheralSpec/simulateDisconnection(withError:)`` - simulates a connection error.
+
+``CBMPeripheralSpec/simulateReset()`` - simulates device hard reset. The central will notify 
+delegates 4 seconds (supervision timeout) after the device has been reset.
+
+``CBMPeripheralSpec/simulateProximityChange(_:)`` - simulates moving the peripheral close or away 
+from the device.
+
+``CBMPeripheralSpec/simulateValueUpdate(_:for:)`` - simulates sending a notification or indication 
+from the device. All subscribed clients will be notified a connection interval later.
+
+``CBMPeripheralSpec/simulateAdvertisementChange(_:)`` - simulates change of the advertisemet data
+of the peripheral. The peripheral will stop advertising with previous data and start with the new set.
+
+``CBMPeripheralSpec/simulateCaching()`` - simulates caching the device by the iDevice. 
+Caching pairs the device's MAC with a random identifier (UUID). A device is also cached whenever 
+it is scanned. Caching makes the device available to be retrieved using
+``CBMCentralManager/retrievePeripherals(withIdentifiers:)``.
+
+``CBMPeripheralSpec/simulateMacChange(_:)`` - simulates the device changing its MAC address. 
+The iDevice will not contain any cached information about the device, as with the new MAC it is
+considered to be a new device.
+
+
 ### Bluetooth State Changes
 
-Apart from simulating the behavior of mocked peripherals this library also provides an API
-to simulate changes in the phone environment. Methods like
-``CBMCentralManagerMock/simulatePowerOn()`` or ``CBMCentralManagerMock/simulatePowerOff()`` can
-simulate turning OFF Bluetooth on the phone. 
-``CBMCentralManagerMock/simulateFeaturesSupport`` can simulate features supported by the device.
-``CBMCentralManagerMock/simulateAuthorization(_:)`` may be used to test the app when the used
-does not authorize Bluetooth.
+``CBMCentralManagerMock/simulatePeripherals(_:)`` - creates a simulation with given list of mock
+peripheral. This method should be called when the manager is powered off, or before any 
+central manager was initialized.
+
+``CBMCentralManagerMock/simulateInitialState(_:)`` - this method should be called before any central
+manager instance was created. It defines the initial state of the mock central manager. 
+By default, the manager is powered off.
+
+``CBMCentralManagerMock/simulatePowerOn()`` - turns on the mock central manager.
+
+``CBMCentralManagerMock/simulatePowerOff()`` - turns off the mock central manager. 
+All scans and connections will be terminated.
+
+``CBMCentralManagerMock/tearDownSimulation()`` - sets the state of all currently existing central
+managers to ``CBMManagerState/unknown`` and clears the list of managers and peripherals bringing 
+the mock manager to initial state.
+
+``CBMCentralManagerMock/simulateStateRestoration`` - this closure will be used when you initiate a
+central manager with ``CBMCentralManagerOptionRestoreIdentifierKey`` option. The map returned will be
+passed to ``CBMCentralManagerDelegate/centralManager(_:willRestoreState:)-9qavl`` callback in 
+central manager's delegate.
+
+``CBMCentralManagerMock/simulateFeaturesSupport`` - this closure will be used to emulate Bluetooth
+features supported by the manager. It is available on iOS 13+, tvOS 13+ or watchOS 6+.
+
+``CBMCentralManagerMock/simulateAuthorization(_:)`` - simulates the current authorization state 
+of a Core Bluetooth manager. When any value other than `.allowedAlways` is returned, the
+``CBMCentralManager`` will change state to ``CBMManagerState/unauthorized``.
 
 ## Known limitations
 

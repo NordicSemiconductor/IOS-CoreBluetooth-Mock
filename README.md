@@ -97,109 +97,11 @@ targets: [
 ]
 ```
 
-### Usage
+### Documentation
 
-With this complete, you need to choose one of the following approaches:
+The documentation of the library is available [here](https://nordicsemiconductor.github.io/IOS-CoreBluetooth-Mock/documentation/corebluetoothmock).
 
-#### Using aliases (recommended)
-
-Copy [CoreBluetoothTypeAliases.swift](Example/nRFBlinky/CoreBluetoothTypeAliases.swift) file to your project. It will create 
-number of type aliases for all **CBM...** names and rename them to **CB...**, so you will not need to perform any changes in 
-your code, except from removing `import CoreBluetooth` in all your files, as the types are now defined locally.
-
-#### Direct
-
-Replace `import CoreBluetooth` with `import CoreBluetoothMock` in your classes.
-
-Replace all instances of **CB...** with **CBM...**.
-
-### Other required changes
-
-The only difference is how the central manager is instantiated. Instead of:
-```swift
-let manager = CBCentralManager(delegate: self, queue: ...)
-```
-you need to use the `CBCentralManagerFactory`:
-```swift
-let manager = CBCentralManagerFactory.initiate(delegate: self, queue: ...)
-```
-The last parameter, `forceMock`, when set to *true*, allows to run mock implementation also on a physical device.
-
-### Known issues
-
-- The new `CBMPeripheral` is a protocols, not a class. That means that, e.g. they cannot 
-be used as `Equatable` or `Hashable`. When using in maps, you may need to use the *identifier*. Also, KVO are not yet supported.
-
-## Defining mock peripherals
-
-When the app using *Core Bluetooth Mock* library is started on a simulator, or the `forceMock` parameter is set to *true* during 
-instantiating a central manager instance, a mock version of central manager will be created. Use the following methods and 
-properties to simulate central manager behavior:
-
-### Basic
-
-`CBMCentralManagerMock.simulateInitialState(_ state: CBMManagerState)` -  this method should be called before
-any central manager instance was created. It defines the initial state of the mock central manager. By default, the manager is powered off.
-
-`CBMCentralManager.simulatePowerOn()` - turns on the mock central manager.
-
-`CBMCentralManager.simulatePowerOff()` - turns off the mock central manager. All scans and connections will be terminated.
-
-`CBMCentralManagerMock.simulatePeripherals(_ peripherals: [CBMPeripheralSpec])` - defines list of 
-mock peripheral. This method should be called when the manager is powered off, or before any central manager was initialized.
-
-`CBMCentralManagerMock.tearDownSimulation()` - sets the state of all currently existing central managers to `.unknown` and
-clears the list of managers and peripherals bringing the mock manager to initial state.
-
-See [AppDelegate.swift](Example/nRFBlinky/AppDelegate.swift#L48) for reference. In the sample app the mock implementation is
-used only in UI Tests, which launch the app with `mocking-enabled` parameter (see [here](Example/UI%20Tests/UITests.swift#L42)),
-but can be easily modified to use it every time it is launched on a simulator or a device.
-
-### Peripheral specs
-
-`CBMPeripheralSpec.Builder` - use the builder to define your mock peripheral. Specify the proximity, whether it is advertising 
-together with advertising data and advertising interval, is it connectable (or already connected when your app starts), by defining
-its services and their behavior. A list of such peripheral specifications needs to be set by calling the `simulatePeripherals(:)` 
-method described above.
-
-`CBMPeripheralSpec.simulateConnection()` - simulates a situation when another app on the iDevice connects to this 
-peripheral. It will stop advertising (unless `advertisingWhenConnected` flag was set) and will be available using 
-`manager.retrieveConnectedPeripherals(withServices:)`.
-
-`CBMPeripheralSpec.simulateDisconnection(withError:)` - simulates a connection error.
-
-`CBMPeripheralSpec.simulateReset()` - simulates device hard reset. The central will notify delegates 4 seconds (supervision timeout)
-after the device has been reset.
-
-`CBMPeripheralSpec.simulateProximityChange(:)` - simulates moving the peripheral close or away from the device.
-
-`CBMPeripheralSpec.simulateValueUpdate(:for:)` - simulates sending a notification or indication from the device. All subscribed
-clients will be notified a connection interval later.
-
-`CBMPeripheralSpec.simulateCaching()` - simulates caching the device by the iDevice. Caching pairs the device's MAC with a 
-random identifier (UUID). A device is also cached whenever it is scanned. Caching makes the device available to be retrieved using 
-`CBMCentralManager.retrievePeripherals(withIdentifiers:)`.
-
-`CBMPeripheralSpec.simulateMacChange(:)` - simulates the device changing its MAC address. The iDevice will not contain any
-cached information about the device, as with the new MAC it is considered to be a new device.
-
-See [AppDelegate.swift](Example/nRFBlinky/MockPeripherals.swift#L48) for reference, where 3 mock peripherals are defined: a test blinky
-device (like in Nordic SDK), an HRM device (GATT behavior not implemented, as the app does not support it), and a Physical Web Beacon,
-a non-connectable device. The 2 latter will not pop up on in the sample app, as it is scanning with Service UUID filter.
-
-### Advanced
-
-`CBMCentralManagerMock.simulateStateRestoration` - this closure will be used when you initiate a central manager
-with `CBMCentralManagerOptionRestoreIdentifierKey` option. The map returned will be passed to
-`centralManager(:willRestoreState:)` callback in central manager's delegate.
-
-`CBMCentralManagerMock.simulateFeaturesSupport` - this closure will be used to emulate Bluetooth features supported
-by the manager. It is available on iOS 13+, tvOS 13+ or watchOS 6+.
-
-`CBMCentralManagerMock.simulateAuthorization(:)` - Simulates the current authorization state of a Core Bluetooth manager.
-When any value other than `.allowedAlways` is returned, the `CBMCentralManager` will change state to `CBMManagerState.unauthorized`.
-
-## Sample application: nRF BLINKY
+## Sample application: nRF Blinky
 
 nRF Blinky is an example app targeted towards newcomer BLE developers, and also demonstrating the use 
 of *Core Bluetooth Mock* library. This application controls an LED on an
