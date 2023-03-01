@@ -30,6 +30,10 @@
 
 import CoreBluetooth
 
+/// Mock implementation of the ``CBMCentralManager``.
+///
+/// This implementation will interact only with mock peripherals created using
+/// ``CBMPeripheralSpec/simulatePeripheral(identifier:proximity:)``.
 open class CBMCentralManagerMock: CBMCentralManager {
     /// Mock RSSI deviation.
     ///
@@ -47,7 +51,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
     }
     /// A map of all current advertisements of all simulated peripherals.
-    private static var advertisementTimers: [AdvertisementConfig : Timer] = [:]
+    private static var advertisementTimers: [CBMAdvertisementConfig : Timer] = [:]
     /// A mutex queue for managing managers.
     private static let mutex: DispatchQueue = DispatchQueue(label: "Mutex")
     /// The value of current authorization status for using Bluetooth.
@@ -114,7 +118,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// - Parameters:
     ///   - config: Advertisement configuration to start.
     ///   - mock: The advertising mock peripheral.
-    private static func startAdvertising(_ config: AdvertisementConfig, for mock: CBMPeripheralSpec) {
+    private static func startAdvertising(_ config: CBMAdvertisementConfig, for mock: CBMPeripheralSpec) {
         // A valid advertising config is a single time advertisement (delay > 0),
         // or a periodic one (interval > 0) (or both - delayed periodic advertisement).
         // Not to be mistaken with "Periodic Advertisement" from Advertising Extension.
@@ -159,7 +163,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// The peripheral specification and advertising configuration is set as `userInfo`.
     /// - Parameter timer: The timer that is fired.
     @objc private static func schedule(timer: Timer) {
-        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, AdvertisementConfig) else {
+        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, CBMAdvertisementConfig) else {
             return
         }
         notify(config, for: mock)
@@ -180,7 +184,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// The peripheral specification and advertising configuration is set as `userInfo`.
     /// - Parameter timer: The timer that is fired.
     @objc private static func notify(timer: Timer) {
-        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, AdvertisementConfig) else {
+        guard let (mock, config) = timer.userInfo as? (CBMPeripheralSpec, CBMAdvertisementConfig) else {
             return
         }
         notify(config, for: mock)
@@ -193,7 +197,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// - Parameters:
     ///   - config: Advertisement configuration to start.
     ///   - mock: The advertising mock peripheral.
-    private static func notify(_ config: AdvertisementConfig, for mock: CBMPeripheralSpec) {
+    private static func notify(_ config: CBMAdvertisementConfig, for mock: CBMPeripheralSpec) {
         // If a peripheral is out of range, the packet gets missed.
         guard mock.proximity != .outOfRange else {
             return
@@ -348,8 +352,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// simulation, resetting it to the initial state.
     ///
     /// Use this to tear down your mocks between tests, e.g. in `tearDownWithError()`.
-    /// All manager delegates will receive a `.unknown` state update.
+    /// All manager delegates will receive a ``CBMManagerState/unknown`` state update.
     public static func tearDownSimulation() {
+        stopAdvertising()
         // Set the state of all currently existing cenral manager instances to
         // .unknown, which will make them invalid.
         managerState = .unknown
@@ -372,20 +377,19 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     /// This simulation method is called when a mock central manager was
     /// created with an option to restore the state
-    /// (`CBMCentralManagerOptionRestoreIdentifierKey`).
+    /// (``CBMCentralManagerOptionRestoreIdentifierKey``).
     ///
-    /// The returned map, if not <i>nil</i>, will be passed to
-    /// `centralManager(:willRestoreState:)` before creation.
-    /// - SeeAlso: CBMCentralManagerRestoredStatePeripheralsKey
-    /// - SeeAlso: CBMCentralManagerRestoredStateScanServicesKey
-    /// - SeeAlso: CBMCentralManagerRestoredStateScanOptionsKey
+    /// The returned map, if not `nil`, will be passed to
+    /// ``CBMCentralManagerDelegate/centralManager(_:willRestoreState:)-4zyhg`` before creation.
+    /// - SeeAlso: ``CBMCentralManagerRestoredStatePeripheralsKey``
+    /// - SeeAlso: ``CBMCentralManagerRestoredStateScanServicesKey``
+    /// - SeeAlso: ``CBMCentralManagerRestoredStateScanOptionsKey``
     public static var simulateStateRestoration: ((_ identifierKey: String) -> [String : Any]?)?
     
     #if !os(macOS)
     /// Returns a boolean value representing the support for the provided features.
     ///
-    /// This method will be called when `CBMCentralManager.supports(:)` method is
-    /// called.
+    /// This method will be called when ``CBMCentralManager/supports(_:)`` method is called.
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public static var simulateFeaturesSupport: ((_ features: CBMCentralManager.Feature) -> Bool)?
     #endif
@@ -393,7 +397,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// Sets the initial state of the Bluetooth central manager.
     ///
     /// This method should only be called ones, before any central manager
-    /// is created. By default, the initial state is `.poweredOff`.
+    /// is created. By default, the initial state is ``CBMManagerState/poweredOff``.
     /// - Parameter state: The initial state of the central manager.
     public static func simulateInitialState(_ state: CBMManagerState) {
         managerState = state
@@ -403,10 +407,10 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///
     /// Peripherals added using this method will be available for scanning
     /// and connecting, depending on their proximity. Use peripheral's
-    /// `simulateProximity(of:didChangeTo:)` to modify proximity.
+    /// ``CBMPeripheralSpec/simulateProximityChange(_:)`` to modify proximity.
     ///
     /// This method may only be called before any central manager was created
-    /// or when Bluetooth state is `.poweredOff`. Existing list of peripherals
+    /// or when Bluetooth state is ``CBMManagerState/poweredOff``. Existing list of peripherals
     /// will be overridden.
     /// - Parameter peripherals: Peripherals specifications.
     public static func simulatePeripherals(_ peripherals: [CBMPeripheralSpec]) {
@@ -440,7 +444,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// Simulates a situation when the given peripheral was moved closer
     /// or away from the phone.
     ///
-    /// If the proximity is changed to `.outOfRange`, the peripheral will
+    /// If the proximity is changed to ``CBMProximity/outOfRange``, the peripheral will
     /// be disconnected and will not appear on scan results.
     /// - Parameter peripheral: The peripheral that was repositioned.
     /// - Parameter proximity: The new peripheral proximity.
@@ -506,7 +510,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// Simulates a notification sent from the peripheral.
     ///
     /// All central managers that have enabled notifications on it
-    /// will receive `peripheral(:didUpdateValueFor:error)`.
+    /// will receive ``CBMPeripheralDelegate/peripheral(_:didUpdateValueFor:error:)-62302``.
     /// - Parameter characteristic: The characteristic from which
     ///                             notification is to be sent.
     internal static func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -534,7 +538,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///   - peripheral: The peripheral that changed advertising.
     ///   - advertisement: The new advertising set.
     internal static func peripheral(_ peripheral: CBMPeripheralSpec,
-                                    didChangeAdvertisement advertisement: [AdvertisementConfig]?) {
+                                    didChangeAdvertisement advertisement: [CBMAdvertisementConfig]?) {
         // Stop current advertising of the given device.
         stopAdvertising(of: peripheral)
         // Set new advertising set.
@@ -549,10 +553,10 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///
     /// Central managers will not be notified about the state change unless
     /// they registered for connection events using
-    /// `registerForConnectionEvents(options:)`.
+    /// ``CBMCentralManager/registerForConnectionEvents(options:)``.
     /// Even without registering (which is available since iOS 13), they
     /// can retrieve the connected peripheral using
-    /// `retrieveConnectedPeripherals(withServices:)`.
+    /// ``CBMCentralManager/retrieveConnectedPeripherals(withServices:)``.
     ///
     /// The peripheral does not need to be registered before.
     /// - Parameter peripheral: The peripheral that has connected.
@@ -590,11 +594,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     /// Simulates the peripheral to disconnect from the device.
+    ///
     /// All connected mock central managers will receive
-    /// `peripheral(:didDisconnected:error)` callback.
+    /// ``CBMCentralManagerDelegate/centralManager(_:didDisconnectPeripheral:error:)-1lv48`` callback.
     /// - Parameter peripheral: The peripheral to disconnect.
-    /// - Parameter error: The disconnection reason. Use `CBError` or
-    ///                    `CBATTError` errors.
+    /// - Parameter error: The disconnection reason. Use ``CBMError`` or ``CBMATTError`` errors.
     internal static func peripheral(_ peripheral: CBMPeripheralSpec,
                                     didDisconnectWithError error: Error =  CBError(.peripheralDisconnected)) {
         // Is the device connected at all?
@@ -825,8 +829,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
 
 // MARK: - CBPeripheralMock implementation
 
+/// Mock implementation of the ``CBMPeripheral``.
+///
+/// This implementation will be used when creating peripherals by ``CBMCentralManagerMock``.
+///
+/// Unless required, this class should not be accessed directly, but rather by the common protocol ``CBMPeripheral``.
 open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
-    
     /// The parent central manager.
     private let manager: CBMCentralManagerMock
     /// The dispatch queue to call delegate methods on.
@@ -838,7 +846,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     private let mock: CBMPeripheralSpec
     /// Size of the outgoing buffer. Only this many packets
     /// can be written without response in a loop, without
-    /// waiting for `canSendWriteWithoutResponse`.
+    /// waiting for ``CBMPeripheral/canSendWriteWithoutResponse``.
     private let bufferSize = 20
     /// The supervision timeout is a time after which a device realizes
     /// that a connected peer has disconnected, had there been no signal
@@ -850,7 +858,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     
     /// A flag set to `true` when the device was scanned for the first time during
     /// a single scan. This is to ensure that th result is not delivered twice unless
-    /// `CBMCentralManagerScanOptionAllowDuplicatesKey` flag is set.
+    /// ``CBMCentralManagerScanOptionAllowDuplicatesKey`` flag is set.
     fileprivate var wasScanned: Bool = false
     fileprivate var lastAdvertisedName: String? = nil
     

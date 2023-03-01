@@ -30,6 +30,7 @@
 
 import CoreBluetooth
 
+/// This delegate should implement the behavior of a real Bluetooth LE device duting a connection.
 public protocol CBMPeripheralSpecDelegate {
 
     /// This method is called when the mock peripheral has been reset.
@@ -40,7 +41,7 @@ public protocol CBMPeripheralSpecDelegate {
     /// mock central manager.
     /// - Parameter peripheral: The peripheral specification to handle connection.
     /// - Returns: Success or an error. The error will be returned using
-    ///            `centralManager(:didFailToConnect:error:)`.
+    ///            ``CBMCentralManagerDelegate/centralManager(_:didFailToConnect:error:)-2h1bb``.
     func peripheralDidReceiveConnectionRequest(_ peripheral: CBMPeripheralSpec)
         -> Result<Void, Error>
 
@@ -59,7 +60,7 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - peripheral: The target device.
     ///   - serviceUUIDs: Optional services requested.
     /// - Returns: Success, or a service discovery error. The error will be reported
-    ///            using `peripheral(:didDiscoverServices:)`.
+    ///            using ``CBMPeripheralDelegate/peripheral(_:didDiscoverServices:)-6mi4k``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?)
         -> Result<Void, Error>
@@ -72,7 +73,7 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - serviceUUIDs: Optional services requested.
     ///   - service: The primary service.
     /// - Returns: Success, or a service discovery error. The error will be reported
-    ///            using `peripheral(:didDiscoverIncludedServices:)`.
+    ///            using ``CBMPeripheralDelegate/peripheral(_:didDiscoverIncludedServicesFor:error:)-6b62q``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
                     for service: CBMServiceMock)
@@ -92,7 +93,7 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - characteristicUUIDs: Optional characteristics requested.
     ///   - service: The parent service.
     /// - Returns: Success, or a service discovery error. The error will be reported
-    ///            using `peripheral(:didDiscoverCharacteristics:)`.
+    ///            using ``CBMPeripheralDelegate/peripheral(_:didDiscoverCharacteristicsFor:error:)-2pyjk``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
                     for service: CBMServiceMock)
@@ -111,7 +112,7 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - peripheral: The target device.
     ///   - characteristic: The parent characteristic.
     /// - Returns: Success, or a service discovery error. The error will be reported
-    ///            using `peripheral(:didDiscoverDescriptors:)`.
+    ///            using ``CBMPeripheralDelegate/peripheral(_:didDiscoverDescriptorsFor:error:)-240qo``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristicMock)
         -> Result<Void, Error>
@@ -128,7 +129,7 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - characteristic: The characteristic, which value should be returned.
     /// - Returns: When success, the characteristic value should be returned. In case
     ///            of a failure, the returned error will be returned to the
-    ///            `peripheral(:didUpdateValueFor:error:)`.
+    ///            ``CBMPeripheralDelegate/peripheral(_:didUpdateValueFor:error:)-2xce0``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
         -> Result<Data, Error>
@@ -145,7 +146,7 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - descriptor: The descriptor, which value should be returned.
     /// - Returns: When success, the descriptor value should be returned. In case
     ///            of a failure, the returned error will be returned to the
-    ///            `peripheral(:didUpdateValueFor:error:)`.
+    ///            ``CBMPeripheralDelegate/peripheral(_:didUpdateValueFor:error:)-2xce0``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor descriptor: CBMDescriptorMock)
         -> Result<Data, Error>
@@ -162,7 +163,7 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - characteristic: The target characteristic.
     ///   - data: The data written.
     /// - Returns: Success, or the reason of failure. The returned error will be
-    ///            returned to the `peripheral(:didWriteValueFor:error:)`.
+    ///            returned to the ``CBMPeripheralDelegate/peripheral(_:didWriteValueFor:error:)-86kdv``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor characteristic: CBMCharacteristicMock,
                     data: Data)
@@ -196,7 +197,7 @@ public protocol CBMPeripheralSpecDelegate {
     ///   - descriptor: The target descriptor.
     ///   - data: The data written.
     /// - Returns: Success, or the reason of failure. The returned error will be
-    ///            returned to the `peripheral(:didWriteValueFor:error:)`.
+    ///            returned to the ``CBMPeripheralDelegate/peripheral(_:didWriteValueFor:error:)-90cp``.
     func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor descriptor: CBMDescriptorMock,
                     data: Data)

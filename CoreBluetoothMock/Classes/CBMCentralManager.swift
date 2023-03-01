@@ -30,20 +30,28 @@
 
 import CoreBluetooth
 
+/// An object that scans for, discovers, connects to, and manages peripherals.
+///
+/// `CBMCentralManager` objects manage discovered or connected remote peripheral devices
+/// (represented by ``CBMPeripheral`` objects), including scanning for, discovering, and connecting
+/// to advertising peripherals.
+///
+/// Before calling the `CBMCentralManager` methods, set the state of the central manager object to
+/// powered on, as indicated by the ``CBMManagerState/poweredOn`` constant. This state
+/// indicates that the central device (your iPhone or iPad, for instance) supports Bluetooth low energy
+/// and that Bluetooth is on and available for use.
 open class CBMCentralManager: NSObject {
     
-    /// A dummy initializer that allows overriding `CBMCentralManager` class and also
+    /// A dummy initializer that allows overriding ``CBMCentralManager`` class and also
     /// gives a warning when trying to migrate from native `CBCentralManager`
-    /// to `CBMCentralManager`. This method does nothing.
+    /// to ``CBMCentralManager``. This method does nothing.
     ///
     /// If you need to create your own implementation of central manager, call it. See also
     /// [Issue #55](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/issues/55).
     ///
     /// If you migrated to CoreBluetooth Mock and are getting an error with
-    /// instantiating a `CBMCentralManager` instance, use
-    /// `CBMCentalManagerFactory.instance(...)` instead.
-    ///
-    /// See [documentation](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/#other-required-changes).
+    /// instantiating a ``CBMCentralManager`` instance, use
+    /// ``CBMCentralManagerFactory/instance(delegate:queue:forceMock:)`` instead.
     /// - Parameter dummy: This can be anything.
     public init(_ dummy: Bool) {
         // pancakes
@@ -68,6 +76,7 @@ open class CBMCentralManager: NSObject {
     }
     
     #if !os(macOS)
+    /// An option set of device-specific features.
     @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public typealias Feature = CBCentralManager.Feature
     #endif
@@ -75,9 +84,10 @@ open class CBMCentralManager: NSObject {
     /// The delegate object that will receive central events.
     open weak var delegate: CBMCentralManagerDelegate?
     
-    /// The current state of the manager, initially set to
-    /// `CBManagerStateUnknown`. Updates are provided by required delegate
-    /// method `centralManagerDidUpdateState(_:)`.
+    /// The current state of the manager, initially set to ``CBMManagerState/unknown``.
+    ///
+    /// Updates are provided by required delegate method
+    /// ``CBMCentralManagerDelegate/centralManagerDidUpdateState(_:)``.
     open var state: CBMManagerState { return .unknown }
     
     /// Whether or not the central is currently scanning.
@@ -87,7 +97,7 @@ open class CBMCentralManager: NSObject {
     /// The current authorization status for using Bluetooth.
     ///
     /// - Note:
-    /// This method returns the value set as `CBMCentralManagerMock.simulateAuthorization`
+    /// This method returns the value set as ``CBMCentralManagerMock/simulateAuthorization(_:)``
     /// or, if set to `nil`, the native result returned by `CBCentralManager`.
     @available(iOS, introduced: 13.0, deprecated: 13.1)
     @available(macOS, introduced: 10.15)
@@ -105,15 +115,15 @@ open class CBMCentralManager: NSObject {
     /// The current authorization status for using Bluetooth.
     ///
     /// Check this property in your implementation of the delegate methods
-    /// `centralManagerDidUpdateState(_:)` and `peripheralManagerDidUpdateState(_:)`
+    /// ``CBMCentralManagerDelegate/centralManagerDidUpdateState(_:)``
+    /// and `CBPeripheralManager.peripheralManagerDidUpdateState(_:)`
     /// to determine whether your app can use Core Bluetooth. You can also
-    /// use it to check the app’s authorization status before creating a
-    /// `CBManager` instance.
+    /// use it to check the app’s authorization status before creating a `CBManager` instance.
     ///
     /// The initial value of this property is `CBMManagerAuthorization.notDetermined`.
     ///
     /// - Note:
-    /// This method returns the value set as `CBMCentralManagerMock.simulateAuthorization`
+    /// This method returns the value set as ``CBMCentralManagerMock/simulateAuthorization(_:)``
     /// or, if set to `nil`, the native result returned by `CBCentralManager`.
     @available(iOS 13.1, macOS 10.15, tvOS 13.1, watchOS 6.1, *)
     open class var authorization: CBMManagerAuthorization {
@@ -129,7 +139,7 @@ open class CBMCentralManager: NSObject {
     /// Returns a Boolean that indicates whether the device supports a
     /// specific set of features.
     /// - Note:
-    /// This method returns the value set as `CBMCentralManagerMock.simulateFeaturesSupport(:)`
+    /// This method returns the value set as ``CBMCentralManagerMock/simulateFeaturesSupport``
     /// or, if set to `nil`, the native result returned by `CBCentralManager`.
     /// - Parameter features: One or more features that you would like to
     ///                       check for support.
@@ -142,7 +152,7 @@ open class CBMCentralManager: NSObject {
     
     /// Scans for peripherals that are advertising services.
     ///
-    /// You can provide an array of CBUUID objects — representing service
+    /// You can provide an array of `CBMUUID` objects — representing service
     /// UUIDs — in the serviceUUIDs parameter. When you do, the central
     /// manager returns only peripherals that advertise the services you
     /// specify. If the `serviceUUIDs` parameter is nil, this method returns
@@ -156,13 +166,13 @@ open class CBMCentralManager: NSObject {
     /// parameters and it receives another set to scan, the new parameters
     /// override the previous set. When the central manager discovers a
     /// peripheral, it calls the
-    /// `centralManager(_:didDiscover:advertisementData:rssi:)` method of
+    /// ``CBMCentralManagerDelegate/centralManager(_:didDisconnectPeripheral:error:)-1lv48`` method of
     /// its delegate object.
     ///
     /// Your app can scan for Bluetooth devices in the background by
     /// specifying the bluetooth-central background mode. To do this, your
     /// app must explicitly scan for one or more services by specifying
-    /// them in the `serviceUUIDs` parameter. The `CBMCentralManager` scan
+    /// them in the `serviceUUIDs` parameter. The ``CBMCentralManager`` scan
     /// option has no effect while scanning in the background.
     /// - Parameters:
     ///   - serviceUUIDs: An array of `CBMUUID` objects that the app is
@@ -182,14 +192,17 @@ open class CBMCentralManager: NSObject {
     /// Establishes a local connection to a peripheral.
     ///
     /// After successfully establishing a local connection to a peripheral,
-    /// the central manager object calls the `centralManager(_:didConnect:)`
+    /// the central manager object calls the ``CBMCentralManagerDelegate/centralManager(_:didConnect:)-6tlfh``
     /// method of its delegate object. If the connection attempt fails, the
     /// central manager object calls the
-    /// `centralManager(_:didFailToConnect:error:)` method of its delegate
-    /// object instead. Attempts to connect to a peripheral don’t time out.
+    /// ``CBMCentralManagerDelegate/centralManager(_:didFailToConnect:error:)-2h1bb``
+    /// method of its delegate object instead.
+    ///
+    /// Attempts to connect to a peripheral don’t time out.
+    ///
     /// To explicitly cancel a pending connection to a peripheral, call the
-    /// `cancelPeripheralConnection(_:)` method. Deallocating peripheral
-    /// also implicitly calls `cancelPeripheralConnection(_:)`.
+    /// ``CBMCentralManager/cancelPeripheralConnection(_:)`` method.
+    /// Deallocating peripheral also implicitly calls `cancelPeripheralConnection(_:)`.
     /// - Parameters:
     ///   - peripheral: The peripheral to which the central is attempting
     ///                 to connect.
@@ -202,14 +215,14 @@ open class CBMCentralManager: NSObject {
     
     /// Cancels an active or pending local connection to a peripheral.
     ///
-    /// This method is non-blocking, and any `CBMPeripheral` class commands
+    /// This method is non-blocking, and any ``CBMPeripheral`` class commands
     /// that are still pending to peripheral may not complete. Because
     /// other apps may still have a connection to the peripheral, canceling
     /// a local connection doesn’t guarantee that the underlying physical
     /// link is immediately disconnected. From the app’s perspective,
     /// however, the peripheral is effectively disconnected, and the
     /// central manager object calls the
-    /// `centralManager(_:didDisconnectPeripheral:error:)` method of its
+    /// ``CBMCentralManagerDelegate/centralManager(_:didDisconnectPeripheral:error:)-1lv48`` method of its
     /// delegate object.
     /// - Parameter peripheral: The peripheral to which the central manager
     ///                         is either trying to connect or has already
@@ -220,8 +233,8 @@ open class CBMCentralManager: NSObject {
     
     /// Returns a list of known peripherals by their identifiers.
     /// - Parameter identifiers: A list of peripheral identifiers
-    ///                          (represented by NSUUID objects) from which
-    ///                          `CBMPeripheral` objects can be retrieved.
+    ///                          (represented by `NSUUID` objects) from which
+    ///                          ``CBMPeripheral`` objects can be retrieved.
     /// - Returns: A list of peripherals that the central manager is able
     ///            to match to the provided identifiers.
     @available(iOS 7.0, *)
@@ -253,7 +266,7 @@ open class CBMCentralManager: NSObject {
     ///
     /// When the central manager makes a connection that matches the
     /// options, it calls the delegate’s
-    /// `centralManager(_:connectionEventDidOccur:for:)` method.
+    /// ``CBMCentralManagerDelegate/centralManager(_:connectionEventDidOccur:for:)-1ay8d`` method.
     /// - Parameter options: A dictionary that specifies options for
     ///                      connection events. See Peripheral Connection
     ///                      Options for a list of possible options.

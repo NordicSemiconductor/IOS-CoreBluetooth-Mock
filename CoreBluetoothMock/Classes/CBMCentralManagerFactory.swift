@@ -30,20 +30,19 @@
 
 import CoreBluetooth
 
-/// The factory that instantiates the `CBMCentralManager` object.
+/// The factory that instantiates the ``CBMCentralManager`` object.
 ///
-/// The factory may be used to automatically instantiate either a native
-/// or mock implementation based on the environment. You may also
-/// instantiate the `CBMCentralManagerMock` or `CBMCentralManagerNative` without
-/// using this factory.
+/// The factory may be used to automatically instantiate either a native or mock implementation based
+/// on the environment. You may also instantiate the ``CBMCentralManagerMock`` or
+/// ``CBMCentralManagerNative`` without using this factory.
 public class CBMCentralManagerFactory {
     
-    /// Returns the implementation of `CBCentralManager`, depending on the environment.
+    /// Returns the implementation of ``CBMCentralManager``, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
     ///   - forceMock: A flag to force mocking also on physical device.
-    /// - Returns: The implementation of `CBCentralManager`.
+    /// - Returns: The implementation of ``CBMCentralManager``.
     public static func instance(forceMock: Bool = false) -> CBMCentralManager {
         #if targetEnvironment(simulator)
             return CBMCentralManagerMock()
@@ -54,15 +53,15 @@ public class CBMCentralManagerFactory {
         #endif
     }
     
-    /// Returns the implementation of `CBCentralManager`, depending on the environment.
+    /// Returns the implementation of ``CBMCentralManager``, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
     ///   - delegate: The delegate that will receive central role events.
     ///   - queue: The dispatch queue on which the events will be dispatched.
-    ///            If <i>nil</i>, the main queue will be used.
+    ///            If `nil`, the main queue will be used.
     ///   - forceMock: A flag to force mocking also on a physical device.
-    /// - Returns: The implementation of `CBCentralManager`.
+    /// - Returns: The implementation of ``CBMCentralManager``.
     public static func instance(delegate: CBMCentralManagerDelegate?,
                                 queue: DispatchQueue?,
                                 forceMock: Bool = false) -> CBMCentralManager {
@@ -75,16 +74,16 @@ public class CBMCentralManagerFactory {
         #endif
     }
     
-    /// Returns the implementation of `CBCentralManager`, depending on the environment.
+    /// Returns the implementation of ``CBMCentralManager``, depending on the environment.
     /// On a simulator, or when the `forceMock` flag is enabled, the mock
     /// implementation is returned, otherwise the native one.
     /// - Parameters:
     ///   - delegate: The delegate that will receive central role events.
     ///   - queue: The dispatch queue on which the events will be dispatched.
-    ///            If <i>nil</i>, the main queue will be used.
+    ///            If `nil`, the main queue will be used.
     ///   - options: An optional dictionary specifying options for the manager.
     ///   - forceMock: A flag to force mocking also on a physical device.
-    /// - Returns: The implementation of `CBCentralManager`.
+    /// - Returns: The implementation of ``CBMCentralManager``.
     public static func instance(delegate: CBMCentralManagerDelegate?,
                                 queue: DispatchQueue?,
                                 options: [String : Any]?,

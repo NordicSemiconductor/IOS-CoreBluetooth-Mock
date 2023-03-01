@@ -30,6 +30,11 @@
 
 import CoreBluetooth
 
+/// A protocol that provides updates on the use of a peripheral’s services.
+///
+/// The delegate of a CBPeripheral object must adopt the ``CBMPeripheralDelegate`` protocol. The delegate
+/// uses this protocol’s methods to monitor the discovery, exploration, and interaction of a remote peripheral’s services
+/// and properties. This protocol doesn’t have any required methods.
 public protocol CBMPeripheralDelegate: AnyObject {
     
     /// This method is invoked when the name of peripheral changes.
@@ -37,8 +42,8 @@ public protocol CBMPeripheralDelegate: AnyObject {
     func peripheralDidUpdateName(_ peripheral: CBMPeripheral)
     
     /// This method is invoked when the `services` of peripheral have been changed.
-    /// At this point, the designated `CBMService` objects have been invalidated.
-    /// Services can be re-discovered via `discoverServices(:).
+    /// At this point, the designated ``CBMService`` objects have been invalidated.
+    /// Services can be re-discovered via ``CBMPeripheral/discoverServices(_:)``.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this update.
     ///   - invalidatedServices: The services that have been invalidated.
@@ -46,7 +51,7 @@ public protocol CBMPeripheralDelegate: AnyObject {
     func peripheral(_ peripheral: CBMPeripheral,
                     didModifyServices invalidatedServices: [CBMService])
     
-    /// This method returns the result of a `readRSSI(:)` call.
+    /// This method returns the result of a ``CBMPeripheral/readRSSI()`` call.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this update.
     ///   - RSSI: The current RSSI of the link.
@@ -54,105 +59,105 @@ public protocol CBMPeripheralDelegate: AnyObject {
     func peripheral(_ peripheral: CBMPeripheral,
                     didReadRSSI RSSI: NSNumber, error: Error?)
     
-    /// This method returns the result of a `discoverServices(:)` call. If the service(s)
-    /// were read successfully, they can be retrieved via peripheral's services property.
+    /// This method returns the result of a ``CBMPeripheral/discoverServices(_:)`` call.
+    /// If the service(s) were read successfully, they can be retrieved via peripheral's services property.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didDiscoverServices error: Error?)
     
-    /// This method returns the result of a `discoverIncludedServices(:for:) call. If the
-    /// included service(s) were read successfully, they can be retrieved via service's
-    /// `includedServices` property.
+    /// This method returns the result of a ``CBMPeripheral/discoverIncludedServices(_:for:)`` call.
+    /// If the included service(s) were read successfully, they can be retrieved via service's
+    /// ``CBMService/includedServices`` property.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - service: The `CBMService` object containing the included services.
+    ///   - service: The ``CBMService`` object containing the included services.
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didDiscoverIncludedServicesFor service: CBMService,
                     error: Error?)
     
-    /// This method returns the result of a `discoverCharacteristics(:for:)` call. If the
-    /// characteristic(s) were read successfully, they can be retrieved via service's
-    /// `characteristics` property.
+    /// This method returns the result of a ``CBMPeripheral/discoverCharacteristics(_:for:)`` call.
+    /// If the characteristic(s) were read successfully, they can be retrieved via service's
+    /// ``CBMService/characteristics`` property.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - service: The `CBMService` object containing the characteristic(s).
+    ///   - service: The ``CBMService`` object containing the characteristic(s).
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didDiscoverCharacteristicsFor service: CBMService,
                     error: Error?)
     
-    /// This method returns the result of a `discoverDescriptors(for:)` call. If the
-    /// descriptors were read successfully, they can be retrieved via characteristic's
+    /// This method returns the result of a ``CBMPeripheral/discoverDescriptors(for:)`` call.
+    /// If the descriptors were read successfully, they can be retrieved via characteristic's
     /// `descriptors` property.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - characteristic: A `CBMCharacteristic` object.
+    ///   - characteristic: A ``CBMCharacteristic`` object.
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didDiscoverDescriptorsFor characteristic: CBMCharacteristic,
                     error: Error?)
     
-    /// This method returns the result of a `setNotifyValue(:for:) call. 
+    /// This method returns the result of a ``CBMPeripheral/setNotifyValue(_:for:)`` call.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - characteristic: A `CBMCharacteristic` object.
+    ///   - characteristic: A ``CBMCharacteristic`` object.
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didUpdateNotificationStateFor characteristic: CBMCharacteristic,
                     error: Error?)
     
-    /// This method is invoked after a `readValue(for:) call, or upon receipt of a
-    /// notification/indication.
+    /// This method is invoked after a ``CBMPeripheral/readValue(for:)-1hqxp`` call, or upon
+    /// receipt of a notification/indication.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - characteristic: A `CBMCharacteristic` object.
+    ///   - characteristic: A ``CBMCharacteristic`` object.
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didUpdateValueFor characteristic: CBMCharacteristic,
                     error: Error?)
     
-    /// This method returns the result of a `readValue(for:)` call.
+    /// This method returns the result of a ``CBMPeripheral/readValue(for:)-3xyb1`` call.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - descriptor: A `CBDescriptorType` object.
+    ///   - descriptor: A ``CBMDescriptor`` object.
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didUpdateValueFor descriptor: CBMDescriptor, error: Error?)
     
-    /// This method returns the result of a `writeValue(:for:type:)` call, when the
-    /// `.withResponse` type is used.
+    /// This method returns the result of a ``CBMPeripheral/writeValue(_:for:type:)`` call,
+    /// when the `.withResponse` type is used.
     ///
     /// - Important: On iOS 10 this callback was also incorrectly called for
     ///             `.withoutResponse` type.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - characteristic: A `CBMCharacteristic` object.
+    ///   - characteristic: A ``CBMCharacteristic`` object.
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didWriteValueFor characteristic: CBMCharacteristic,
                     error: Error?)
     
-    /// This method returns the result of a `writeValue(:for:)` call.
+    /// This method returns the result of a ``CBMPeripheral/writeValue(_:for:)`` call.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - descriptor: A `CBDescriptorType` object.
+    ///   - descriptor: A ``CBMDescriptor`` object.
     ///   - error: If an error occurred, the cause of the failure.
     func peripheral(_ peripheral: CBMPeripheral,
                     didWriteValueFor descriptor: CBMDescriptor, error: Error?)
     
-    /// This method is invoked after a failed call to `writeValue(:for:type:), when
+    /// This method is invoked after a failed call to ``CBMPeripheral/writeValue(_:for:type:)``, when
     /// peripheral is again ready to send characteristic value updates.
     /// - Parameter peripheral: The peripheral providing this update.
     @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func peripheralIsReady(toSendWriteWithoutResponse peripheral: CBMPeripheral)
 
-    /// This method returns the result of a `openL2CAPChannel(:)` call.
+    /// This method returns the result of a ``CBMPeripheral/openL2CAPChannel(_:)`` call.
     /// - Parameters:
     ///   - peripheral: The peripheral providing this information.
-    ///   - channel: A `CBL2CAPChannel` object.
+    ///   - channel: A ``CBML2CAPChannel`` object.
     ///   - error: If an error occurred, the cause of the failure.
     @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
     func peripheral(_ peripheral: CBMPeripheral,

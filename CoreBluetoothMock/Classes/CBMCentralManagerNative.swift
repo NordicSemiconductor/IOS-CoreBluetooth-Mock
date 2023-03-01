@@ -30,6 +30,10 @@
 
 import CoreBluetooth
 
+/// An implementation  of ``CBMCentralManager`` that will proxy all the requests and responses
+/// to the native `CBCentralManager` object.
+///
+/// This manager can only interact with physical Bluetooth LE devices.
 public class CBMCentralManagerNative: CBMCentralManager {
     private var manager: CBCentralManager!
     private var wrapper: CBCentralManagerDelegate!
@@ -236,6 +240,11 @@ public class CBMCentralManagerNative: CBMCentralManager {
     #endif
 }
 
+/// A native implementation of ``CBMPeripheral`` that will proxy all requests to an underlying `CBPeripheral`.
+///
+/// This implementation will be used when creating peripherals by ``CBMCentralManagerNative``.
+///
+/// Unless required, this class should not be accessed directly, but rather by the common protocol ``CBMPeripheral``.
 public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
     
     private class CBPeripheralDelegateWrapper: NSObject, CBPeripheralDelegate {

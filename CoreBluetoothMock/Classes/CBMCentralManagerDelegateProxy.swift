@@ -32,7 +32,7 @@ import CoreBluetooth
 
 /// A helper class that allows setting delegate callbacks as closures.
 ///
-/// - SeeAlso: CBMCentralManagerDelegate
+/// - SeeAlso: ``CBMCentralManagerDelegate``
 open class CBMCentralManagerDelegateProxy: NSObject, CBMCentralManagerDelegate {
     public var didUpdateState: ((CBMCentralManager) -> ())?
     public var willRestoreState: ((CBMCentralManager, [String : Any]) -> ())?

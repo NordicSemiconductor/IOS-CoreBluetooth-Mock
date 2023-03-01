@@ -32,7 +32,7 @@ import CoreBluetooth
 
 /// A helper class that allows setting delegate callbacks as closures.
 ///
-/// - SeeAlso: CBMPeripheralDelegate
+/// - SeeAlso: ``CBMPeripheralDelegate``
 open class CBMPeripheralDelegateProxy: NSObject, CBMPeripheralDelegate {
     public var didUpdateName: ((CBMPeripheral) -> ())?
     public var didModifyServices: ((CBMPeripheral, [CBMService]) -> ())?
@@ -112,6 +112,11 @@ open class CBMPeripheralDelegateProxy: NSObject, CBMPeripheralDelegate {
     }
 }
 
+/// A helper class that allows setting delegate callbacks as closures.
+///
+/// This class differs from ``CBMPeripheralDelegateProxy`` that it also contains callbacks added in iOS 11.
+///
+/// - SeeAlso: ``CBMPeripheralDelegateProxy``
 @available(iOS 11.0, tvOS 11.0, watchOS 4.0, *)
 open class CBMPeripheralDelegateProxyWithL2CAPChannel: CBMPeripheralDelegateProxy {
     public var didOpenChannel: ((CBMPeripheral, CBML2CAPChannel?, Error?) -> ())?

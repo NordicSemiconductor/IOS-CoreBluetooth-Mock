@@ -30,14 +30,26 @@
 
 import CoreBluetooth
 
+/// A representation of common aspects of services offered by a peripheral.
+///
+/// Concrete subclasses of `CBMAttribute` (and their mutable counterparts) represent the services a peripheral
+/// offers, the characteristics of those services, and the descriptors attached to those characteristics. The concrete
+/// subclasses are:
+/// * ``CBMService``
+/// * ``CBMCharacteristic``
+/// * ``CBMDescriptor``
 open class CBMAttribute: NSObject {
     
-    /// The Bluetooth UUID of the attribute.
+    /// The Bluetooth-specific UUID of the attribute.
     var uuid: CBMUUID {
         fatalError()
     }
 }
 
+/// A collection of data and associated behaviors that accomplish a function or feature of a device.
+///
+/// `CBMService` objects represent services of a remote peripheral. Services are either primary or secondary and
+/// may contain multiple characteristics or included services (references to other services).
 open class CBMService: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
@@ -117,6 +129,7 @@ internal class CBMServiceNative: CBMService {
     
 }
 
+/// Mock implementation of ``CBMService``.
 open class CBMServiceMock: CBMService {
     
     /// Returns a service, initialized with a service type and UUID.
@@ -160,6 +173,12 @@ open class CBMServiceMock: CBMService {
     }
 }
 
+/// A characteristic of a remote peripheral’s service.
+///
+/// `CBMCharacteristic` represents further information about a peripheral’s service. In particular, `CBMCharacteristic`
+/// objects represent the characteristics of a remote peripheral’s service. A characteristic contains a single value and any number
+/// of descriptors describing that value. The properties of a characteristic determine how you can use a characteristic’s value,
+/// and how you access the descriptors.
 open class CBMCharacteristic: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
@@ -243,6 +262,7 @@ internal class CBMCharacteristicNative: CBMCharacteristic {
     }
 }
 
+/// Mock implementation of ``CBMCharacteristic``.
 open class CBMCharacteristicMock: CBMCharacteristic {
 
     open override var descriptors: [CBMDescriptor]? {
@@ -272,6 +292,16 @@ open class CBMCharacteristicMock: CBMCharacteristic {
     }
 }
 
+/// An object that provides further information about a remote peripheral’s characteristic.
+///
+/// `CBMDescriptor` represents a descriptor of a peripheral’s characteristic. In partcular, `CBMDescriptor` objects
+/// represent the descriptors of a remote peripheral’s characteristic. Descriptors provide further information about a
+/// characteristic’s value. For example, they may describe the value in human-readable form and describe how to format
+/// the value for presentation purposes. Characteristic descriptors also indicate whether a characteristic’s value indicates
+/// or notifies a client (a central) when the value of the characteristic changes.
+///
+/// ``CBMUUID`` details six predefined descriptors and their corresponding value types. `CBMDescriptor` lists the
+/// predefined descriptors and the ``CBMUUID`` constants that represent them.
 open class CBMDescriptor: CBMAttribute {
     internal let identifier: UUID
     private let _uuid: CBMUUID
@@ -297,8 +327,7 @@ open class CBMDescriptor: CBMAttribute {
     /// The value of the descriptor.
     open internal(set) var value: Any?
     
-    /// Returns <i>true</i> if the descriptor is a Client Configuration
-    /// Characteristic Descriptor (CCCD); otherwise <i>false</i>.
+    /// Returns `true` if the descriptor is a Client Configuration Characteristic Descriptor (CCCD); otherwise `false`.
     internal var isCCCD: Bool {
         return uuid.uuidString == "2902"
     }
@@ -334,6 +363,7 @@ internal class CBMDescriptorNative: CBMDescriptor {
     }
 }
 
+/// Mock implementation of ``CBMDescriptor``.
 open class CBMDescriptorMock: CBMDescriptor {
     
     public override init(type uuid: CBMUUID) {
@@ -348,6 +378,9 @@ open class CBMDescriptorMock: CBMDescriptor {
     }
 }
 
+/// A mock implementation of Client Characteristic Configuration descriptor (CCCD).
+///
+/// This descriptor should be added to characteristics with `.notify` or `.indicate` properties.
 open class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock {
     
     public init() {
@@ -355,6 +388,7 @@ open class CBMClientCharacteristicConfigurationDescriptorMock: CBMDescriptorMock
     }
 }
 
+/// A type alias of ``CBMClientCharacteristicConfigurationDescriptorMock``.
 public typealias CBMCCCDescriptorMock = CBMClientCharacteristicConfigurationDescriptorMock
 
 // MARK: - Utilities
