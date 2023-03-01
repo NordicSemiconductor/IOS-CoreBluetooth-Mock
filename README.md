@@ -108,8 +108,11 @@ of *Core Bluetooth Mock* library. This application controls an LED on an
 [nRF5DK](https://www.nordicsemi.com/Software-and-Tools/Development-Kits)
 and receive notifications whenever the button on the kit is pressed and released.
 
-The mock implementation is used in UI tests. See [AppDelegate.swift](Example/nRFBlinky/AppDelegate.swift) 
-and [UITests.swift](Example/UI%20Tests/UITests.swift) classes.
+The mock implementation is used in Unit tests and UI tests. 
+See [AppDelegate.swift](Example/nRFBlinky/AppDelegate.swift) where the mock environment is set up and
+and [UITests.swift](Example/Tests) and [UITests.swift](Example/UI%20Tests/UITests.swift) classes.
+
+The mock peripherals are defined in [MockPeripherals.swift](Example/nRFBlinky/MockPeripherals.swift).
 
 ## Nordic LED and Button Service
 
