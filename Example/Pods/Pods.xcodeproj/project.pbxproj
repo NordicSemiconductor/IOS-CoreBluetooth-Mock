@@ -32,6 +32,7 @@
 		E7C5740D1C9F024945EABC07DDF7A92D /* CBMPeripheralSpecDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B596E8A912A66AD857068DEACABAB737 /* CBMPeripheralSpecDelegate.swift */; };
 		EDFF1483173947D4DF125CBA02BFF9EA /* Pods-nRFBlinky-nRFBlinky_UITests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 05A53FE949257853F7E3939C9F803937 /* Pods-nRFBlinky-nRFBlinky_UITests-dummy.m */; };
 		F08FD85BE1541D6433F4D4E1BC646049 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		F0A6C9F729ACCAC100FA75EB /* Documentation.docc in Sources */ = {isa = PBXBuildFile; fileRef = F0A6C9F629ACCAC100FA75EB /* Documentation.docc */; };
 		F2E7927452B41264FD86179E75634737 /* CBMCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 909074428FDA8AF9E6B5FE1FBA769665 /* CBMCentralManagerMock.swift */; };
 /* End PBXBuildFile section */
 
@@ -114,6 +115,7 @@
 		DFE592CEF601DC267B934D167A4EC7FC /* CoreBluetoothMock.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = CoreBluetoothMock.release.xcconfig; sourceTree = "<group>"; };
 		E51C3B2EBE3D334E3BD361653A43734F /* Pods-nRFBlinky_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-nRFBlinky_Tests.modulemap"; sourceTree = "<group>"; };
 		E6162EA64C5ED57205DC70075E58C951 /* CBMPeripheral.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMPeripheral.swift; path = CoreBluetoothMock/Classes/CBMPeripheral.swift; sourceTree = "<group>"; };
+		F0A6C9F629ACCAC100FA75EB /* Documentation.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Documentation.docc; sourceTree = "<group>"; };
 		F3F0C24F969499580018F86CF5FEA9E0 /* CBMCentralManagerFactory.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CBMCentralManagerFactory.swift; path = CoreBluetoothMock/Classes/CBMCentralManagerFactory.swift; sourceTree = "<group>"; };
 		FA11D9D2A8BE1D25698FC4DB8F16C15D /* Pods_nRFBlinky_nRFBlinky_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_nRFBlinky_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -287,6 +289,7 @@
 				B596E8A912A66AD857068DEACABAB737 /* CBMPeripheralSpecDelegate.swift */,
 				2C54304D4A08E07FB085A32F83E14E4A /* Pod */,
 				ACD8607D6A513411DDE9F67AE095E959 /* Support Files */,
+				F0A6C9F629ACCAC100FA75EB /* Documentation.docc */,
 			);
 			name = CoreBluetoothMock;
 			path = ../..;
@@ -491,6 +494,7 @@
 				4D6AE412C78A15072318656090005CE5 /* CBMAttributes.swift in Sources */,
 				418CDFECFE501F07CB4D83F93D404995 /* CBMCentralManager.swift in Sources */,
 				61E1D35BF8B6A7FCD6E5F5B33FD9D911 /* CBMCentralManagerDelegate.swift in Sources */,
+				F0A6C9F729ACCAC100FA75EB /* Documentation.docc in Sources */,
 				BA0123E3B7C4935C2E2A1B21AC88A3A0 /* CBMCentralManagerDelegateProxy.swift in Sources */,
 				2DFBC5C024A3C13C57DB60C477FC6B14 /* CBMCentralManagerFactory.swift in Sources */,
 				F2E7927452B41264FD86179E75634737 /* CBMCentralManagerMock.swift in Sources */,

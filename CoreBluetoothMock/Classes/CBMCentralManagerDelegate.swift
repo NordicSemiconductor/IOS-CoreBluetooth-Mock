@@ -30,13 +30,21 @@
 
 import CoreBluetooth
 
+/// A protocol that provides updates for the discovery and management of peripheral devices.
+///
+/// The `CBMCentralManagerDelegate` protocol defines the methods that a delegate of a
+/// ``CBMCentralManager`` object must adopt. The optional methods of the protocol allow
+/// the delegate to monitor the discovery, connectivity, and retrieval of peripheral devices.
+///
+/// The only required method is ``CBMCentralManagerDelegate/centralManagerDidUpdateState(_:)``;
+/// the central manager calls this when its state updates, thereby indicating the availability of the central manager.
 public protocol CBMCentralManagerDelegate: AnyObject {
 
     /// Invoked whenever the central manager's state has been updated. Commands
-    /// should only be issued when the state is `.poweredOn`.
-    /// A state below`.poweredOn` implies that scanning has stopped and any
+    /// should only be issued when the state is ``CBMManagerState/poweredOn``.
+    /// A state below``CBMManagerState/poweredOn`` implies that scanning has stopped and any
     /// connected peripherals have been disconnected. If the state moves below
-    /// `.poweredOff`, all `CBMPeripheral` objects obtained from this central
+    /// ``CBMManagerState/poweredOff``, all ``CBMPeripheral`` objects obtained from this central
     /// manager become invalid and must be retrieved or discovered again.
     /// - Parameter central: The central manager whose state has changed.
     func centralManagerDidUpdateState(_ central: CBMCentralManager)
@@ -47,7 +55,7 @@ public protocol CBMCentralManagerDelegate: AnyObject {
     /// app's state with the state of the Bluetooth system.
     ///
     /// When mocking is enabled, the returned state is obtained using
-    /// `simulateStateRestoration(forIdentifierKey:)`.
+    /// ``CBMCentralManagerMock/simulateStateRestoration``.
     /// - Parameters:
     ///   - central: The central manager providing this information.
     ///   - dict: A dictionary containing information about central that was
@@ -59,10 +67,10 @@ public protocol CBMCentralManagerDelegate: AnyObject {
     /// central. A discovered peripheral must be retained in order to use it;
     /// otherwise, it is assumed to not be of interest and will be cleaned up by
     /// the central manager. For a list of advertisementData keys, see
-    /// `CBAdvertisementDataLocalNameKey` and other similar constants.
+    /// ``CBMAdvertisementDataLocalNameKey`` and other similar constants.
     /// - Parameters:
     ///   - central: The central manager providing this update.
-    ///   - peripheral: A `CBMPeripheral` object.
+    ///   - peripheral: A ``CBMPeripheral`` object.
     ///   - advertisementData: A dictionary containing any advertisement and scan
     ///                        response data.
     ///   - RSSI: The current RSSI of peripheral, in dBm. A value of 127 is
@@ -72,33 +80,35 @@ public protocol CBMCentralManagerDelegate: AnyObject {
                         advertisementData: [String : Any],
                         rssi RSSI: NSNumber)
     
-    /// This method is invoked when a connection initiated by `connect(:options:)`
-    /// has succeeded.
+    /// This method is invoked when a connection initiated by
+    /// ``CBMCentralManager/connect(_:options:)`` has succeeded.
     /// - Parameters:
     ///   - central: The central manager providing this information.
-    ///   - peripheral: The `CBMPeripheral` that has connected.
+    ///   - peripheral: The ``CBMPeripheral`` that has connected.
     func centralManager(_ central: CBMCentralManager,
                         didConnect peripheral: CBMPeripheral)
     
-    /// This method is invoked when a connection initiated by `connect(:options:)`
+    /// This method is invoked when a connection initiated by ``CBMCentralManager/connect(_:options:)``
     /// has failed to complete. As connection attempts do not timeout, the failure
     /// of a connection is atypical and usually indicative of a transient issue.
     /// - Parameters:
     ///   - central: The central manager providing this information.
-    ///   - peripheral: The `CBMPeripheral` that has failed to connect.
+    ///   - peripheral: The ``CBMPeripheral`` that has failed to connect.
     ///   - error: The cause of the failure.
     func centralManager(_ central: CBMCentralManager,
                         didFailToConnect peripheral: CBMPeripheral,
                         error: Error?)
     
     /// This method is invoked upon the disconnection of a peripheral that was
-    /// connected by `connect(:options:)`. If the disconnection was not initiated
-    /// by `cancelPeripheralConnection(:)`, the cause will be detailed in the
-    /// error parameter. Once this method has been called, no more methods will be
-    /// invoked on peripheral's `CBMPeripheralDelegate`.
+    /// connected by ``CBMCentralManager/connect(_:options:)``.
+    /// If the disconnection was not initiated by
+    /// ``CBMCentralManager/cancelPeripheralConnection(_:)``,
+    /// the cause will be detailed in the error parameter.
+    /// Once this method has been called, no more methods will be
+    /// invoked on peripheral's ``CBMPeripheralDelegate``.
     /// - Parameters:
     ///   - central: The central manager providing this information.
-    ///   - peripheral: The `CBMPeripheral` that has disconnected.
+    ///   - peripheral: The ``CBMPeripheral`` that has disconnected.
     ///   - error: If an error occurred, the cause of the failure.
     func centralManager(_ central: CBMCentralManager,
                         didDisconnectPeripheral peripheral: CBMPeripheral,
@@ -106,24 +116,24 @@ public protocol CBMCentralManagerDelegate: AnyObject {
     
     /// This method is invoked upon the connection or disconnection of a
     /// peripheral that matches any of the options provided in
-    /// `registerForConnectionEvents(options:)`.
+    /// ``CBMCentralManager/registerForConnectionEvents(options:)``.
     /// - Parameters:
     ///   - central: The central manager providing this information.
-    ///   - event: The `CBConnectionEvent` that has occurred.
-    ///   - peripheral: The `CBMPeripheral` that caused the event.
+    ///   - event: The ``CBMConnectionEvent`` that has occurred.
+    ///   - peripheral: The ``CBMPeripheral`` that caused the event.
     @available(iOS 13.0, *)
     func centralManager(_ central: CBMCentralManager,
                         connectionEventDidOccur event: CBMConnectionEvent,
                         for peripheral: CBMPeripheral)
     
     /// This method is invoked when the authorization status changes for a
-    /// peripheral connected with `connect(:options:)` option
-    /// `CBConnectPeripheralOptionRequiresANCS`.
+    /// peripheral connected with ``CBMCentralManager/connect(_:options:)``
+    /// option ``CBMConnectPeripheralOptionRequiresANCS``.
     ///
     /// - Important: This method is not implemented in mock central manager.
     /// - Parameters:
     ///   - central: The central manager providing this information.
-    ///   - peripheral: The `CBMPeripheral` that caused the event.
+    ///   - peripheral: The ``CBMPeripheral`` that caused the event.
     @available(iOS 13.0, *)
     func centralManager(_ central: CBMCentralManager,
                         didUpdateANCSAuthorizationFor peripheral: CBMPeripheral)
