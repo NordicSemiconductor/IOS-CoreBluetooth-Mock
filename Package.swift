@@ -22,7 +22,7 @@ let package = Package(
   targets: [
     .target(
       name: "CoreBluetoothMock",
-      path: "CoreBluetoothMock/Classes/"
+      path: "CoreBluetoothMock/"
     )
   ],  
   swiftLanguageVersions: [.v5]

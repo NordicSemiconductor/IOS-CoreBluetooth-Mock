@@ -20,5 +20,5 @@ device and test the app on simulator.
   # s.watchos.deployment_target = '4.0'
   s.swift_versions = ['4.2', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6']
 
-  s.source_files = 'CoreBluetoothMock/Classes/**/*'
+  s.source_files = 'CoreBluetoothMock/**/*'
 end
