@@ -72,6 +72,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         #endif
         
+        #if os(macOS)
+        // Setting minimum size to 1440x900 px (needed for Screenshots)
+        UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.forEach { windowScene in
+            windowScene.sizeRestrictions?.minimumSize = CGSize(width: 608, height: 338)
+        }
+        #endif
+        
         return true
     }
 
