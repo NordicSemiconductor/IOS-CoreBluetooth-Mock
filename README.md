@@ -27,12 +27,11 @@ forwarded to their native equivalents, but on a simulator a user defined mock im
 
 ## How to start
 
-The *Core Bluetooth Mock* library is available only in Swift, and compatible with iOS 11.0+[^1], macOS 10.13+, tvOS 11.0+[^1] and ~watchOS 2.0+~[^2],
+The *Core Bluetooth Mock* library is available only in Swift, and compatible with iOS 11.0+[^1], macOS 10.13+, tvOS 11.0+[^1] and watchOS 4.0+,
 with some features available only on newer platforms.
 For projects running Objective-C we recommend https://github.com/Rightpoint/RZBluetooth library.
 
 [^1]: Xcode 14 dropped support for iOS 9.0 and tvOS 9.0 in simulator. Now the minimum supported version is 11.0 for both platforms.
-[^2]: Support for WatchOS using CocoaPods was paused in version 0.15.0 of *CoreBluetoothMock* due to [this fix](https://github.com/CocoaPods/CocoaPods/pull/11660) still not released.
 
 ### Including the library
 
