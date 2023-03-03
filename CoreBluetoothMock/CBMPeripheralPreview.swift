@@ -35,8 +35,9 @@ import Foundation
 /// The `CBMPeripheralPreview` object has very limited functionality. The implementation
 /// handles connection but all request methods just call corresponding delegate method.
 ///
-/// All ``CBMService``s are available immediately and the device does not need to be scanned to
-/// be available from any ``CBMCentralManager`` instance.
+/// All ``CBMService``s are available immediately, without the need for service discovery.
+/// Bluetooth LE operations are NO OP. The device does not need to be scanned to
+/// be retrievable by any ``CBMCentralManagerMock`` instance.
 open class CBMPeripheralPreview: CBMPeripheral {
     private let mock: CBMPeripheralSpec
     
