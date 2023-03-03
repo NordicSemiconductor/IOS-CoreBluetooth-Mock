@@ -93,12 +93,23 @@ open class CBMService: CBMAttribute {
         self.isPrimary = isPrimary
     }
     
-    internal init(shallowCopy service: CBMService,
-                  for peripheral: CBMPeripheralMock) {
+    init(shallowCopy service: CBMService,
+         for peripheral: CBMPeripheral) {
         self.identifier = service.identifier
         self.peripheral = peripheral
         self._uuid = service._uuid
         self.isPrimary = service.isPrimary
+    }
+    
+    convenience init(copy service: CBMService,
+                     for peripheral: CBMPeripheral) {
+        self.init(shallowCopy: service, for: peripheral)
+        self._includedServices = service._includedServices?.map { includedService in
+            CBMService(copy: includedService, for: peripheral)
+        }
+        self._characteristics = service._characteristics?.map { characteristic in
+            CBMCharacteristic(copy: characteristic, in: self)
+        }
     }
 }
 
@@ -139,8 +150,8 @@ open class CBMServiceMock: CBMService {
     ///   - includedServices: Optional list of included services.
     ///   - characteristics: Optional list of characteristics.
     public convenience init(type uuid: CBMUUID, primary isPrimary: Bool,
-                includedService: CBMServiceMock...,
-                characteristics: CBMCharacteristicMock...) {
+                            includedService: CBMServiceMock...,
+                            characteristics: CBMCharacteristicMock...) {
         self.init(type: uuid,
                   primary: isPrimary,
                   includedService: includedService,
@@ -236,6 +247,13 @@ open class CBMCharacteristic: CBMAttribute {
         self._uuid = characteristic._uuid
         self.properties = characteristic.properties
         self.isNotifying = false
+    }
+    
+    convenience init(copy characteristic: CBMCharacteristic, in service: CBMService) {
+        self.init(shallowCopy: characteristic, in: service)
+        self._descriptors = characteristic._descriptors?.map { descriptor in
+            CBMDescriptor(copy: descriptor, in: self)
+        }
     }
 }
 
@@ -342,6 +360,10 @@ open class CBMDescriptor: CBMAttribute {
         self.identifier = descriptor.identifier
         self.characteristic = characteristic
         self._uuid = descriptor._uuid
+    }
+    
+    convenience init(copy descriptor: CBMDescriptor, in characteristic: CBMCharacteristic) {
+        self.init(shallowCopy: descriptor, in: characteristic)
     }
 }
 

@@ -50,6 +50,10 @@ open class CBMCentralManagerMock: CBMCentralManager {
             initializeAdvertising()
         }
     }
+    /// A list of ``CBMPeripheral``s for SwiftUI Previews only.
+    ///
+    /// Registered items can be accessed using any ``CBMCentralManagerMock``.
+    private static var previewPeripherals: Set<CBMPeripheralPreview> = Set()
     /// A map of all current advertisements of all simulated peripherals.
     private static var advertisementTimers: [CBMAdvertisementConfig : Timer] = [:]
     /// A mutex queue for managing managers.
@@ -347,6 +351,14 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     // MARK: - Central manager simulation methods
+    
+    /// This method may be used to register a list ot ``CBMPeripheralPreview`` should they be used in Swift UI Previews.
+    ///
+    /// Registered peripherals can be connected, retrieved, and respond to basic requests
+    /// - Parameter peripherals: The list of peripherals intended for Swift UI purposes.
+    internal static func registerForPreviews(_ peripheral: CBMPeripheralPreview) {
+        previewPeripherals.insert(peripheral)
+    }
     
     /// Removes all active central manager instances and peripherals from the
     /// simulation, resetting it to the initial state.
@@ -688,6 +700,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     open override func connect(_ peripheral: CBMPeripheral, options: [String : Any]? = nil) {
+        // Handle the Preview peripheral.
+        if let peripheral = peripheral as? CBMPeripheralPreview {
+            peripheral.state = .connected
+            delegate?.centralManager(self, didConnect: peripheral)
+            return
+        }
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         if let o = options, !o.isEmpty {
@@ -709,6 +727,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     open override func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
+        // Handle the Preview peripheral.
+        if let peripheral = peripheral as? CBMPeripheralPreview {
+            peripheral.state = .disconnected
+            delegate?.centralManager(self, didDisconnectPeripheral: peripheral, error: nil)
+            return
+        }
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
         // Ignore peripherals that are not mocks.
@@ -727,6 +751,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     open override func retrievePeripherals(withIdentifiers identifiers: [UUID]) -> [CBMPeripheral] {
+        // Check if any Preview peripheral matches the identifier.
+        let previewPeripherals = Self.previewPeripherals
+            .filter{ identifiers.contains($0.identifier) }
+        if !previewPeripherals.isEmpty {
+            return Array(previewPeripherals)
+        }
         // Starting from iOS 13, this method returns peripherals only in ON state.
         guard ensurePoweredOn() else { return [] }
         // Also, look for them among other managers, and copy them to the local
@@ -768,6 +798,14 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     open override func retrieveConnectedPeripherals(withServices serviceUUIDs: [CBMUUID]) -> [CBMPeripheral] {
+        // Check if there exist any Preview peripheral with at least one common service.
+        let previewPeripherals = Self.previewPeripherals
+            .filter { peripheral in
+                peripheral.services?.contains(where: { serviceUUIDs.contains($0.uuid) }) ?? false
+            }
+        if !previewPeripherals.isEmpty {
+            return Array(previewPeripherals)
+        }
         // Starting from iOS 13, this method returns peripherals only in ON state.
         guard ensurePoweredOn() else { return [] }
         // Get the connected peripherals with at least one of the given services

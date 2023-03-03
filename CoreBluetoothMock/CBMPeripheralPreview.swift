@@ -1,0 +1,130 @@
+/*
+* Copyright (c) 2020, Nordic Semiconductor
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*
+* 1. Redistributions of source code must retain the above copyright notice, this
+*    list of conditions and the following disclaimer.
+*
+* 2. Redistributions in binary form must reproduce the above copyright notice, this
+*    list of conditions and the following disclaimer in the documentation and/or
+*    other materials provided with the distribution.
+*
+* 3. Neither the name of the copyright holder nor the names of its contributors may
+*    be used to endorse or promote products derived from this software without
+*    specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+* IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+* NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+* PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+* WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*/
+
+import Foundation
+
+/// A stub ``CBMPeripheral`` implementation designed only for SwiftUI Previews.
+///
+/// The `CBMPeripheralPreview` object has very limited functionality. The implementation
+/// handles connection but all request methods just call corresponding delegate method.
+///
+/// All ``CBMService``s are available immediately and the device does not need to be scanned to
+/// be available from any ``CBMCentralManager`` instance.
+open class CBMPeripheralPreview: CBMPeripheral {
+    private let mock: CBMPeripheralSpec
+    
+    public let identifier: UUID
+    public var name: String? {
+        mock.name
+    }
+    public var services: [CBMService]?
+    
+    public var delegate: CBMPeripheralDelegate?
+    public internal(set) var state: CBMPeripheralState
+    
+    public let canSendWriteWithoutResponse: Bool = true
+    public let ancsAuthorized: Bool = false
+    
+    /// Creates the preview ``CBMPeripheral``.
+    /// - Parameters:
+    ///   - mock: The mock peripheral to base the preview on.
+    ///   - state: The state to return from ``CBMPeripheral/state``.
+    public init(_ mock: CBMPeripheralSpec,
+                state: CBMPeripheralState = .disconnected) {
+        self.mock = mock
+        self.identifier = mock.identifier
+        self.state = state
+        self.services = mock.services?.map { CBMService(copy: $0, for: self) }
+        CBMCentralManagerMock.registerForPreviews(self)
+    }
+    
+    public func readRSSI() {
+        delegate?.peripheral(self, didReadRSSI: mock.proximity.RSSI as NSNumber, error: nil)
+    }
+    
+    public func discoverServices(_ serviceUUIDs: [CBMUUID]?) {
+        delegate?.peripheral(self, didDiscoverServices: nil)
+    }
+    
+    public func discoverIncludedServices(_ includedServiceUUIDs: [CBMUUID]?, for service: CBMService) {
+        delegate?.peripheral(self, didDiscoverIncludedServicesFor: service, error: nil)
+    }
+    
+    public func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?, for service: CBMService) {
+        delegate?.peripheral(self, didDiscoverCharacteristicsFor: service, error: nil)
+    }
+    
+    public func discoverDescriptors(for characteristic: CBMCharacteristic) {
+        delegate?.peripheral(self, didDiscoverDescriptorsFor: characteristic, error: nil)
+    }
+    
+    public func readValue(for characteristic: CBMCharacteristic) {
+        delegate?.peripheral(self, didUpdateValueFor: characteristic, error: nil)
+    }
+    
+    public func readValue(for descriptor: CBMDescriptor) {
+        delegate?.peripheral(self, didUpdateValueFor: descriptor, error: nil)
+    }
+    
+    public func maximumWriteValueLength(for type: CBMCharacteristicWriteType) -> Int {
+        return (mock.mtu ?? 23) - 3
+    }
+    
+    public func writeValue(_ data: Data, for characteristic: CBMCharacteristic,
+                           type: CBMCharacteristicWriteType) {
+        if type == .withResponse {
+            delegate?.peripheral(self, didWriteValueFor: characteristic, error: nil)
+        }
+    }
+    
+    public func writeValue(_ data: Data, for descriptor: CBMDescriptor) {
+        delegate?.peripheral(self, didWriteValueFor: descriptor, error: nil)
+    }
+    
+    public func setNotifyValue(_ enabled: Bool, for characteristic: CBMCharacteristic) {
+        delegate?.peripheral(self, didUpdateNotificationStateFor: characteristic, error: nil)
+    }
+    
+    public func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
+        fatalError("Not available")
+    }
+}
+
+extension CBMPeripheralPreview: Hashable {
+    
+    public static func == (lhs: CBMPeripheralPreview, rhs: CBMPeripheralPreview) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
+    
+}
