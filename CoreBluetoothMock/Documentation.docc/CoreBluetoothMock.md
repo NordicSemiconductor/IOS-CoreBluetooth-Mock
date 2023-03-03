@@ -249,6 +249,7 @@ Keys used to pass state restoration options to the central manager initializer.
 - ``CBMPeripheralDelegateProxyWithL2CAPChannel``
 - ``CBMPeripheralMock``
 - ``CBMPeripheralNative``
+- ``CBMPeripheralPreview``
 - ``CBMPeripheralState``
 
 ### Attributes
