@@ -42,7 +42,7 @@ open class CBMPeripheralPreview: CBMPeripheral {
     private let mock: CBMPeripheralSpec
     
     public let identifier: UUID
-    public var name: String? {
+    open var name: String? {
         mock.name
     }
     public var services: [CBMService]?
@@ -66,54 +66,54 @@ open class CBMPeripheralPreview: CBMPeripheral {
         CBMCentralManagerMock.registerForPreviews(self)
     }
     
-    public func readRSSI() {
+    open func readRSSI() {
         delegate?.peripheral(self, didReadRSSI: mock.proximity.RSSI as NSNumber, error: nil)
     }
     
-    public func discoverServices(_ serviceUUIDs: [CBMUUID]?) {
+    open func discoverServices(_ serviceUUIDs: [CBMUUID]?) {
         delegate?.peripheral(self, didDiscoverServices: nil)
     }
     
-    public func discoverIncludedServices(_ includedServiceUUIDs: [CBMUUID]?, for service: CBMService) {
+    open func discoverIncludedServices(_ includedServiceUUIDs: [CBMUUID]?, for service: CBMService) {
         delegate?.peripheral(self, didDiscoverIncludedServicesFor: service, error: nil)
     }
     
-    public func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?, for service: CBMService) {
+    open func discoverCharacteristics(_ characteristicUUIDs: [CBMUUID]?, for service: CBMService) {
         delegate?.peripheral(self, didDiscoverCharacteristicsFor: service, error: nil)
     }
     
-    public func discoverDescriptors(for characteristic: CBMCharacteristic) {
+    open func discoverDescriptors(for characteristic: CBMCharacteristic) {
         delegate?.peripheral(self, didDiscoverDescriptorsFor: characteristic, error: nil)
     }
     
-    public func readValue(for characteristic: CBMCharacteristic) {
+    open func readValue(for characteristic: CBMCharacteristic) {
         delegate?.peripheral(self, didUpdateValueFor: characteristic, error: nil)
     }
     
-    public func readValue(for descriptor: CBMDescriptor) {
+    open func readValue(for descriptor: CBMDescriptor) {
         delegate?.peripheral(self, didUpdateValueFor: descriptor, error: nil)
     }
     
-    public func maximumWriteValueLength(for type: CBMCharacteristicWriteType) -> Int {
+    open func maximumWriteValueLength(for type: CBMCharacteristicWriteType) -> Int {
         return (mock.mtu ?? 23) - 3
     }
     
-    public func writeValue(_ data: Data, for characteristic: CBMCharacteristic,
+    open func writeValue(_ data: Data, for characteristic: CBMCharacteristic,
                            type: CBMCharacteristicWriteType) {
         if type == .withResponse {
             delegate?.peripheral(self, didWriteValueFor: characteristic, error: nil)
         }
     }
     
-    public func writeValue(_ data: Data, for descriptor: CBMDescriptor) {
+    open func writeValue(_ data: Data, for descriptor: CBMDescriptor) {
         delegate?.peripheral(self, didWriteValueFor: descriptor, error: nil)
     }
     
-    public func setNotifyValue(_ enabled: Bool, for characteristic: CBMCharacteristic) {
+    open func setNotifyValue(_ enabled: Bool, for characteristic: CBMCharacteristic) {
         delegate?.peripheral(self, didUpdateNotificationStateFor: characteristic, error: nil)
     }
     
-    public func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
+    open func openL2CAPChannel(_ PSM: CBML2CAPPSM) {
         fatalError("Not available")
     }
 }
