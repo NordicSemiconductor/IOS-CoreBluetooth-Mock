@@ -224,6 +224,7 @@ devices. Such mock peripherals will be available using ``CBMCentralManagerMock``
 - ``CBMCentralManagerMock``
 - ``CBMCentralManagerNative``
 - ``CBMManagerState``
+- ``CBMManagerAuthorization``
 
 ### Central Manager Initialization Options
 
@@ -251,6 +252,19 @@ Keys used to pass state restoration options to the central manager initializer.
 - ``CBMPeripheralNative``
 - ``CBMPeripheralPreview``
 - ``CBMPeripheralState``
+- ``CBML2CAPPSM``
+- ``CBML2CAPChannel``
+
+### Peripheral Connection Options
+
+Keys used to pass options when connecting to a peripheral.
+
+- ``CBMConnectPeripheralOptionNotifyOnConnectionKey``
+- ``CBMConnectPeripheralOptionNotifyOnDisconnectionKey``
+- ``CBMConnectPeripheralOptionNotifyOnNotificationKey``
+- ``CBMConnectPeripheralOptionEnableTransportBridgingKey``
+- ``CBMConnectPeripheralOptionRequiresANCS``
+- ``CBMConnectPeripheralOptionStartDelayKey``
 
 ### Attributes
 
@@ -268,16 +282,26 @@ Keys used to pass state restoration options to the central manager initializer.
 
 ### Scanning options
 
+Keys used to pass options when scanning for peripherals.
+
 - ``CBMCentralManagerScanOptionAllowDuplicatesKey``
 - ``CBMCentralManagerScanOptionSolicitedServiceUUIDsKey``
 
-### Advertisement Data Keys
+### Advertisement Data Retrieval Keys
 
-- ``CBMAdvertisementDataIsConnectable``
+Keys used to specify items in a dictionary of peripheral advertisement data.
+
 - ``CBMAdvertisementDataLocalNameKey``
 - ``CBMAdvertisementDataManufacturerDataKey``
-- ``CBMAdvertisementDataOverflowServiceUUIDsKey``
 - ``CBMAdvertisementDataServiceDataKey``
 - ``CBMAdvertisementDataServiceUUIDsKey``
-- ``CBMAdvertisementDataSolicitedServiceUUIDsKey``
+- ``CBMAdvertisementDataOverflowServiceUUIDsKey``
 - ``CBMAdvertisementDataTxPowerLevelKey``
+- ``CBMAdvertisementDataIsConnectable``
+- ``CBMAdvertisementDataSolicitedServiceUUIDsKey``
+
+### Other
+
+- ``CBMUUID``
+- ``CBMError``
+- ``CBMATTError``
