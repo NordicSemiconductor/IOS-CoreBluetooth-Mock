@@ -9,5 +9,6 @@
 "OFF" = "TẮT";
 "PRESSED" = "ĐÃ ẤN";
 "RELEASED" = "ĐÃ NHẢ";
+"UNKNOWN" = "KHÔNG XÁC ĐỊNH";
 "Reading..." = "Đang đọc...";
 "Unknown Device" = "Thiết bị chưa nhận dạng";

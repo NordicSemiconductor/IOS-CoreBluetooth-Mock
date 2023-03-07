@@ -9,5 +9,6 @@
 "OFF" = "DESLIGADO";
 "PRESSED" = "PRESSIONADO";
 "RELEASED" = "LIBERADO";
+"UNKNOWN" = "DESCONHECIDO";
 "Reading..." = "Lendo...";
 "Unknown Device" = "Dispositivo desconhecido";

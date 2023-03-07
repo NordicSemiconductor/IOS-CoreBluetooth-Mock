@@ -9,5 +9,6 @@
 "OFF" = "बंद";
 "PRESSED" = "दाबले";
 "RELEASED" = "सोडले";
+"UNKNOWN" = "अज्ञात";
 "Reading..." = "वाचले जात आहे...";
 "Unknown Device" = "अज्ञात उपकरण";

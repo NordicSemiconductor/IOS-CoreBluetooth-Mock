@@ -108,9 +108,9 @@ class NormalBehaviorTest: XCTestCase {
         // The `onLedStateDidChange` handler will be called after the initial state has been read.
         let ledEnabled = XCTestExpectation(description: "LED Enabled")
         let ledObserver = target!.onLedStateDidChange { isOn in
-            if isOn {
+            if isOn == true {
                 ledEnabled.fulfill()
-            } else {
+            } else if isOn == false {
                 // Simulate toggling the switch.
                 blinkyViewController.ledToggleSwitch.setOn(true, animated: true)
                 blinkyViewController.ledToggleSwitchDidChange(blinkyViewController.ledToggleSwitch)
@@ -123,7 +123,7 @@ class NormalBehaviorTest: XCTestCase {
         let buttonPressed = XCTestExpectation(description: "Button pressed")
         let buttonReleased = XCTestExpectation(description: "Button released")
         let buttonObserver = target!.onButtonStateDidChange { isPressed in
-            if isPressed {
+            if isPressed == true {
                 // Simulate releasing the BTN1 on DK.
                 blinky.simulateValueUpdate(Data([0x00]), for: .buttonCharacteristic)
                 buttonPressed.fulfill()
