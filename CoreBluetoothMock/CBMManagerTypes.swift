@@ -243,6 +243,7 @@ public let CBMConnectPeripheralOptionNotifyOnDisconnectionKey = CBConnectPeriphe
 /// most recently in the foreground receives the alert. If the key isn’t specified, the default
 /// value is `false`.
 public let CBMConnectPeripheralOptionNotifyOnNotificationKey = CBConnectPeripheralOptionNotifyOnNotificationKey
+#if !os(macOS)
 /// A Boolean value that specifies whether the system should to connect non-GATT profiles
 /// on classic Bluetooth devices, if there is a low energy GATT connection to the same device.
 ///
@@ -251,7 +252,6 @@ public let CBMConnectPeripheralOptionNotifyOnNotificationKey = CBConnectPeripher
 ///
 /// The value for this key is an `NSNumber` object. If the key isn’t specified, the default
 /// value is `false`.
-#if !os(macOS)
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public let CBMConnectPeripheralOptionEnableTransportBridgingKey = CBConnectPeripheralOptionEnableTransportBridgingKey
 #endif
