@@ -9,5 +9,6 @@
 "OFF" = "AV";
 "PRESSED" = "NEDTRYKKET";
 "RELEASED" = "INAKTIV";
+"UNKNOWN" = "UKJENT";
 "Reading..." = "Leser...";
 "Unknown Device" = "Ukjent Enhet";

@@ -9,5 +9,6 @@
 "OFF" = "OFF";
 "PRESSED" = "PRESSED";
 "RELEASED" = "RELEASED";
+"UNKNOWN" = "UNKNOWN";
 "Reading..." = "Reading...";
 "Unknown Device" = "Unknown Device";

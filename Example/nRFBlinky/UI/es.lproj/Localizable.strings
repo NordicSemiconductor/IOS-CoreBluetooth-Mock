@@ -9,5 +9,6 @@
 "OFF" = "APAGADO";
 "PRESSED" = "PULSADO";
 "RELEASED" = "LIBRE";
+"UNKNOWN" = "DESCONOCIDO";
 "Reading..." = "Leyendo...";
 "Unknown Device" = "Dispositivo Desconocido";

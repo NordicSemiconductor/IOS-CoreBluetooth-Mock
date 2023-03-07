@@ -9,5 +9,6 @@
 "OFF" = "关";
 "PRESSED" = "按下";
 "RELEASED" = "释放";
+"UNKNOWN" = "未知状态";
 "Reading..." = "读取...";
 "Unknown Device" = "未知设备";

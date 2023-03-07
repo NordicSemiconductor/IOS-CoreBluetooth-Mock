@@ -115,7 +115,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
                 basePeripheral.readValue(for: ledCharacteristic)
             } else {
                 print("Can't read LED state")
-                post(.ledState(of: self, didChangeTo: false))
+                post(.ledState(of: self, didChangeTo: nil))
             }
         }
     }
@@ -381,6 +381,8 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
             print("Writing value failed: \(error.localizedDescription)")
         }
         // LED value has been written, let's read it to confirm.
-        readLEDValue()
+        if characteristic.properties.contains(.read) {
+            readLEDValue()
+        }
     }
 }

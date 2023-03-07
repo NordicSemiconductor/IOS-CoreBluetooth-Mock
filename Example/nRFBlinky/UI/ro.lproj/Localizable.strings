@@ -9,5 +9,6 @@
 "OFF" = "OPRIT";
 "PRESSED" = "APASAT";
 "RELEASED" = "NEAPĂSAT";
+"UNKNOWN" = "NECUNOSCUT";
 "Reading..." = "Se actualizează starea...";
 "Unknown Device" = "Dispozitiv necunoscut";

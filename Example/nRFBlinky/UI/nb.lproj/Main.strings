@@ -38,7 +38,7 @@
 /* Class = "UILabel"; text = "2. Make sure the coin cell battery has power."; ObjectID = "rmw-BF-cDo"; */
 "rmw-BF-cDo.text" = "2. Sørg for at det er strøm i batteriet.";
 
-/* Class = "UILabel"; text = "OFF"; ObjectID = "sXe-8K-21Q"; */
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "sXe-8K-21Q"; */
 "sXe-8K-21Q.text" = "UKJENT";
 
 /* Class = "UILabel"; text = "Nordic Blinky"; ObjectID = "ufl-Iw-mhn"; */

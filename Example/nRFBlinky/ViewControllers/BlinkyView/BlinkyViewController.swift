@@ -164,24 +164,31 @@ private extension BlinkyViewController {
         }
     }
     
-    func ledStateChanged(isOn: Bool) {
+    func ledStateChanged(isOn: Bool?) {
         DispatchQueue.main.async {
-            if isOn {
+            switch isOn {
+            case true:
                 self.ledStateLabel.text = "ON".localized
                 self.ledToggleSwitch.setOn(true, animated: true)
-            } else {
+            case false:
                 self.ledStateLabel.text = "OFF".localized
+                self.ledToggleSwitch.setOn(false, animated: true)
+            default:
+                self.ledStateLabel.text = "UNKNOWN".localized
                 self.ledToggleSwitch.setOn(false, animated: true)
             }
         }
     }
     
-    func buttonStateChanged(isPressed: Bool) {
+    func buttonStateChanged(isPressed: Bool?) {
         DispatchQueue.main.async {
-            if isPressed {
+            switch isPressed {
+            case true:
                 self.buttonStateLabel.text = "PRESSED".localized
-            } else {
+            case false:
                 self.buttonStateLabel.text = "RELEASED".localized
+            default:
+                self.buttonStateLabel.text = "UNKNOWN".localized
             }
             self.buttonTapHapticFeedback()
         }

@@ -108,12 +108,12 @@ class ResetTest: XCTestCase {
         buttonPressed.isInverted = true
 
         let ledObserver = target!.onLedStateDidChange { isOn in
-            if !isOn {
+            if isOn == false {
                 ledDisabled.fulfill()
             }
         }
         let buttonObserver = target!.onButtonStateDidChange { isPressed in
-            if isPressed {
+            if isPressed == true {
                 buttonPressed.fulfill()
             } else {
                 buttonReleased.fulfill()

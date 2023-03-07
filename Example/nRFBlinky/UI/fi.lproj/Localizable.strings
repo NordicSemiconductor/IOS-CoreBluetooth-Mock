@@ -9,5 +9,6 @@
 "OFF" = "SAMMUTA";
 "PRESSED" = "PAINETTU";
 "RELEASED" = "VAPAUTETTU";
+"UNKNOWN" = "TUNTEMATON";
 "Reading..." = "Lukee...";
 "Unknown Device" = "Tuntematon laite";

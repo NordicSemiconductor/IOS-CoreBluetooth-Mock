@@ -68,15 +68,15 @@ extension Notification {
     }
 
     static func ledState(of blinkyPeripheral: BlinkyPeripheral,
-                         didChangeTo isOn: Bool) -> Notification {
+                         didChangeTo isOn: Bool?) -> Notification {
         return Notification(name: .ledState, object: blinkyPeripheral,
-                            userInfo: ["isOn": isOn])
+                            userInfo: isOn.map { ["isOn": $0] } ?? nil )
     }
 
     static func buttonState(of blinkyPeripheral: BlinkyPeripheral,
-                            didChangeTo isPressed: Bool) -> Notification {
+                            didChangeTo isPressed: Bool?) -> Notification {
         return Notification(name: .buttonState, object: blinkyPeripheral,
-                            userInfo: ["isPressed": isPressed])
+                            userInfo: isPressed.map { ["isPressed": $0] } ?? nil)
     }
 
 }
@@ -139,19 +139,19 @@ extension BlinkyPeripheral {
         }
     }
 
-    func onLedStateDidChange(do action: @escaping (Bool) -> ()) -> NSObjectProtocol {
+    func onLedStateDidChange(do action: @escaping (Bool?) -> ()) -> NSObjectProtocol {
         return on(.ledState) { notification in
-            if let userInfo = notification.userInfo,
-               let isOn = userInfo["isOn"] as? Bool {
+            if let userInfo = notification.userInfo {
+                let isOn = userInfo["isOn"] as? Bool
                 action(isOn)
             }
         }
     }
 
-    func onButtonStateDidChange(do action: @escaping (Bool) -> ()) -> NSObjectProtocol {
+    func onButtonStateDidChange(do action: @escaping (Bool?) -> ()) -> NSObjectProtocol {
         return on(.buttonState) { notification in
-            if let userInfo = notification.userInfo,
-               let isPressed = userInfo["isPressed"] as? Bool {
+            if let userInfo = notification.userInfo {
+                let isPressed = userInfo["isPressed"] as? Bool
                 action(isPressed)
             }
         }

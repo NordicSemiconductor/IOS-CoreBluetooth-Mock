@@ -9,5 +9,6 @@
 "OFF" = "SPENTO";
 "PRESSED" = "PREMUTO";
 "RELEASED" = "ALZATO";
+"UNKNOWN" = "SCONOSCIUTO";
 "Reading..." = "Lettura...";
 "Unknown Device" = "Dispositivo sconosciuto";

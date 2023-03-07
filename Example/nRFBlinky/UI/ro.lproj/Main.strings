@@ -38,8 +38,8 @@
 /* Class = "UILabel"; text = "2. Make sure the coin cell battery has power."; ObjectID = "rmw-BF-cDo"; */
 "rmw-BF-cDo.text" = "2. Asigura-te că bateria de tip moneda e încărcată.";
 
-/* Class = "UILabel"; text = "OFF"; ObjectID = "sXe-8K-21Q"; */
-"sXe-8K-21Q.text" = "OPRIT";
+/* Class = "UILabel"; text = "UNKNOWN"; ObjectID = "sXe-8K-21Q"; */
+"sXe-8K-21Q.text" = "NECUNOSCUT";
 
 /* Class = "UILabel"; text = "Nordic Blinky"; ObjectID = "ufl-Iw-mhn"; */
 "ufl-Iw-mhn.text" = "Nordic Blinky";
