@@ -100,6 +100,18 @@ targets: [
 
 The documentation of the library is available [here](https://nordicsemiconductor.github.io/IOS-CoreBluetooth-Mock/documentation/corebluetoothmock).
 
+### Migration from *CoreBluetooth*
+
+Migration example is available [here](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock-Example).
+See [Pull Request #1](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock-Example/pull/1) for 
+step-by-step guide.
+
+> **Note**
+>
+> The migration example application currently does not use mocks in tests. 
+For that, check out the **Example** folder in this repository with *nRF Blinky* app, which is
+using mock peripherals in Unit Tests and UI Tests. See below.
+
 ## Sample application: nRF Blinky
 
 nRF Blinky is an example app targeted towards newcomer BLE developers, and also demonstrating the use 
