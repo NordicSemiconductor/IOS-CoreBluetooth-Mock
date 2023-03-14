@@ -724,6 +724,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         // Connection is pending.
         mock.state = .connecting
+        // If the device is already connected, there is no need to waiting for
+        // advertising packet.
+        if mock.isAlreadyConnected {
+            mock.connect() { _ in
+                 self.delegate?.centralManager(self, didConnect: mock)
+            }
+        }
     }
     
     open override func cancelPeripheralConnection(_ peripheral: CBMPeripheral) {
@@ -899,6 +906,9 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     /// ``CBMCentralManagerScanOptionAllowDuplicatesKey`` flag is set.
     fileprivate var wasScanned: Bool = false
     fileprivate var lastAdvertisedName: String? = nil
+    fileprivate var isAlreadyConnected: Bool {
+        return mock.isConnected
+    }
     
     open var delegate: CBMPeripheralDelegate?
     
@@ -947,6 +957,22 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
             // into range. To cancel pending connection, call disconnect().
             return
         }
+        // If the device is already connected (using a different central manager),
+        // report success immediatly. The device already has the connection with central
+        // and will not be notified about another virtual client connection.
+        if isAlreadyConnected {
+            queue.async { [weak self] in
+                if let self = self, self.state == .connecting {
+                    self.state = .connected
+                    self._canSendWriteWithoutResponse = true
+                    self.mock.wasConnected = true
+                    self.mock.virtualConnections += 1
+                    completion(.success(()))
+                }
+            }
+            return
+        }
+        // If the device wasn't connected emulate connection request.
         let result = delegate.peripheralDidReceiveConnectionRequest(mock)
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, self.state == .connecting {
