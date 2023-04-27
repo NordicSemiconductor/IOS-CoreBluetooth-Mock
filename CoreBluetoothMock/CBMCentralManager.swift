@@ -92,7 +92,7 @@ open class CBMCentralManager: NSObject {
     
     /// Whether or not the central is currently scanning.
     @available(iOS 9.0, *)
-    open var isScanning: Bool { return false }
+    @objc open var isScanning: Bool { return false }
     
     /// The current authorization status for using Bluetooth.
     ///
