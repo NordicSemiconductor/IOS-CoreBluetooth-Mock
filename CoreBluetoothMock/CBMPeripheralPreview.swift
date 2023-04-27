@@ -29,6 +29,7 @@
 */
 
 import Foundation
+import CoreBluetooth
 
 /// A stub ``CBMPeripheral`` implementation designed only for SwiftUI Previews.
 ///
