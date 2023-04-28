@@ -81,7 +81,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
             // ...stop scanning if state changed to any other state
             // than `.poweredOn`. Also, forget all peripherals.
             if manager.state != .poweredOn {
-                manager._isScanning = false
+                manager.isScanning = false
                 manager.scanFilter = nil
                 manager.scanOptions = nil
                 manager.peripherals.values.forEach { $0.closeManager() }
@@ -289,12 +289,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
     }
     /// A flag set to true when the manager is scanning for mock Bluetooth LE devices.
-    @objc private var _isScanning: Bool
+//    @objc private var isScanning: Bool
     
     // MARK: - Initializers
     
     public init() {
-        self._isScanning = false
         self.queue = DispatchQueue.main
         super.init(true)
         initialize()
@@ -302,7 +301,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     public init(delegate: CBMCentralManagerDelegate?,
                 queue: DispatchQueue?) {
-        self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
         super.init(true)
         self.delegate = delegate
@@ -313,7 +311,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     public init(delegate: CBMCentralManagerDelegate?,
                 queue: DispatchQueue?,
                 options: [String : Any]?) {
-        self._isScanning = false
         self.queue = queue ?? DispatchQueue.main
         super.init(true)
         self.delegate = delegate
@@ -653,9 +650,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         return CBMCentralManagerMock.managerState
     }
-    open override var isScanning: Bool {
-        return _isScanning
-    }
+    
     
     @available(iOS, introduced: 13.0, deprecated: 13.1)
     @available(macOS, introduced: 10.15)
@@ -686,7 +681,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
                                           options: [String : Any]? = nil) {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
-        _isScanning = true
+        isScanning = true
         scanFilter = serviceUUIDs
         scanOptions = options
     }
@@ -694,7 +689,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     open override func stopScan() {
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
-        _isScanning = false
+        isScanning = false
         scanFilter = nil
         scanOptions = nil
         peripherals.values.forEach { $0.wasScanned = false }

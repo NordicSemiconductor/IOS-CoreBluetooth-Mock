@@ -35,7 +35,8 @@ import CoreBluetooth
 ///
 /// This manager can only interact with physical Bluetooth LE devices.
 public class CBMCentralManagerNative: CBMCentralManager {
-    private var manager: CBCentralManager!
+    var observation: NSKeyValueObservation?
+    @objc dynamic private var manager: CBCentralManager!
     private var wrapper: CBCentralManagerDelegate!
     private var peripherals: [UUID : CBMPeripheralNative] = [:]
     
@@ -140,7 +141,12 @@ public class CBMCentralManagerNative: CBMCentralManager {
     
     @available(iOS 9.0, *)
     public override var isScanning: Bool {
-        return manager.isScanning
+        get {
+            manager.isScanning
+        }
+        set {
+            
+        }
     }
     
     @available(iOS, introduced: 13.0, deprecated: 13.1)
@@ -168,6 +174,8 @@ public class CBMCentralManagerNative: CBMCentralManager {
         self.wrapper = CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager()
         self.manager.delegate = wrapper
+        
+        self.addManagerObserver()
     }
     
     public init(delegate: CBMCentralManagerDelegate?,
@@ -176,6 +184,8 @@ public class CBMCentralManagerNative: CBMCentralManager {
         self.wrapper = CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager(delegate: wrapper, queue: queue)
         self.delegate = delegate
+        
+        self.addManagerObserver()
     }
     
     @available(iOS 7.0, *)
@@ -189,6 +199,8 @@ public class CBMCentralManagerNative: CBMCentralManager {
             CBMCentralManagerDelegateWrapper(self)
         self.manager = CBCentralManager(delegate: wrapper, queue: queue, options: options)
         self.delegate = delegate
+        
+        self.addManagerObserver()
     }
     
     public override func scanForPeripherals(withServices serviceUUIDs: [CBMUUID]?,
@@ -238,6 +250,15 @@ public class CBMCentralManagerNative: CBMCentralManager {
         manager.registerForConnectionEvents(options: options)
     }
     #endif
+    
+    /// Add observer for `\.CBCentralManager.isScanning`  and change `Self.isScanning` correspondingly.
+    private func addManagerObserver() {
+        observation = observe(\.manager?.isScanning, options: [.old, .new]) { _, change in
+            change.newValue?.flatMap { [weak self] new in
+                self?.isScanning = new
+            }
+        }
+    }
 }
 
 /// A native implementation of ``CBMPeripheral`` that will proxy all requests to an underlying `CBPeripheral`.
