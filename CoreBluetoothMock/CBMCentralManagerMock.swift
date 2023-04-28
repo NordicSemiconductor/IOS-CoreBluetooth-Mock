@@ -123,6 +123,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///   - config: Advertisement configuration to start.
     ///   - mock: The advertising mock peripheral.
     private static func startAdvertising(_ config: CBMAdvertisementConfig, for mock: CBMPeripheralSpec) {
+        
         // A valid advertising config is a single time advertisement (delay > 0),
         // or a periodic one (interval > 0) (or both - delayed periodic advertisement).
         // Not to be mistaken with "Periodic Advertisement" from Advertising Extension.
@@ -288,7 +289,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
     }
     /// A flag set to true when the manager is scanning for mock Bluetooth LE devices.
-    private var _isScanning: Bool
+    @objc private var _isScanning: Bool
     
     // MARK: - Initializers
     
