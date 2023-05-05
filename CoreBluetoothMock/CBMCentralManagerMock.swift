@@ -875,7 +875,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
 /// This implementation will be used when creating peripherals by ``CBMCentralManagerMock``.
 ///
 /// Unless required, this class should not be accessed directly, but rather by the common protocol ``CBMPeripheral``.
-open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
+@objc open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
     /// The parent central manager.
     private let manager: CBMCentralManagerMock
     /// The dispatch queue to call delegate methods on.
@@ -919,7 +919,7 @@ open class CBMPeripheralMock: CBMPeer, CBMPeripheral {
         return _canSendWriteWithoutResponse
     }
     open private(set) var ancsAuthorized: Bool = false
-    open fileprivate(set) var state: CBMPeripheralState = .disconnected
+    @objc dynamic open fileprivate(set) var state: CBMPeripheralState = .disconnected
     open private(set) var services: [CBMService]? = nil
     
     // MARK: Initializers

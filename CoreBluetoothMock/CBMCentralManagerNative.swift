@@ -526,7 +526,7 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
     }
     #endif
     
-    fileprivate let peripheral: CBPeripheral
+    public let peripheral: CBPeripheral
     
     fileprivate init(_ peripheral: CBPeripheral) {
         self.peripheral = peripheral
