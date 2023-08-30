@@ -39,7 +39,7 @@ import CoreBluetooth
 /// All ``CBMService``s are available immediately, without the need for service discovery.
 /// Bluetooth LE operations are NO OP. The device does not need to be scanned to
 /// be retrievable by any ``CBMCentralManagerMock`` instance.
-open class CBMPeripheralPreview: CBMPeripheral {
+@objc open class CBMPeripheralPreview: NSObject, CBMPeripheral {
     private let mock: CBMPeripheralSpec
     
     public let identifier: UUID
@@ -49,7 +49,7 @@ open class CBMPeripheralPreview: CBMPeripheral {
     public var services: [CBMService]?
     
     public var delegate: CBMPeripheralDelegate?
-    public internal(set) var state: CBMPeripheralState
+    @objc dynamic public internal(set) var state: CBMPeripheralState
     
     public let canSendWriteWithoutResponse: Bool = true
     public let ancsAuthorized: Bool = false
@@ -63,6 +63,7 @@ open class CBMPeripheralPreview: CBMPeripheral {
         self.mock = mock
         self.identifier = mock.identifier
         self.state = state
+        super.init()
         self.services = mock.services?.map { CBMService(copy: $0, for: self) }
         CBMCentralManagerMock.registerForPreviews(self)
     }
@@ -118,7 +119,7 @@ open class CBMPeripheralPreview: CBMPeripheral {
         fatalError("Not available")
     }
 }
-
+/*
 extension CBMPeripheralPreview: Hashable {
     
     public static func == (lhs: CBMPeripheralPreview, rhs: CBMPeripheralPreview) -> Bool {
@@ -130,3 +131,4 @@ extension CBMPeripheralPreview: Hashable {
     }
     
 }
+*/
