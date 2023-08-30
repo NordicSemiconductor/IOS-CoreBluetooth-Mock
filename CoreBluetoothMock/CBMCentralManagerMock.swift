@@ -288,8 +288,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
             CBMCentralManagerMock.managers.contains { $0.ref == self }
         }
     }
-    /// A flag set to true when the manager is scanning for mock Bluetooth LE devices.
-//    @objc private var isScanning: Bool
     
     // MARK: - Initializers
     
