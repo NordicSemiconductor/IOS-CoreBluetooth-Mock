@@ -78,12 +78,6 @@ public protocol CBMPeripheralSpecDelegate {
                     didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
                     for service: CBMServiceMock)
         -> Result<Void, Error>
-    
-    @available(*, deprecated, message: "Use similar method with CBMServiceMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
-                    for service: CBMService)
-        -> Result<Void, Error>
 
     /// This method will be called when characteristic discovery was initiated using a
     /// mock central manager. When success is returned, the characteristics will be returned
@@ -98,12 +92,6 @@ public protocol CBMPeripheralSpecDelegate {
                     didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
                     for service: CBMServiceMock)
         -> Result<Void, Error>
-    
-    @available(*, deprecated, message: "Use similar method with CBMServiceMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
-                    for service: CBMService)
-        -> Result<Void, Error>
 
     /// This method will be called when descriptor discovery was initiated using a
     /// mock central manager. When success is returned, the descriptors will be returned
@@ -117,11 +105,6 @@ public protocol CBMPeripheralSpecDelegate {
                     didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristicMock)
         -> Result<Void, Error>
     
-    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristic)
-        -> Result<Void, Error>
-
     /// This method will be called when read request has been initiated from a mock
     /// central manager.
     /// - Parameters:
@@ -134,11 +117,6 @@ public protocol CBMPeripheralSpecDelegate {
                     didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
         -> Result<Data, Error>
     
-    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveReadRequestFor characteristic: CBMCharacteristic)
-        -> Result<Data, Error>
-
     /// This method will be called when read request has been initiated from a mock
     /// central manager.
     /// - Parameters:
@@ -151,11 +129,6 @@ public protocol CBMPeripheralSpecDelegate {
                     didReceiveReadRequestFor descriptor: CBMDescriptorMock)
         -> Result<Data, Error>
     
-    @available(*, deprecated, message: "Use similar method with CBMDescriptorMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveReadRequestFor descriptor: CBMDescriptor)
-        -> Result<Data, Error>
-
     /// This method will be called when write request has been initiated from a mock
     /// central manager.
     /// - Parameters:
@@ -169,12 +142,6 @@ public protocol CBMPeripheralSpecDelegate {
                     data: Data)
         -> Result<Void, Error>
     
-    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveWriteRequestFor characteristic: CBMCharacteristic,
-                    data: Data)
-        -> Result<Void, Error>
-
     /// This method will be called when write command has been initiated from a mock
     /// central manager. Write command is also known as write without response.
     /// - Parameters:
@@ -185,11 +152,6 @@ public protocol CBMPeripheralSpecDelegate {
                     didReceiveWriteCommandFor characteristic: CBMCharacteristicMock,
                     data: Data)
     
-    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveWriteCommandFor characteristic: CBMCharacteristic,
-                    data: Data)
-
     /// This method will be called when write request has been initiated from a mock
     /// central manager.
     /// - Parameters:
@@ -203,12 +165,6 @@ public protocol CBMPeripheralSpecDelegate {
                     data: Data)
         -> Result<Void, Error>
     
-    @available(*, deprecated, message: "Use similar method with CBMDescriptorMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveWriteRequestFor descriptor: CBMDescriptor,
-                    data: Data)
-        -> Result<Void, Error>
-
     /// This method will be called when client requested enabling or disabling notifications or
     /// indications on the given characteristic using a mock central manager.
     ///
@@ -226,12 +182,6 @@ public protocol CBMPeripheralSpecDelegate {
                     for characteristic: CBMCharacteristicMock)
         -> Result<Void, Error>
     
-    @available(*, deprecated, message: "Use similar method with CBMCharacteristicMock parameter type.")
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveSetNotifyRequest enabled: Bool,
-                    for characteristic: CBMCharacteristic)
-        -> Result<Void, Error>
-  
     /// This method will be called when notifications or indications were enabled
     /// or disabled on the given characteristic using a mock central manager.
     ///
