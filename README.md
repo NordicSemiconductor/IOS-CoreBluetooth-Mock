@@ -20,7 +20,7 @@ work making Bluetooth-enabled apps difficult to test. As the documentation state
 
 ### Core Bluetooth Mock!
 
-The *Core Bluetooth Mock* library defines number of **CBM...** classes and constants, that wrap or imitate the corresponding
+The *Core Bluetooth Mock* library defines a number of **CBM...** classes and constants, that wrap or imitate the corresponding
 **CB...** counterparts from *Core Bluetooth* framework. For example, `CBMCentralManager` has the same API and 
 behavior as `CBCentralManager`, etc. On physical iDevices all calls to `CBMCentralManager` and `CBMPeripheral` are
 forwarded to their native equivalents, but on a simulator a user defined mock implementation is used. 
