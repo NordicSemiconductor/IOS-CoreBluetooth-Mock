@@ -3,6 +3,7 @@
 ![Version number](https://img.shields.io/cocoapods/v/CoreBluetoothMock) 
 [![Platform](https://img.shields.io/cocoapods/p/CoreBluetoothMock.svg?style=flat)](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![SPM compatible](https://img.shields.io/badge/SPM-compatible-green?style=flat)](https://swift.org/package-manager)
 
 The *Core Bluetooth Mock* library was designed to emulate *Core Bluetooth* objects, providing easy way to test 
 Bluetooth-enabled apps. As the native Bluetooth API is not supported on a simulator, using this library you can run, test 
@@ -25,20 +26,28 @@ The *Core Bluetooth Mock* library defines a number of **CBM...** classes and con
 behavior as `CBCentralManager`, etc. On physical iDevices all calls to `CBMCentralManager` and `CBMPeripheral` are
 forwarded to their native equivalents, but on a simulator a user defined mock implementation is used. 
 
-## How to start
+## Requirements
 
-The *Core Bluetooth Mock* library is available only in Swift, and compatible with iOS 11.0+[^1], macOS 10.13+, tvOS 11.0+[^1] and watchOS 4.0+,
-with some features available only on newer platforms.
-For projects running Objective-C we recommend https://github.com/Rightpoint/RZBluetooth library.
+The *Core Bluetooth Mock* library is available only in *Swift*, and compatible with 
+* iOS 12.0+[^1], 
+* macOS 10.14+, 
+* tvOS 12.0+[^1],
+* watchOS 4.0+
 
-[^1]: Xcode 14 dropped support for iOS 9.0 and tvOS 9.0 in simulator. Now the minimum supported version is 11.0 for both platforms.
+(with some features available only on newer platforms).
 
-### Including the library
+> [!Note]
+> For projects running Objective-C we recommend https://github.com/Rightpoint/RZBluetooth library.
+
+[^1]: Xcode 15 dropped support for iOS 9.0 and tvOS 9.0 in simulator. Now the minimum supported version is 12.0 for both platforms.
+
+## Installation
 
 The library support [CocoaPods](https://github.com/CocoaPods/CocoaPods), [Carthage](https://github.com/Carthage/Carthage) and 
 [Swift Package Manager](https://swift.org/package-manager).
 
-#### CocoaPods
+<details>
+   <summary>CocoaPods</summary>
 
 - Create/Update your **Podfile** with the following contents
 
@@ -55,9 +64,10 @@ The library support [CocoaPods](https://github.com/CocoaPods/CocoaPods), [Cartha
     ```
 
 - Open the newly created `.xcworkspace`
-
-#### Carthage
-
+</details>
+<details>
+   <summary>Carthage</summary>
+   
 - Create a new **Cartfile** in your project's root with the following contents
 
     ```
@@ -71,48 +81,49 @@ The library support [CocoaPods](https://github.com/CocoaPods/CocoaPods), [Cartha
     ```
 
 - Copy the **CoreBluetoothMock.framework** from *Carthage/Build* to your project and follow [instructions from Carthage](https://github.com/Carthage/Carthage).
+</details>
+<details>
+   <summary>Swift Package Manager</summary>
 
-#### Swift Package Manager
-
-The library can also be included as SPM package. Simply add it in Xcode: *File -> Swift Packages -> Add package dependency*, 
+- In Xcode: *File -> Swift Packages -> Add package dependency*, 
 type *https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git* and set required version, branch or commit.
 
-If you have *Swift.package* file, include the following dependency:
-```swift
-dependencies: [
-    // [...]
-    .package(name: "CoreBluetoothMock", 
-             url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git", 
-             .upToNextMajor(from: "x.y")) // Replace x.y with your required version
-]
-```
-and add it to your target:
-```swift
-targets: [
-    // [...]
-    .target(
-        name: "<Your target name>",
-        dependencies: ["CoreBluetoothMock"]),
-]
-```
+- If you have *Swift.package* file, include the following dependency:
+  ```swift
+  dependencies: [
+      // [...]
+      .package(name: "CoreBluetoothMock", 
+               url: "https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git", 
+               .upToNextMajor(from: "x.y")) // Replace x.y with your required version
+  ]
+  ```
+  and add it to your target:
+  ```swift
+  targets: [
+      // [...]
+      .target(
+          name: "<Your target name>",
+          dependencies: ["CoreBluetoothMock"]),
+  ]
+  ```
+</details>
 
-### Documentation
+## Documentation
 
 The documentation of the library is available [here](https://nordicsemiconductor.github.io/IOS-CoreBluetooth-Mock/documentation/corebluetoothmock).
 
-### Migration from *CoreBluetooth*
+## Migration from *CoreBluetooth*
 
 Migration example is available [here](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock-Example).
 See [Pull Request #1](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock-Example/pull/1) for 
 step-by-step guide.
 
-> **Note**
->
+> [!Note]
 > The migration example application currently does not use mocks in tests. 
 For that, check out the **Example** folder in this repository with *nRF Blinky* app, which is
 using mock peripherals in Unit Tests and UI Tests. See below.
 
-## Sample application: nRF Blinky
+# Sample application: nRF Blinky
 
 nRF Blinky is an example app targeted towards newcomer BLE developers, and also demonstrating the use 
 of *Core Bluetooth Mock* library. This application controls an LED on an
@@ -125,7 +136,7 @@ and [UITests.swift](Example/Tests) and [UITests.swift](Example/UI%20Tests/UITest
 
 The mock peripherals are defined in [MockPeripherals.swift](Example/nRFBlinky/MockPeripherals.swift).
 
-## Nordic LED and Button Service
+### Nordic LED and Button Service
 
 A simplified proprietary service by Nordic Semiconductor, containing two characteristics one to control LED3 and Button1:
 - Service UUID: **`00001523-1212-EFDE-1523-785FEABCD123`**
@@ -141,7 +152,8 @@ A simplified proprietary service by Nordic Semiconductor, containing two charact
   For full specification, check out 
   [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/ble_sdk_app_blinky.html?cp=8_1_4_2_2_3).
 
-## Requirements:
+### Requirements
+
 - An iOS device with BLE capabilities, or a simulator (to run the mock).
 - A [Development Kit](https://www.nordicsemi.com/Software-and-Tools/Development-Kits) (unless testing mock).
 - The Blinky example firmware to flash on the Development Kit. For your convenience, we have bundled two firmwares in this project under the Firmwares directory.
@@ -149,7 +161,8 @@ A simplified proprietary service by Nordic Semiconductor, containing two charact
 - The LBS (LED Button Service) is also supported in nRF Connect SDK: [here](https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/samples/bluetooth/peripheral_lbs/README.html).
 -  More information about the nRFBlinky example firmware can be found in the [documentation](https://infocenter.nordicsemi.com/topic/sdk_nrf5_v17.0.2/ble_sdk_app_blinky.html?cp=8_1_4_2_2_3).
 
-## Installation and usage:
+### Installation and usage
+
 - Prepare your Development kit.
   - Plug in the Development Kit to your computer via USB.
   - Power On the Development Kit.
