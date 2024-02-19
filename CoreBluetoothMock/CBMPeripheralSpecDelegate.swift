@@ -30,7 +30,7 @@
 
 import CoreBluetooth
 
-/// This delegate should implement the behavior of a real Bluetooth LE device duting a connection.
+/// This delegate should implement the behavior of a real Bluetooth LE device during a connection.
 public protocol CBMPeripheralSpecDelegate {
 
     /// This method is called when the mock peripheral has been reset.

@@ -105,8 +105,8 @@ open class CBMCentralManager: NSObject {
     @available(watchOS, introduced: 6.0, deprecated: 6.1)
     open var authorization: CBMManagerAuthorization {
         if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
-           let authotization = CBMManagerAuthorization(rawValue: rawValue) {
-            return authotization
+           let authorization = CBMManagerAuthorization(rawValue: rawValue) {
+            return authorization
         } else {
             return CBCentralManager().authorization
         }
@@ -128,8 +128,8 @@ open class CBMCentralManager: NSObject {
     @available(iOS 13.1, macOS 10.15, tvOS 13.1, watchOS 6.1, *)
     open class var authorization: CBMManagerAuthorization {
         if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
-           let authotization = CBMManagerAuthorization(rawValue: rawValue) {
-            return authotization
+           let authorization = CBMManagerAuthorization(rawValue: rawValue) {
+            return authorization
         } else {
             return CBCentralManager.authorization
         }

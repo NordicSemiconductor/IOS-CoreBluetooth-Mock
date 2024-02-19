@@ -54,7 +54,7 @@ public enum CBMProximity {
 /// Advertisement configuration.
 ///
 /// This config includes the advertisement data, interval, initial delay and a flag
-/// indicating thether the advertisement is also broadcasted when the device is in
+/// indicating whether the advertisement is also broadcasted when the device is in
 /// connected state.
 ///
 /// The advertisement config is set in ``CBMPeripheralSpec/Builder/advertising(advertisementData:withInterval:delay:alsoWhenConnected:)``
@@ -68,7 +68,7 @@ public struct CBMAdvertisementConfig {
     public let data: [String : Any]
     /// The advertising interval.
     ///
-    /// If the intetval is 0, the advertisement will be fired only once. In that case use the `delay`
+    /// If the interval is 0, the advertisement will be fired only once. In that case use the `delay`
     /// parameter to specify when the advertisement is to be sent.
     public let interval: TimeInterval
     /// The delay of the first advertising packet of that type.
@@ -87,7 +87,7 @@ public struct CBMAdvertisementConfig {
     /// Creates an advertising configuration.
     /// - Parameters:
     ///   - data: The data that will be advertised. Only the iOS-supported keys are available.
-    ///   - interval: The advertising ingterval in seconds.
+    ///   - interval: The advertising interval in seconds.
     ///   - delay: The delay to the first packet, in seconds.
     ///   - isAdvertisingWhenConnected: Whether the device advertises also when in
     ///                                 connected state.
@@ -166,7 +166,7 @@ public class CBMPeripheralSpec {
     /// Min value is 23, max 517.
     ///
     /// The maximum value length for Write Without Response is MTU - 3 bytes, as 3 bytes
-    /// are reserved for the Hndle number and Op Code on the GATT layer.
+    /// are reserved for the Handle number and Op Code on the GATT layer.
     public let mtu: Int?
     /// The delegate that will handle connection requests.
     public let connectionDelegate: CBMPeripheralSpecDelegate?
@@ -319,7 +319,7 @@ public class CBMPeripheralSpec {
     /// Simulates a change in the advertising packet.
     ///
     /// The delays in the config will be applied from the time this method is called.
-    /// - Parameter advertisement: The new advertrising configuration.
+    /// - Parameter advertisement: The new advertising configuration.
     /// - Since: 0.15.0
     public func simulateAdvertisementChange(_ advertisement: [CBMAdvertisementConfig]?) {
         CBMCentralManagerMock.peripheral(self, didChangeAdvertisement: advertisement)
@@ -379,7 +379,7 @@ public class CBMPeripheralSpec {
         private var services: [CBMServiceMock]? = nil
         /// The connection interval, in seconds.
         private var connectionInterval: TimeInterval? = nil
-        /// The MTU (Maximul Transfer Unit). Min value is 23, max 517.
+        /// The MTU (Maximum Transfer Unit). Min value is 23, max 517.
         /// The maximum value length for Write Without Response is
         /// MTU - 3 bytes.
         private var mtu: Int? = nil
@@ -404,7 +404,7 @@ public class CBMPeripheralSpec {
         ///                               `false`.
         /// - Returns: The builder.
         /// - Note: Starting from version 0.15.0 this method may be called multiple times
-        ///         if the device advertises with muiltiple different packets.
+        ///         if the device advertises with multiple different packets.
         public func advertising(advertisementData: [String : Any],
                                 withInterval interval: TimeInterval = 0.100,
                                 delay: TimeInterval = 0.0,
@@ -484,7 +484,7 @@ public class CBMPeripheralSpec {
         /// without scanning.
         ///
         /// That means, that the manager has perviously scanned and cached the
-        /// peripheral and can obtain it by the identfier.
+        /// peripheral and can obtain it by the identifier.
         public func allowForRetrieval() -> Builder {
             self.isKnown = true
             return self
