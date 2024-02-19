@@ -1,5 +1,5 @@
 PODS:
-  - CoreBluetoothMock (0.17.0)
+  - CoreBluetoothMock (0.18.0)
 
 DEPENDENCIES:
   - CoreBluetoothMock (from `../`)
