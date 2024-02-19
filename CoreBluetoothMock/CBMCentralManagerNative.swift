@@ -131,7 +131,15 @@ public class CBMCentralManagerNative: CBMCentralManager {
         
         func centralManager(_ central: CBCentralManager,
                             willRestoreState dict: [String : Any]) {
-            manager.delegate?.centralManager(manager, willRestoreState: dict)
+            var state = dict
+            
+            if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
+                state[CBMCentralManagerRestoredStatePeripheralsKey] = peripherals.map {
+                    CBMPeripheralNative($0)
+                }
+            }
+                        
+            manager.delegate?.centralManager(manager, willRestoreState: state)
         }
     }
     
