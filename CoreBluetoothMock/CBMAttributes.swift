@@ -163,7 +163,7 @@ open class CBMServiceMock: CBMService {
     ///   - uuid: The Bluetooth UUID of the service.
     ///   - isPrimary: The type of the service (primary or secondary).
     ///   - includedServices: Optional array of included services.
-    ///   - characteristics: Optional aray of characteristics.
+    ///   - characteristics: Optional array of characteristics.
     public init(type uuid: CBMUUID, primary isPrimary: Bool,
                 includedService: [CBMServiceMock]? = nil,
                 characteristics: [CBMCharacteristicMock]? = nil) {
@@ -312,7 +312,7 @@ open class CBMCharacteristicMock: CBMCharacteristic {
 
 /// An object that provides further information about a remote peripheral’s characteristic.
 ///
-/// `CBMDescriptor` represents a descriptor of a peripheral’s characteristic. In partcular, `CBMDescriptor` objects
+/// `CBMDescriptor` represents a descriptor of a peripheral’s characteristic. In particular, `CBMDescriptor` objects
 /// represent the descriptors of a remote peripheral’s characteristic. Descriptors provide further information about a
 /// characteristic’s value. For example, they may describe the value in human-readable form and describe how to format
 /// the value for presentation purposes. Characteristic descriptors also indicate whether a characteristic’s value indicates

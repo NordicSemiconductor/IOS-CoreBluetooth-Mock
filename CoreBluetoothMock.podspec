@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'CoreBluetoothMock'
-  s.version          = '0.17.0'
+  s.version          = '0.18.0'
   s.summary          = 'Mocking library for CoreBluetooth.'
 
   s.description      = <<-DESC
@@ -13,12 +13,15 @@ device and test the app on simulator.
   s.author           = { 'Aleksander Nowakowski' => 'aleksander.nowakowski@nordicsemi.no' }
   s.source           = { :git => 'https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock.git', :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/nordictweets'
+  s.swift_versions   = ['4.2', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7', '5.8', '5.9']
 
-  s.ios.deployment_target = '11.0'
-  s.osx.deployment_target = '10.13'
-  s.tvos.deployment_target = '11.0'
+  s.ios.deployment_target = '12.0'
+  s.osx.deployment_target = '10.14'
+  s.tvos.deployment_target = '12.0'
   s.watchos.deployment_target = '4.0'
-  s.swift_versions = ['4.2', '5.0', '5.1', '5.2', '5.3', '5.4', '5.5', '5.6']
 
   s.source_files = 'CoreBluetoothMock/**/*'
+  s.resource_bundles = {
+    'PrivacyInfo' => ['PrivacyInfo.xcprivacy']
+  }
 end

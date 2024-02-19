@@ -418,7 +418,7 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
             impl.delegate?.peripheral(impl, didOpen: channel, error: error)
         }
         
-        /// Updates the local list of serivces with received ones.
+        /// Updates the local list of services with received ones.
         /// - Parameter services: New list of services.
         private func smartCopy(_ services: [CBService]?) {
             guard let services = services else {

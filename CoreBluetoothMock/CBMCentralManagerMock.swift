@@ -207,7 +207,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         guard mock.proximity != .outOfRange else {
             return
         }
-        // If the device is connected and does not advetise in that state, skip.
+        // If the device is connected and does not advertise in that state, skip.
         guard !mock.isConnected || config.isAdvertisingWhenConnected else {
             return
         }
@@ -235,7 +235,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 let peripheral = manager.peripherals[mock.identifier]!
                 
                 // If the Allow Duplicates flag was not set and the device was already reported,
-                // don't report it for th second time
+                // don't report it for the second time
                 let allowDuplicates = manager.scanOptions?[CBMCentralManagerScanOptionAllowDuplicatesKey] as? NSNumber ?? false as NSNumber
                 if !peripheral.wasScanned || allowDuplicates.boolValue {
                     // Remember the scanned name from the last advertising packet.
@@ -348,7 +348,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     // MARK: - Central manager simulation methods
     
-    /// This method may be used to register a list ot ``CBMPeripheralPreview`` should they be used in Swift UI Previews.
+    /// This method may be used to register a list of ``CBMPeripheralPreview`` should they be used in Swift UI Previews.
     ///
     /// Registered peripherals can be connected, retrieved, and respond to basic requests
     /// - Parameter peripherals: The list of peripherals intended for Swift UI purposes.
@@ -363,7 +363,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// All manager delegates will receive a ``CBMManagerState/unknown`` state update.
     public static func tearDownSimulation() {
         stopAdvertising()
-        // Set the state of all currently existing cenral manager instances to
+        // Set the state of all currently existing central manager instances to
         // .unknown, which will make them invalid.
         managerState = .unknown
         // Remove all central manager instances.
@@ -656,8 +656,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
     @available(watchOS, introduced: 6.0, deprecated: 6.1)
     open override var authorization: CBMManagerAuthorization {
         if let rawValue = CBMCentralManagerMock.bluetoothAuthorization,
-           let authotization = CBMManagerAuthorization(rawValue: rawValue) {
-            return authotization
+           let authorization = CBMManagerAuthorization(rawValue: rawValue) {
+            return authorization
         } else {
             // If `simulateAuthorization(:)` was not called, .allowedAlways is assumed.
             return .allowedAlways
@@ -952,7 +952,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         // If the device is already connected (using a different central manager),
-        // report success immediatly. The device already has the connection with central
+        // report success immediately. The device already has the connection with central
         // and will not be notified about another virtual client connection.
         if isAlreadyConnected {
             queue.async { [weak self] in
