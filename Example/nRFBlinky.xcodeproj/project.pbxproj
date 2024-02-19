@@ -130,6 +130,7 @@
 		DE38B9C36EDC9D3F334FA8B0 /* Pods_nRFBlinky_nRFBlinky_UITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_nRFBlinky_nRFBlinky_UITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF2A391A629B418AF377967D /* CoreBluetoothMock.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CoreBluetoothMock.podspec; path = ../CoreBluetoothMock.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		EF952C1221D6FC1BB09999FC /* Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig"; path = "Target Support Files/Pods-nRFBlinky-nRFBlinky_UITests/Pods-nRFBlinky-nRFBlinky_UITests.release.xcconfig"; sourceTree = "<group>"; };
+		F04F4A2C2B839E67004E7942 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F0A6C9F129A9100200FA75EB /* AdvertisingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvertisingTest.swift; sourceTree = "<group>"; };
 		F0A6C9F329ACA59A00FA75EB /* nRFBlinky.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = nRFBlinky.entitlements; path = nRFBlinky/nRFBlinky.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -264,6 +265,7 @@
 			isa = PBXGroup;
 			children = (
 				F0A6C9F329ACA59A00FA75EB /* nRFBlinky.entitlements */,
+				F04F4A2C2B839E67004E7942 /* PrivacyInfo.xcprivacy */,
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
 				607FACD21AFB9204008FA782 /* nRF Blinky Example */,
 				52A648EF240E83F000817F2F /* Tests */,

@@ -21,8 +21,7 @@ device and test the app on simulator.
   s.watchos.deployment_target = '4.0'
 
   s.source_files = 'CoreBluetoothMock/**/*'
-  s.exclude_files = [ 'CoreBluetoothMock/PrivacyInfo.xcprivacy' ]
   s.resource_bundles = {
-    'PrivacyInfo' => ['CoreBluetoothMock/PrivacyInfo.xcprivacy']
+    'PrivacyInfo' => ['PrivacyInfo.xcprivacy']
   }
 end
