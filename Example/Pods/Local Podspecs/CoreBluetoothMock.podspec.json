@@ -36,6 +36,9 @@
     "watchos": "4.0"
   },
   "source_files": "CoreBluetoothMock/**/*",
+  "exclude_files": [
+    "CoreBluetoothMock/PrivacyInfo.xcprivacy"
+  ],
   "resource_bundles": {
     "PrivacyInfo": [
       "CoreBluetoothMock/PrivacyInfo.xcprivacy"
