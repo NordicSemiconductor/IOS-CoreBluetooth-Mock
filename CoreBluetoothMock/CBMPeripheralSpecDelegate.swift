@@ -251,155 +251,113 @@ public protocol CBMPeripheralSpecDelegate {
 public extension CBMPeripheralSpecDelegate {
 
     func reset() {
-        // Empty default implementation
+        // No-op.
     }
 
-    func peripheralDidReceiveConnectionRequest(_ peripheral: CBMPeripheralSpec)
-        -> Result<Void, Error> {
-            return .success(())
+    func peripheralDidReceiveConnectionRequest(_ peripheral: CBMPeripheralSpec) -> Result<Void, Error> {
+        .success(())
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec, didDisconnect error: Error?) {
         assert(peripheral.virtualConnections == 0)
     }
     
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?)
-        -> Result<Void, Error> {
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?) -> Result<Void, Error> {
+            
+        .success(())
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?, for service: CBMService) -> Result<Void, Error> {
+            
+        .success(())
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?, for service: CBMServiceMock) -> Result<Void, Error> {
+            
+        peripheral(p, didReceiveIncludedServiceDiscoveryRequest: serviceUUIDs, for: service)
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?, for service: CBMService) -> Result<Void, Error> {
+        .success(())
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?, for service: CBMServiceMock) -> Result<Void, Error> {
+            
+        peripheral(p, didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs, for: service)
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristic) -> Result<Void, Error> {
+        .success(())
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristicMock) -> Result<Void, Error> {
+            
+        peripheral(p, didReceiveDescriptorsDiscoveryRequestFor: characteristic)
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveReadRequestFor characteristic: CBMCharacteristic) -> Result<Data, Error> {
+            
+        .failure(CBMATTError(.readNotPermitted))
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveReadRequestFor characteristic: CBMCharacteristicMock) -> Result<Data, Error> {
+            
+        peripheral(p, didReceiveReadRequestFor: characteristic)
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveReadRequestFor descriptor: CBMDescriptor) -> Result<Data, Error> {
+            
+        .failure(CBMATTError(.readNotPermitted))
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveReadRequestFor descriptor: CBMDescriptorMock) -> Result<Data, Error> {
+            
+        peripheral(p, didReceiveReadRequestFor: descriptor)
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveWriteRequestFor characteristic: CBMCharacteristic, data: Data) -> Result<Void, Error> {
+            
+        .failure(CBMATTError(.writeNotPermitted))
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveWriteRequestFor characteristic: CBMCharacteristicMock, data: Data) -> Result<Void, Error> {
+            
+        peripheral(p, didReceiveWriteRequestFor: characteristic, data: data)
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveWriteCommandFor characteristic: CBMCharacteristic, data: Data) {
+        // No-op.
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveWriteCommandFor characteristic: CBMCharacteristicMock, data: Data) {
+        peripheral(p, didReceiveWriteCommandFor: characteristic, data: data)
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveWriteRequestFor descriptor: CBMDescriptor, data: Data) -> Result<Void, Error> {
+            
+        .failure(CBATTError(.writeNotPermitted))
+    }
+    
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveWriteRequestFor descriptor: CBMDescriptorMock, data: Data) -> Result<Void, Error> {
+            
+        peripheral(p, didReceiveWriteRequestFor: descriptor, data: data)
+    }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didReceiveSetNotifyRequest enabled: Bool, for characteristic: CBMCharacteristic) -> Result<Void, Error> {
+            
+        if !characteristic.properties.isDisjoint(with: [.notify, .indicate, .notifyEncryptionRequired, .indicateEncryptionRequired]) {
             return .success(())
+        } else {
+            return .failure(CBMError(.invalidHandle))
+        }
     }
     
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
-                    for service: CBMService)
-        -> Result<Void, Error> {
-            return .success(())
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
-                    for service: CBMServiceMock)
-        -> Result<Void, Error> {
-            return peripheral(p, didReceiveIncludedServiceDiscoveryRequest: serviceUUIDs, for: service as CBMService)
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
-                    for service: CBMService)
-        -> Result<Void, Error> {
-            return .success(())
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
-                    for service: CBMServiceMock)
-        -> Result<Void, Error> {
-            return peripheral(p, didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs, for: service as CBMService)
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristic)
-        -> Result<Void, Error> {
-            return .success(())
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristicMock)
-        -> Result<Void, Error> {
-            return peripheral(p, didReceiveDescriptorsDiscoveryRequestFor: characteristic as CBMCharacteristic)
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveReadRequestFor characteristic: CBMCharacteristic)
-        -> Result<Data, Error> {
-            return .failure(CBMATTError(.readNotPermitted))
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
-        -> Result<Data, Error> {
-            return peripheral(p, didReceiveReadRequestFor: characteristic as CBMCharacteristic)
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveReadRequestFor descriptor: CBMDescriptor)
-        -> Result<Data, Error> {
-            return .failure(CBMATTError(.readNotPermitted))
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveReadRequestFor descriptor: CBMDescriptorMock)
-        -> Result<Data, Error> {
-            return peripheral(p, didReceiveReadRequestFor: descriptor as CBMDescriptor)
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveWriteRequestFor characteristic: CBMCharacteristic,
-                    data: Data)
-        -> Result<Void, Error> {
-            return .failure(CBMATTError(.writeNotPermitted))
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveWriteRequestFor characteristic: CBMCharacteristicMock,
-                    data: Data)
-        -> Result<Void, Error> {
-            return peripheral(p, didReceiveWriteRequestFor: characteristic as CBMCharacteristic, data: data)
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveWriteCommandFor characteristic: CBMCharacteristic,
-                    data: Data) {
-        // Empty default implementation
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveWriteCommandFor characteristic: CBMCharacteristicMock,
-                    data: Data) {
-        peripheral(p, didReceiveWriteCommandFor: characteristic as CBMCharacteristic, data: data)
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveWriteRequestFor descriptor: CBMDescriptor,
-                    data: Data)
-        -> Result<Void, Error> {
-            return .failure(CBATTError(.writeNotPermitted))
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveWriteRequestFor descriptor: CBMDescriptorMock,
-                    data: Data)
-        -> Result<Void, Error> {
-            return peripheral(p, didReceiveWriteRequestFor: descriptor as CBMDescriptor, data: data)
-    }
-    
-    func peripheral(_ peripheral: CBMPeripheralSpec,
-                    didReceiveSetNotifyRequest enabled: Bool,
-                    for characteristic: CBMCharacteristic)
-        -> Result<Void, Error> {
-            if !characteristic.properties
-                .isDisjoint(with: [
-                    .notify,
-                    .indicate,
-                    .notifyEncryptionRequired,
-                    .indicateEncryptionRequired]) {
-                return .success(())
-            } else {
-                return .failure(CBMError(.invalidHandle))
-            }
-    }
-    
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didReceiveSetNotifyRequest enabled: Bool,
-                    for characteristic: CBMCharacteristicMock)
-        -> Result<Void, Error> {
-            return peripheral(p, didReceiveSetNotifyRequest: enabled, for: characteristic as CBMCharacteristic)
+    func peripheral(_ p: CBMPeripheralSpec, didReceiveSetNotifyRequest enabled: Bool, for characteristic: CBMCharacteristicMock) -> Result<Void, Error> {
+            
+        peripheral(p, didReceiveSetNotifyRequest: enabled, for: characteristic)
     }
   
-    func peripheral(_ p: CBMPeripheralSpec,
-                    didUpdateNotificationStateFor characteristic: CBMCharacteristicMock,
-                    error: Error?) {
-        // Empty default implementation
+    func peripheral(_ p: CBMPeripheralSpec, didUpdateNotificationStateFor characteristic: CBMCharacteristicMock, error: Error?) {
+        // No-op.
     }
-
 }
