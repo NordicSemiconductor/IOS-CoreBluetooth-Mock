@@ -38,7 +38,7 @@ public class CBMCentralManagerNative: CBMCentralManager {
     var observation: NSKeyValueObservation?
     @objc dynamic private var manager: CBCentralManager!
     private var wrapper: CBCentralManagerDelegate!
-    private var peripherals: [UUID : CBMPeripheralNative] = [:]
+    private var peripherals = CBMDictionary<UUID, CBMPeripheralNative>()
     
     private class CBMCentralManagerDelegateWrapper: NSObject, CBCentralManagerDelegate {
         fileprivate weak var manager: CBMCentralManagerNative! // weak to avoid cyclic reference (#9)
