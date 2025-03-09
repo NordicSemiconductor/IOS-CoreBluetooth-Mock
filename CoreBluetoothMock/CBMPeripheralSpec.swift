@@ -206,8 +206,8 @@ public class CBMPeripheralSpec {
         advertisement: [CBMAdvertisementConfig]?,
         services: [CBMServiceMock]?,
         connectionInterval: TimeInterval?,
-        mtu: Int?,
         supervisionTimeout: TimeInterval?,
+        mtu: Int?,
         connectionDelegate: CBMPeripheralSpecDelegate?
     ) {
         self.identifier = identifier
@@ -529,8 +529,8 @@ public class CBMPeripheralSpec {
                 advertisement: advertisement,
                 services: services,
                 connectionInterval: connectionInterval,
-                mtu: mtu,
                 supervisionTimeout: supervisionTimeout,
+                mtu: mtu,
                 connectionDelegate: connectionDelegate
             )
         }
