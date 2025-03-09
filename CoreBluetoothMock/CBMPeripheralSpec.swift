@@ -49,6 +49,14 @@ public enum CBMProximity {
         case .outOfRange: return 127
         }
     }
+    
+    /// The amount the proximity should randomly deviate when reporting RSSI
+    public enum Deviation: Int {
+        /// Zero deviation
+        case none = 0
+        /// +/- 15 dBm
+        case max = 15
+    }
 }
 
 /// Advertisement configuration.

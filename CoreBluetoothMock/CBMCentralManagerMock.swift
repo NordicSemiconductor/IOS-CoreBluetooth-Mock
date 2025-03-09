@@ -39,7 +39,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///
     /// Returned RSSI values will be in range
     /// `(base RSSI - deviation)...(base RSSI + deviation)`.
-    fileprivate static let rssiDeviation = 15 // dBm
+    ///
+    /// Defaults to maximum value of 15 dBm
+    public static var rssiDeviation: CBMProximity.Deviation = .max
     
     /// A list of all mock managers instantiated by user.
     private static var managers: [WeakRef<CBMCentralManagerMock>] = []
@@ -242,7 +244,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     peripheral.lastAdvertisedName = config.data[CBAdvertisementDataLocalNameKey] as? String ?? peripheral.lastAdvertisedName
                     // Emulate RSSI based on proximity. Apply some deviation.
                     let rssi = mock.proximity.RSSI
-                    let delta = CBMCentralManagerMock.rssiDeviation
+                    let delta = CBMCentralManagerMock.rssiDeviation.rawValue
                     let deviation = Int.random(in: -delta...delta)
                     manager.delegate?.centralManager(manager, didDiscover: peripheral,
                                                      advertisementData: config.data,
@@ -1550,7 +1552,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         queue.async { [weak self] in
             if let self = self, self.state == .connected {
                 let rssi = self.mock.proximity.RSSI
-                let delta = CBMCentralManagerMock.rssiDeviation
+                let delta = CBMCentralManagerMock.rssiDeviation.rawValue
                 let deviation = Int.random(in: -delta...delta)
                 self.delegate?.peripheral(self, didReadRSSI: (rssi + deviation) as NSNumber,
                                           error: nil)
