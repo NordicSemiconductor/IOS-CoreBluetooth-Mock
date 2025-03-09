@@ -887,10 +887,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// can be written without response in a loop, without
     /// waiting for ``CBMPeripheral/canSendWriteWithoutResponse``.
     private let bufferSize = 20
-    /// The supervision timeout is a time after which a device realizes
-    /// that a connected peer has disconnected, had there been no signal
-    /// from it.
-    private let supervisionTimeout = 4.0
     /// The current buffer size.
     private var availableWriteWithoutResponseBuffer: Int
     private var _canSendWriteWithoutResponse: Bool = false
@@ -1026,8 +1022,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // If a device disconnected with a timeout, the central waits
         // for the duration of supervision timeout before accepting
         // disconnection.
-        if let error = error as? CBMError, error.code == .connectionTimeout {
-            interval = supervisionTimeout
+        if let error = error as? CBMError, error.code == .connectionTimeout, let timeout = mock.supervisionTimeout {
+            interval = timeout
         }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, CBMCentralManagerMock.managerState == .poweredOn {

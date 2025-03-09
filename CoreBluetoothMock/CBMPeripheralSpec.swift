@@ -168,6 +168,10 @@ public class CBMPeripheralSpec {
     /// The maximum value length for Write Without Response is MTU - 3 bytes, as 3 bytes
     /// are reserved for the Handle number and Op Code on the GATT layer.
     public let mtu: Int?
+    /// The supervision timeout is a time after which a device realizes
+    /// that a connected peer has disconnected, had there been no signal
+    /// from it.
+    public let supervisionTimeout: TimeInterval?
     /// The delegate that will handle connection requests.
     public let connectionDelegate: CBMPeripheralSpecDelegate?
     /// A flag indicating whether the device is connected.
@@ -195,6 +199,7 @@ public class CBMPeripheralSpec {
         services: [CBMServiceMock]?,
         connectionInterval: TimeInterval?,
         mtu: Int?,
+        supervisionTimeout: TimeInterval?,
         connectionDelegate: CBMPeripheralSpecDelegate?
     ) {
         self.identifier = identifier
@@ -206,6 +211,7 @@ public class CBMPeripheralSpec {
         self.services = services
         self.connectionInterval = connectionInterval
         self.mtu = mtu
+        self.supervisionTimeout = supervisionTimeout
         self.connectionDelegate = connectionDelegate
         self.wasConnected = isInitiallyConnected
     }
@@ -383,6 +389,10 @@ public class CBMPeripheralSpec {
         /// The maximum value length for Write Without Response is
         /// MTU - 3 bytes.
         private var mtu: Int? = nil
+        /// The supervision timeout is a time after which a device realizes
+        /// that a connected peer has disconnected, had there been no signal
+        /// from it.
+        private var supervisionTimeout: TimeInterval? = 4.0
         /// The delegate that will handle connection requests.
         private var connectionDelegate: CBMPeripheralSpecDelegate?
         
@@ -431,6 +441,9 @@ public class CBMPeripheralSpec {
         ///   - connectionDelegate: The connection delegate that will handle
         ///                         GATT requests.
         ///   - connectionInterval: Connection interval, in seconds.
+        ///   - supervisionTimeout: A time after which a device realizes
+        ///                         that a connected peer has disconnected, had 
+        ///                         there been no signal from it.
         ///   - mtu: The MTU (Maximum Transfer Unit). Min 23 (default), max 517.
         ///          The maximum value length for Write Without Response is
         ///          MTU - 3 bytes (3 bytes are used by GATT for handle and
@@ -439,11 +452,13 @@ public class CBMPeripheralSpec {
                                 services: [CBMServiceMock],
                                 delegate: CBMPeripheralSpecDelegate?,
                                 connectionInterval: TimeInterval = 0.045,
+                                supervisionTimeout: TimeInterval = 4.0,
                                 mtu: Int = 23) -> Builder {
             self.name = name
             self.services = services
             self.connectionDelegate = delegate
             self.connectionInterval = connectionInterval
+            self.supervisionTimeout = supervisionTimeout
             self.mtu = max(23, min(517, mtu))
             self.isInitiallyConnected = false
             return self
@@ -460,6 +475,9 @@ public class CBMPeripheralSpec {
         ///   - connectionDelegate: The connection delegate that will handle
         ///                         GATT requests.
         ///   - connectionInterval: Connection interval, in seconds.
+        ///   - supervisionTimeout: A time after which a device realizes
+        ///                         that a connected peer has disconnected, had
+        ///                         there been no signal from it.
         ///   - mtu: The MTU (Maximum Transfer Unit). Min 23 (default), max 517.
         ///          The maximum value length for Write Without Response is
         ///          MTU - 3 bytes (3 bytes are used by GATT for handle and
@@ -468,11 +486,13 @@ public class CBMPeripheralSpec {
                               services: [CBMServiceMock],
                               delegate: CBMPeripheralSpecDelegate?,
                               connectionInterval: TimeInterval = 0.045,
+                              supervisionTimeout: Double = 4.0,
                               mtu: Int = 23) -> Builder {
             self.name = name
             self.services = services
             self.connectionDelegate = delegate
             self.connectionInterval = connectionInterval
+            self.supervisionTimeout = supervisionTimeout
             self.mtu = max(23, min(517, mtu))
             self.isInitiallyConnected = proximity != .outOfRange
             self.isKnown = true
@@ -502,6 +522,7 @@ public class CBMPeripheralSpec {
                 services: services,
                 connectionInterval: connectionInterval,
                 mtu: mtu,
+                supervisionTimeout: supervisionTimeout,
                 connectionDelegate: connectionDelegate
             )
         }
