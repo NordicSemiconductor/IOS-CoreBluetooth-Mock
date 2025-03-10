@@ -35,13 +35,7 @@ import CoreBluetooth
 /// This implementation will interact only with mock peripherals created using
 /// ``CBMPeripheralSpec/simulatePeripheral(identifier:proximity:)``.
 open class CBMCentralManagerMock: CBMCentralManager {
-    /// Mock RSSI deviation.
-    ///
-    /// Returned RSSI values will be in range
-    /// `(base RSSI - deviation)...(base RSSI + deviation)`.
-    ///
-    /// Defaults to maximum value of 15 dBm
-    public static var rssiDeviation: CBMProximity.Deviation = .max
+
     
     /// A list of all mock managers instantiated by user.
     private static var managers: [WeakRef<CBMCentralManagerMock>] = []
@@ -68,6 +62,15 @@ open class CBMCentralManagerMock: CBMCentralManager {
             notifyManagers()
         }
     }
+    
+    /// Mock RSSI deviation.
+    ///
+    /// Returned RSSI values will be in range
+    /// `(base RSSI - deviation)...(base RSSI + deviation)`.
+    ///
+    /// Defaults to maximum value of 15 dBm
+    internal private(set) static var rssiDeviation: CBMProximity.Deviation = .max
+    
     /// The global state of the Bluetooth adapter on the device.
     fileprivate private(set) static var managerState: CBMManagerState = .poweredOff {
         didSet {
@@ -383,6 +386,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     public static func simulateAuthorization(_ authorization: CBMManagerAuthorization) {
         bluetoothAuthorization = authorization.rawValue
+    }
+    
+    /// Simulates the degree of variability in the reported RSSI
+    ///
+    /// - NOTE: For unit testing, it is recommended to set this value to `.none`
+    public static func simulateRSSIDeviation(_ deviation: CBMProximity.Deviation) {
+        rssiDeviation = deviation
     }
     
     /// This simulation method is called when a mock central manager was
