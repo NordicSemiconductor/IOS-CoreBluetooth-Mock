@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2020, Nordic Semiconductor
+* Copyright (c) 2025, Nordic Semiconductor
 * All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification,
@@ -33,8 +33,8 @@ import Foundation
 /// A thread-safe dictionary implementation that uses a concurrent dispatch queue for synchronization.
 ///
 /// - NOTE: This dictionary wrapper does not implement every possible operation and can be expanded as needed
-/// for future use
-class CBMDictionary<Key: Hashable, Value> {
+/// for future use.
+internal class CBMDictionary<Key: Hashable, Value> {
     private var dictStorage = [Key: Value]()
     
     /// A concurrent queue used for synchronizing access to the dictionary
@@ -121,7 +121,7 @@ class CBMDictionary<Key: Hashable, Value> {
     }
     
     /// Removes all key-value pairs from the dictionary
-    /// 
+    ///
     /// Uses a private queue to ensure thread-safe access when calling `.removeAll`
     /// on the underlying dictionary.
     func removeAll() {
