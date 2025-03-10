@@ -55,7 +55,7 @@ public enum CBMProximity {
         /// Zero deviation
         case none = 0
         /// +/- 15 dBm
-        case max = 15
+        case `default` = 15
     }
 }
 

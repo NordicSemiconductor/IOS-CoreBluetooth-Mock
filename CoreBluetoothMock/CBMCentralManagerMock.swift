@@ -69,7 +69,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// `(base RSSI - deviation)...(base RSSI + deviation)`.
     ///
     /// Defaults to maximum value of 15 dBm
-    internal private(set) static var rssiDeviation: CBMProximity.Deviation = .max
+    internal private(set) static var rssiDeviation: CBMProximity.Deviation = .default
     
     /// The global state of the Bluetooth adapter on the device.
     fileprivate private(set) static var managerState: CBMManagerState = .poweredOff {
@@ -377,6 +377,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         // Set the manager state to powered Off.
         managerState = .poweredOff
+        // Reset the RSSI deviation to the default
+        rssiDeviation = .default
         peripherals.removeAll()
     }
     
