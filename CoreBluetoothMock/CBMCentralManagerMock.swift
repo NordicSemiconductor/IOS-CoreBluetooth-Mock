@@ -68,7 +68,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// Returned RSSI values will be in range
     /// `(base RSSI - deviation)...(base RSSI + deviation)`.
     ///
-    /// Defaults to maximum value of 15 dBm
+    /// Defaults to 15 dBm.
     internal private(set) static var rssiDeviation: CBMProximity.Deviation = .default
     
     /// The global state of the Bluetooth adapter on the device.
@@ -247,7 +247,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     peripheral.lastAdvertisedName = config.data[CBAdvertisementDataLocalNameKey] as? String ?? peripheral.lastAdvertisedName
                     // Emulate RSSI based on proximity. Apply some deviation.
                     let rssi = mock.proximity.RSSI
-                    let delta = CBMCentralManagerMock.rssiDeviation.rawValue
+                    let delta = CBMCentralManagerMock.rssiDeviation.value
                     let deviation = Int.random(in: -delta...delta)
                     manager.delegate?.centralManager(manager, didDiscover: peripheral,
                                                      advertisementData: config.data,
@@ -390,9 +390,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
         bluetoothAuthorization = authorization.rawValue
     }
     
-    /// Simulates the degree of variability in the reported RSSI
+    /// Simulates the degree of variability in the reported RSSI.
     ///
-    /// - NOTE: For unit testing, it is recommended to set this value to `.none`
+    /// - NOTE: For unit testing, it is recommended to set this value to `.none`.
     public static func simulateRSSIDeviation(_ deviation: CBMProximity.Deviation) {
         rssiDeviation = deviation
     }
@@ -1564,7 +1564,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         queue.async { [weak self] in
             if let self = self, self.state == .connected {
                 let rssi = self.mock.proximity.RSSI
-                let delta = CBMCentralManagerMock.rssiDeviation.rawValue
+                let delta = CBMCentralManagerMock.rssiDeviation.value
                 let deviation = Int.random(in: -delta...delta)
                 self.delegate?.peripheral(self, didReadRSSI: (rssi + deviation) as NSNumber,
                                           error: nil)

@@ -50,12 +50,25 @@ public enum CBMProximity {
         }
     }
     
-    /// The amount the proximity should randomly deviate when reporting RSSI
-    public enum Deviation: Int {
-        /// Zero deviation
-        case none = 0
-        /// +/- 15 dBm
-        case `default` = 15
+    /// The amount the proximity should randomly deviate when reporting RSSI.
+    public enum Deviation {
+        /// Zero deviation from a proximity's preset RSSI.
+        case none
+        /// +/- 15 dBm deviation from a proximity's preset RSSI.
+        case `default`
+        /// A custom deviation from a proximity's preset RSSI.
+        ///
+        /// This should be a positive value. If a negative value is provided,
+        /// its absolute value is used when determining RSSI deviation.
+        case custom(_ deviation: Int)
+        
+        internal var value: Int {
+            switch self {
+            case .none:              return 0
+            case .default:           return 15
+            case .custom(let value): return abs(value)
+            }
+        }
     }
 }
 
@@ -494,7 +507,7 @@ public class CBMPeripheralSpec {
                               services: [CBMServiceMock],
                               delegate: CBMPeripheralSpecDelegate?,
                               connectionInterval: TimeInterval = 0.045,
-                              supervisionTimeout: Double = 4.0,
+                              supervisionTimeout: TimeInterval = 4.0,
                               mtu: Int = 23) -> Builder {
             self.name = name
             self.services = services
