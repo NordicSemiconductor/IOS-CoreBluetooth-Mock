@@ -51,7 +51,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// Registered items can be accessed using any ``CBMCentralManagerMock``.
     private static var previewPeripherals: Set<CBMPeripheralPreview> = Set()
     /// A map of all current advertisements of all simulated peripherals.
-    private static var advertisementTimers: [CBMAdvertisementConfig : Timer] = [:]
+    private static var advertisementTimers = CBMDictionary<CBMAdvertisementConfig, Timer>()
     /// A mutex queue for managing managers.
     private static let mutex: DispatchQueue = DispatchQueue(label: "Mutex")
     /// The value of current authorization status for using Bluetooth.
