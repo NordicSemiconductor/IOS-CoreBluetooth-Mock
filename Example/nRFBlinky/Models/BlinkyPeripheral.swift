@@ -88,7 +88,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
                 self.post(.blinkyDidDisconnect(self, error: nil))
             }
         }
-        onConnected {
+        _ = onConnected {
             self.discoverBlinkyServices()
         }
     }

@@ -12,3 +12,7 @@
 "UNKNOWN" = "未知状态";
 "Reading..." = "读取...";
 "Unknown Device" = "未知设备";
+"Error" = "错误";
+"Connection failed." = "连接失败。";
+"Device has disconnected." = "设备已断开。";
+"OK" = "好的";

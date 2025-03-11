@@ -12,3 +12,7 @@
 "UNKNOWN" = "알 수 없음";
 "Reading..." = "읽는 중...";
 "Unknown Device" = "알 수 없는 기기";
+"Error" = "오류";
+"Connection failed." = "연결 실패.";
+"Device has disconnected." = "이 디바이스가 꺼져 있거나 연결이 끊겼습니다.";
+"OK" = "확인";

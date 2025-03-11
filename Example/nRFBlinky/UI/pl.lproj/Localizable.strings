@@ -12,4 +12,8 @@
 "UNKNOWN" = "NIEZNANY";
 "Reading..." = "Pobieranie...";
 "Unknown Device" = "Nieznane urządzenie";
+"Error" = "Błąd";
+"Connection failed." = "Błąd połączenia.";
+"Device has disconnected." = "Połączenie zostało zerwane.";
+"OK" = "OK";
 

@@ -32,7 +32,7 @@ import Foundation
 
 /// A thread-safe dictionary implementation that uses a concurrent dispatch queue for synchronization.
 ///
-/// - NOTE: This dictionary wrapper does not implement every possible operation and can be expanded as needed
+/// - Note: This dictionary wrapper does not implement every possible operation and can be expanded as needed
 /// for future use.
 internal class CBMDictionary<Key: Hashable, Value> {
     private var dictStorage = [Key: Value]()

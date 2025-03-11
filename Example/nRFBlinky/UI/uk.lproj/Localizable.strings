@@ -12,3 +12,7 @@
 "UNKNOWN" = "НЕВІДОМО";
 "Reading..." = "Читання...";
 "Unknown Device" = "Невідомий пристрій";
+"Error" = "Помилка";
+"Connection failed." = "Підключення не вдалося.";
+"Device has disconnected." = "Пристрій відключено.";
+"OK" = "Добре";

@@ -12,3 +12,7 @@
 "UNKNOWN" = "NECUNOSCUT";
 "Reading..." = "Se actualizează starea...";
 "Unknown Device" = "Dispozitiv necunoscut";
+"Error" = "Eroare";
+"Connection failed." = "Conexiune eșuată.";
+"Device has disconnected." = "Dispozitivul s-a deconectat.";
+"OK" = "OK";

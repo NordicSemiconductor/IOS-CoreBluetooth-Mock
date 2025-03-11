@@ -12,3 +12,7 @@
 "UNKNOWN" = "अज्ञात";
 "Reading..." = "वाचले जात आहे...";
 "Unknown Device" = "अज्ञात उपकरण";
+"Error" = "त्रुटी";
+"Connection failed." = "कनेक्शन अयशस्वी झाली.";
+"Device has disconnected." = "उपकरण डिस्कनेक्ट केले आहे.";
+"OK" = "ठीक आहे";

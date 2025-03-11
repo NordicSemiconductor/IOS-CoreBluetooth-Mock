@@ -33,7 +33,7 @@ import CoreBluetoothMock
 // Copy this file to your project to start using CoreBluetoothMock classes
 // without having to refactor any of your code. You will just have to remove
 // the imports to CoreBluetooth to fix conflicts and initiate the manager
-// using CBCentralManagerFactory, instad of just creating a CBCentralManager.
+// using CBCentralManagerFactory, instead of just creating a CBCentralManager.
 
 // disabled for Xcode 12.5 beta
 //typealias CBPeer                          = CBMPeer
