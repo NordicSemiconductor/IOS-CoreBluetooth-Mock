@@ -35,11 +35,7 @@ import CoreBluetooth
 /// This implementation will interact only with mock peripherals created using
 /// ``CBMPeripheralSpec/simulatePeripheral(identifier:proximity:)``.
 open class CBMCentralManagerMock: CBMCentralManager {
-    /// Mock RSSI deviation.
-    ///
-    /// Returned RSSI values will be in range
-    /// `(base RSSI - deviation)...(base RSSI + deviation)`.
-    fileprivate static let rssiDeviation = 15 // dBm
+
     
     /// A list of all mock managers instantiated by user.
     private static var managers: [WeakRef<CBMCentralManagerMock>] = []
@@ -66,6 +62,15 @@ open class CBMCentralManagerMock: CBMCentralManager {
             notifyManagers()
         }
     }
+    
+    /// Mock RSSI deviation.
+    ///
+    /// Returned RSSI values will be in range
+    /// `(base RSSI - deviation)...(base RSSI + deviation)`.
+    ///
+    /// Defaults to 15 dBm.
+    internal private(set) static var rssiDeviation: CBMProximity.Deviation = .default
+    
     /// The global state of the Bluetooth adapter on the device.
     fileprivate private(set) static var managerState: CBMManagerState = .poweredOff {
         didSet {
@@ -242,7 +247,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     peripheral.lastAdvertisedName = config.data[CBAdvertisementDataLocalNameKey] as? String ?? peripheral.lastAdvertisedName
                     // Emulate RSSI based on proximity. Apply some deviation.
                     let rssi = mock.proximity.RSSI
-                    let delta = CBMCentralManagerMock.rssiDeviation
+                    let delta = CBMCentralManagerMock.rssiDeviation.value
                     let deviation = Int.random(in: -delta...delta)
                     manager.delegate?.centralManager(manager, didDiscover: peripheral,
                                                      advertisementData: config.data,
@@ -372,6 +377,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         // Set the manager state to powered Off.
         managerState = .poweredOff
+        // Reset the RSSI deviation to the default
+        rssiDeviation = .default
         peripherals.removeAll()
     }
     
@@ -381,6 +388,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     public static func simulateAuthorization(_ authorization: CBMManagerAuthorization) {
         bluetoothAuthorization = authorization.rawValue
+    }
+    
+    /// Simulates the degree of variability in the reported RSSI.
+    ///
+    /// - NOTE: For unit testing, it is recommended to set this value to `.none`.
+    public static func simulateRSSIDeviation(_ deviation: CBMProximity.Deviation) {
+        rssiDeviation = deviation
     }
     
     /// This simulation method is called when a mock central manager was
@@ -887,10 +901,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// can be written without response in a loop, without
     /// waiting for ``CBMPeripheral/canSendWriteWithoutResponse``.
     private let bufferSize = 20
-    /// The supervision timeout is a time after which a device realizes
-    /// that a connected peer has disconnected, had there been no signal
-    /// from it.
-    private let supervisionTimeout = 4.0
     /// The current buffer size.
     private var availableWriteWithoutResponseBuffer: Int
     private var _canSendWriteWithoutResponse: Bool = false
@@ -1026,8 +1036,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // If a device disconnected with a timeout, the central waits
         // for the duration of supervision timeout before accepting
         // disconnection.
-        if let error = error as? CBMError, error.code == .connectionTimeout {
-            interval = supervisionTimeout
+        if let error = error as? CBMError, error.code == .connectionTimeout, let timeout = mock.supervisionTimeout {
+            interval = timeout
         }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, CBMCentralManagerMock.managerState == .poweredOn {
@@ -1554,7 +1564,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         queue.async { [weak self] in
             if let self = self, self.state == .connected {
                 let rssi = self.mock.proximity.RSSI
-                let delta = CBMCentralManagerMock.rssiDeviation
+                let delta = CBMCentralManagerMock.rssiDeviation.value
                 let deviation = Int.random(in: -delta...delta)
                 self.delegate?.peripheral(self, didReadRSSI: (rssi + deviation) as NSNumber,
                                           error: nil)
