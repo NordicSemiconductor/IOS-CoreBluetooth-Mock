@@ -906,7 +906,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     private var _canSendWriteWithoutResponse: Bool = false
     
     /// A flag set to `true` when the device was scanned for the first time during
-    /// a single scan. This is to ensure that th result is not delivered twice unless
+    /// a single scan. This is to ensure that the result is not delivered twice unless
     /// ``CBMCentralManagerScanOptionAllowDuplicatesKey`` flag is set.
     fileprivate var wasScanned: Bool = false
     fileprivate var lastAdvertisedName: String? = nil
