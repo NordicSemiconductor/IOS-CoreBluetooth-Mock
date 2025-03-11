@@ -12,3 +12,7 @@
 "UNKNOWN" = "TUNTEMATON";
 "Reading..." = "Lukee...";
 "Unknown Device" = "Tuntematon laite";
+"Error" = "Virhe";
+"Connection failed." = "Yhteys epäonnistui.";
+"Device has disconnected." = "Laite on katkaissut yhteyden.";
+"OK" = "OK";

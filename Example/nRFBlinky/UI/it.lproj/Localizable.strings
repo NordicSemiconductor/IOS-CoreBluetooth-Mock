@@ -12,3 +12,7 @@
 "UNKNOWN" = "SCONOSCIUTO";
 "Reading..." = "Lettura...";
 "Unknown Device" = "Dispositivo sconosciuto";
+"Error" = "Errore";
+"Connection failed." = "Connessione fallita.";
+"Device has disconnected." = "Dispositivo disconnesso.";
+"OK" = "OK";

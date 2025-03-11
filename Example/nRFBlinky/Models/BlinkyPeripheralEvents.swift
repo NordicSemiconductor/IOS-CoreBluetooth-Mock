@@ -95,18 +95,14 @@ extension BlinkyPeripheral {
         return NotificationCenter.default.addObserver(forName: name, object: self, queue: OperationQueue.main, using: action)
     }
 
-    func onConnected(do action: @escaping () -> ()) {
-        var observer: NSObjectProtocol?
-        observer = on(.connection) { [unowned self] notification in
-            self.dispose(observer!)
+    func onConnected(do action: @escaping () -> ()) -> NSObjectProtocol {
+        return on(.connection) { notification in
             action()
         }
     }
 
-    func onReady(do action: @escaping (Bool, Bool) -> ()) {
-        var observer: NSObjectProtocol?
-        observer = on(.ready) { [unowned self] notification in
-            self.dispose(observer!)
+    func onReady(do action: @escaping (Bool, Bool) -> ()) -> NSObjectProtocol {
+        return on(.ready) { notification in
             if let userInfo = notification.userInfo,
                let ledSupported = userInfo["ledSupported"] as? Bool,
                let buttonSupported = userInfo["buttonSupported"] as? Bool {
@@ -115,10 +111,8 @@ extension BlinkyPeripheral {
         }
     }
     
-    func onConnectionError(do action: @escaping (Error?) -> ()) {
-        var observer: NSObjectProtocol?
-        observer = on(.fail) { [unowned self] notification in
-            self.dispose(observer!)
+    func onConnectionError(do action: @escaping (Error?) -> ()) -> NSObjectProtocol {
+        return on(.fail) { notification in
             if let userInfo = notification.userInfo,
                let error = userInfo["error"] as? Error? {
                 action(error)
@@ -126,10 +120,8 @@ extension BlinkyPeripheral {
         }
     }
 
-    func onDisconnected(do action: @escaping (Error?) -> ()) {
-        var observer: NSObjectProtocol?
-        observer = on(.disconnection) { [unowned self] notification in
-            self.dispose(observer!)
+    func onDisconnected(do action: @escaping (Error?) -> ()) -> NSObjectProtocol {
+        return on(.disconnection) { notification in
             if let userInfo = notification.userInfo,
                let error = userInfo["error"] as? Error {
                 action(error)

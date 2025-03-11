@@ -12,3 +12,7 @@
 "UNKNOWN" = "НЕИЗВЕСТНО";
 "Reading..." = "Чтение...";
 "Unknown Device" = "Неизвестное устройство";
+"Error" = "Ошибка";
+"Connection failed." = "Ошибка соединения.";
+"Device has disconnected." = "Устройство отключено.";
+"OK" = "Хорошо";

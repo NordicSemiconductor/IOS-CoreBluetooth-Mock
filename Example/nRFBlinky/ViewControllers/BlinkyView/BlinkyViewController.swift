@@ -34,6 +34,14 @@ class BlinkyViewController: UITableViewController {
 
     // MARK: - Outlets and Actions
 
+    @IBOutlet weak var reconnectButton: UIBarButtonItem!
+    @IBAction func reconnectTapped(_ sender: UIBarButtonItem) {
+        connectionIndicator.isHidden = false
+        reconnectButton.isEnabled = false
+        blinky.connect()
+    }
+    @IBOutlet weak var connectionIndicator: UIActivityIndicatorView!
+    
     @IBOutlet weak var ledStateLabel: UILabel!
     @IBOutlet weak var ledToggleSwitch: UISwitch!
     @IBOutlet weak var buttonStateLabel: UILabel!
@@ -46,6 +54,12 @@ class BlinkyViewController: UITableViewController {
 
     private var hapticGenerator: NSObject? // UIImpactFeedbackGenerator is available on iOS 10 and above
 
+    private var ledObserver: NSObjectProtocol!
+    private var buttonObserver: NSObjectProtocol!
+    private var readyObserver: NSObjectProtocol!
+    private var failObserver: NSObjectProtocol!
+    private var disconnectionObserver: NSObjectProtocol!
+    
     var blinky: BlinkyPeripheral! {
         didSet {
             title = blinky.advertisedName
@@ -60,24 +74,30 @@ class BlinkyViewController: UITableViewController {
         tableView.accessibilityLabel = "Blinky Control"
         tableView.accessibilityIdentifier = "control"
 
-        blinky.onReady { [unowned self] ledSupported, buttonSupported in
+        readyObserver = blinky.onReady { [unowned self] ledSupported, buttonSupported in
+            self.connectionIndicator.isHidden = true
+            self.reconnectButton.isEnabled = false
             self.blinkyDidConnect(ledSupported: ledSupported, buttonSupported: buttonSupported)
         }
-        let ledObserver = blinky.onLedStateDidChange { [unowned self] isOn in
+        ledObserver = blinky.onLedStateDidChange { [unowned self] isOn in
             self.ledStateChanged(isOn: isOn)
         }
-        let buttonObserver = blinky.onButtonStateDidChange { [unowned self] isPressed in
+        buttonObserver = blinky.onButtonStateDidChange { [unowned self] isPressed in
             self.buttonStateChanged(isPressed: isPressed)
         }
-        blinky.onConnectionError { [weak self] error in
-            self?.showErrorMessage(error?.localizedDescription ?? "Connection failed.")
+        failObserver = blinky.onConnectionError { [weak self] error in
+            self?.showErrorMessage(error?.localizedDescription ?? "Connection failed.".localized)
         }
-        blinky.onDisconnected { [weak self] error in
-            if let error = error {
+        disconnectionObserver = blinky.onDisconnected { [weak self] error in
+            self?.reconnectButton.isEnabled = true
+            switch error {
+            case let error as CBError where error.code == .peripheralDisconnected:
+                self?.showErrorMessage("Device has disconnected.".localized)
+            case .some(let error):
                 self?.showErrorMessage(error.localizedDescription)
+            default:
+                break
             }
-            self?.blinky.dispose(ledObserver)
-            self?.blinky.dispose(buttonObserver)
             self?.blinkyDidDisconnect()
         }
     }
@@ -95,11 +115,16 @@ class BlinkyViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         // Restore original navigation bar color. It might have changed
         // when the device got disconnected.
-        self.setNavigationBarColor(.dynamicColor(light: .nordicBlue, dark: .black))
+        setNavigationBarColor(.dynamicColor(light: .nordicBlue, dark: .black))
         super.viewWillDisappear(animated)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
+        blinky.dispose(ledObserver)
+        blinky.dispose(buttonObserver)
+        blinky.dispose(readyObserver)
+        blinky.dispose(failObserver)
+        blinky.dispose(disconnectionObserver)
         blinky.disconnect()
         super.viewDidDisappear(animated)
     }
@@ -140,7 +165,10 @@ private extension BlinkyViewController {
 
     func blinkyDidConnect(ledSupported: Bool, buttonSupported: Bool) {
         if ledSupported || buttonSupported {
-            DispatchQueue.main.async {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.setNavigationBarColor(.dynamicColor(light: .nordicBlue, dark: .black))
+                self.ledToggleSwitch.onTintColor = .nordicBlue
                 self.ledToggleSwitch.isEnabled = ledSupported
 
                 if buttonSupported {
@@ -196,10 +224,10 @@ private extension BlinkyViewController {
     
     func showErrorMessage(_ message: String) {
         DispatchQueue.main.async {
-            let alert = UIAlertController(title: "Error",
+            let alert = UIAlertController(title: "Error".localized,
                                           message: message,
                                           preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+            alert.addAction(UIAlertAction(title: "OK".localized, style: .cancel))
             self.present(alert, animated: true)
         }
     }

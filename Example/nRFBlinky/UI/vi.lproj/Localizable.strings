@@ -12,3 +12,7 @@
 "UNKNOWN" = "KHÔNG XÁC ĐỊNH";
 "Reading..." = "Đang đọc...";
 "Unknown Device" = "Thiết bị chưa nhận dạng";
+"Error" = "Lỗi";
+"Connection failed." = "Kết nối thất bại.";
+"Device has disconnected." = "Thiết bị đã ngắt kết nối.";
+"OK" = "OK";

@@ -12,3 +12,7 @@
 "UNKNOWN" = "UKJENT";
 "Reading..." = "Leser...";
 "Unknown Device" = "Ukjent Enhet";
+"Error" = "Feil";
+"Connection failed." = "Tilkobling feilet.";
+"Device has disconnected." = "Enheten har blitt frakoblet.";
+"OK" = "OK";
