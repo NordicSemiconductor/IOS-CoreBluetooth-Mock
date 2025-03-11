@@ -58,7 +58,7 @@ public enum CBMProximity {
         case `default`
         /// A custom deviation from a proximity's preset RSSI.
         ///
-        /// This should be a positive value. If a negative value is provided,
+        /// This should be zero or greater. If a negative value is provided,
         /// its absolute value is used when determining RSSI deviation.
         case custom(_ deviation: Int)
         
