@@ -87,10 +87,11 @@ public class CBMCentralManagerNative: CBMCentralManager {
         func centralManager(_ central: CBCentralManager,
                             didDisconnectPeripheral peripheral: CBPeripheral,
                             error: Error?) {
+            let p = getPeripheral(peripheral)
+            p.mockServices = nil
             manager.delegate?.centralManager(manager,
-                                             didDisconnectPeripheral: getPeripheral(peripheral),
+                                             didDisconnectPeripheral: p,
                                              error: error)
-            removePeripheral(peripheral)
         }
         
         #if !os(macOS)
@@ -121,10 +122,6 @@ public class CBMCentralManagerNative: CBMCentralManager {
             let p = CBMPeripheralNative(peripheral)
             manager.peripherals[peripheral.identifier] = p
             return p
-        }
-
-        private func removePeripheral(_ peripheral: CBPeripheral) {
-            manager.peripherals[peripheral.identifier] = nil
         }
     }
     
@@ -522,7 +519,7 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         return peripheral.state
     }
     
-    private var mockServices: [CBMServiceNative]?
+    fileprivate var mockServices: [CBMServiceNative]?
     public var services: [CBMService]? {
         return mockServices
     }
