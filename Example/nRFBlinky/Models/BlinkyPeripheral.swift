@@ -71,6 +71,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
     ///   - peripheral: The underlying peripheral.
     ///   - data: The latest advertisement data of the device.
     ///   - currentRSSI: The most recent RSSI value.
+    ///   - manager: The ``BlinkyManager`` instance.
     init(withPeripheral peripheral: CBPeripheral,
          advertisementData data: [String : Any],
          andRSSI currentRSSI: NSNumber,

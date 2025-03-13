@@ -30,6 +30,9 @@
 
 import Foundation
 
+/// A manager responsible for scanning, connecting and managing Blinky peripherals.
+///
+/// If allows connecting to a single device at a time.
 class BlinkyManager {
     /// Underlying central manager.
     private var centralManager: CBCentralManager!

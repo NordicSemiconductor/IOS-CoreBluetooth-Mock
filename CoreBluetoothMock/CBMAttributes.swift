@@ -150,11 +150,11 @@ open class CBMServiceMock: CBMService {
     ///   - includedServices: Optional list of included services.
     ///   - characteristics: Optional list of characteristics.
     public convenience init(type uuid: CBMUUID, primary isPrimary: Bool,
-                            includedService: CBMServiceMock...,
+                            includedServices: CBMServiceMock...,
                             characteristics: CBMCharacteristicMock...) {
         self.init(type: uuid,
                   primary: isPrimary,
-                  includedService: includedService,
+                  includedServices: includedServices,
                   characteristics: characteristics)
     }
 
@@ -165,11 +165,11 @@ open class CBMServiceMock: CBMService {
     ///   - includedServices: Optional array of included services.
     ///   - characteristics: Optional array of characteristics.
     public init(type uuid: CBMUUID, primary isPrimary: Bool,
-                includedService: [CBMServiceMock]? = nil,
+                includedServices: [CBMServiceMock]? = nil,
                 characteristics: [CBMCharacteristicMock]? = nil) {
         super.init(type: uuid, primary: isPrimary)
-        if let includedService = includedService {
-            self._includedServices = includedService
+        if let includedServices = includedServices {
+            self._includedServices = includedServices
         }
         if let characteristics = characteristics {
             self._characteristics = characteristics

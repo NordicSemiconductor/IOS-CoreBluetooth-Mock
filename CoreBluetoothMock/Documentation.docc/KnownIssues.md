@@ -4,7 +4,7 @@ Known issues when using **CoreBluetoothMock** framework instead of native **Core
 
 ## Overview
 
-By design, the library should behave exatly the same as the native implementation and no
+By design, the library should behave exactly the same as the native implementation and no
 code changes above those mentioned in <doc:Migration-guide> should be necessary.
 
 However, to make mocking possible, some tradeoffs were made.
