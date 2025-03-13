@@ -276,11 +276,11 @@ public extension CBMPeripheralSpecDelegate {
             return .success(())
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveIncludedServiceDiscoveryRequest serviceUUIDs: [CBMUUID]?,
                     for service: CBMServiceMock)
         -> Result<Void, Error> {
-            return peripheral(p, didReceiveIncludedServiceDiscoveryRequest: serviceUUIDs, for: service as CBMService)
+            return self.peripheral(peripheral, didReceiveIncludedServiceDiscoveryRequest: serviceUUIDs, for: service as CBMService)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -290,11 +290,11 @@ public extension CBMPeripheralSpecDelegate {
             return .success(())
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveCharacteristicsDiscoveryRequest characteristicUUIDs: [CBMUUID]?,
                     for service: CBMServiceMock)
         -> Result<Void, Error> {
-            return peripheral(p, didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs, for: service as CBMService)
+            return self.peripheral(peripheral, didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs, for: service as CBMService)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -303,10 +303,10 @@ public extension CBMPeripheralSpecDelegate {
             return .success(())
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveDescriptorsDiscoveryRequestFor characteristic: CBMCharacteristicMock)
         -> Result<Void, Error> {
-            return peripheral(p, didReceiveDescriptorsDiscoveryRequestFor: characteristic as CBMCharacteristic)
+            return self.peripheral(peripheral, didReceiveDescriptorsDiscoveryRequestFor: characteristic as CBMCharacteristic)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -315,10 +315,10 @@ public extension CBMPeripheralSpecDelegate {
             return .failure(CBMATTError(.readNotPermitted))
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor characteristic: CBMCharacteristicMock)
         -> Result<Data, Error> {
-            return peripheral(p, didReceiveReadRequestFor: characteristic as CBMCharacteristic)
+            return self.peripheral(peripheral, didReceiveReadRequestFor: characteristic as CBMCharacteristic)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -327,10 +327,10 @@ public extension CBMPeripheralSpecDelegate {
             return .failure(CBMATTError(.readNotPermitted))
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveReadRequestFor descriptor: CBMDescriptorMock)
         -> Result<Data, Error> {
-            return peripheral(p, didReceiveReadRequestFor: descriptor as CBMDescriptor)
+            return self.peripheral(peripheral, didReceiveReadRequestFor: descriptor as CBMDescriptor)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -340,11 +340,11 @@ public extension CBMPeripheralSpecDelegate {
             return .failure(CBMATTError(.writeNotPermitted))
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor characteristic: CBMCharacteristicMock,
                     data: Data)
         -> Result<Void, Error> {
-            return peripheral(p, didReceiveWriteRequestFor: characteristic as CBMCharacteristic, data: data)
+            return self.peripheral(peripheral, didReceiveWriteRequestFor: characteristic as CBMCharacteristic, data: data)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -353,10 +353,10 @@ public extension CBMPeripheralSpecDelegate {
         // Empty default implementation
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteCommandFor characteristic: CBMCharacteristicMock,
                     data: Data) {
-        peripheral(p, didReceiveWriteCommandFor: characteristic as CBMCharacteristic, data: data)
+        self.peripheral(peripheral, didReceiveWriteCommandFor: characteristic as CBMCharacteristic, data: data)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -366,11 +366,11 @@ public extension CBMPeripheralSpecDelegate {
             return .failure(CBATTError(.writeNotPermitted))
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveWriteRequestFor descriptor: CBMDescriptorMock,
                     data: Data)
         -> Result<Void, Error> {
-            return peripheral(p, didReceiveWriteRequestFor: descriptor as CBMDescriptor, data: data)
+            return self.peripheral(peripheral, didReceiveWriteRequestFor: descriptor as CBMDescriptor, data: data)
     }
     
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -389,14 +389,14 @@ public extension CBMPeripheralSpecDelegate {
             }
     }
     
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didReceiveSetNotifyRequest enabled: Bool,
                     for characteristic: CBMCharacteristicMock)
         -> Result<Void, Error> {
-            return peripheral(p, didReceiveSetNotifyRequest: enabled, for: characteristic as CBMCharacteristic)
+            return self.peripheral(peripheral, didReceiveSetNotifyRequest: enabled, for: characteristic as CBMCharacteristic)
     }
   
-    func peripheral(_ p: CBMPeripheralSpec,
+    func peripheral(_ peripheral: CBMPeripheralSpec,
                     didUpdateNotificationStateFor characteristic: CBMCharacteristicMock,
                     error: Error?) {
         // Empty default implementation
