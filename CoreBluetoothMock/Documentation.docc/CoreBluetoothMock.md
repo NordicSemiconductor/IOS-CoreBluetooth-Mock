@@ -29,7 +29,7 @@ Bluetooth LE devices using an implementation in Swift. This allows:
 
 ### Known issues
 
-- <doc:Known-issues>
+- <doc:KnownIssues>
 
 ### Mocking Bluetooth LE Devices
 

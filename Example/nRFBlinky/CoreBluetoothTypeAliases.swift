@@ -72,7 +72,7 @@ typealias CBL2CAPChannel                  = CBML2CAPChannel
 let CBCentralManagerScanOptionAllowDuplicatesKey       = CBMCentralManagerScanOptionAllowDuplicatesKey
 /// An array of service UUIDs that you want to scan for.
 ///
-/// The array is an instance of `NSArray`, and uses ``CBMUUID`` objects to represent the UUIDs
+/// The array is an instance of `NSArray`, and uses ``CBUUID`` objects to represent the UUIDs
 /// to scan for.
 ///
 /// Specifying this scan option causes the central manager to also scan for peripherals soliciting
@@ -91,7 +91,7 @@ let CBCentralManagerOptionShowPowerAlertKey            = CBMCentralManagerOption
 let CBCentralManagerOptionRestoreIdentifierKey         = CBMCentralManagerOptionRestoreIdentifierKey
 /// An array of peripherals for use when restoring the state of a central manager.
 ///
-/// The value associated with this key is an `NSArray` of ``CBMPeripheral`` objects.
+/// The value associated with this key is an `NSArray` of ``CBPeripheral`` objects.
 /// The array contains all of the peripherals connected to the central manager
 /// (or had a pending connection) at the time the system terminated the app.
 ///
@@ -101,7 +101,7 @@ let CBCentralManagerRestoredStatePeripheralsKey        = CBMCentralManagerRestor
 /// An array of service IDs for use when restoring state.
 ///
 /// The value associated with this key is an `NSArray` of service UUIDs
-/// (represented by ``CBMUUID`` objects) containing all the services the central manager
+/// (represented by ``CBUUID`` objects) containing all the services the central manager
 /// was scanning for at the time the system terminated the app.
 let CBCentralManagerRestoredStateScanServicesKey       = CBMCentralManagerRestoredStateScanServicesKey
 /// A dictionary of peripheral scan options for use when restoring state.
@@ -135,7 +135,7 @@ let CBAdvertisementDataIsConnectable                   = CBMAdvertisementDataIsC
 let CBAdvertisementDataTxPowerLevelKey                 = CBMAdvertisementDataTxPowerLevelKey
 /// A dictionary that contains service-specific advertisement data.
 ///
-/// he keys (``CBMUUID`` objects) represent ``CBMService`` UUIDs, and the values
+/// The keys (``CBUUID`` objects) represent ``CBService`` UUIDs, and the values
 /// (`NSData` objects) represent service-specific data.
 let CBAdvertisementDataServiceDataKey                  = CBMAdvertisementDataServiceDataKey
 /// The manufacturer data of a peripheral.
@@ -144,8 +144,8 @@ let CBAdvertisementDataServiceDataKey                  = CBMAdvertisementDataSer
 let CBAdvertisementDataManufacturerDataKey             = CBMAdvertisementDataManufacturerDataKey
 /// An array of UUIDs found in the overflow area of the advertisement data.
 ///
-/// The value associated with this key is an array of one or more ``CBMUUID`` objects,
-/// representing ``CBMService`` UUIDs.
+/// The value associated with this key is an array of one or more ``CBUUID`` objects,
+/// representing ``CBService`` UUIDs.
 ///
 /// Because data stored in this area results from not fitting in the main advertisement,
 /// UUIDs listed here are “best effort” and may not always be accurate. For details
@@ -154,8 +154,8 @@ let CBAdvertisementDataManufacturerDataKey             = CBMAdvertisementDataMan
 let CBAdvertisementDataOverflowServiceUUIDsKey         = CBMAdvertisementDataOverflowServiceUUIDsKey
 /// An array of solicited service UUIDs.
 ///
-/// The value associated with this key is an array of one or more ``CBMUUID`` objects,
-/// representing ``CBMService`` UUIDs.
+/// The value associated with this key is an array of one or more ``CBUUID`` objects,
+/// representing ``CBService`` UUIDs.
 let CBAdvertisementDataSolicitedServiceUUIDsKey        = CBMAdvertisementDataSolicitedServiceUUIDsKey
 
 /// An option that indicates a delay before the system makes a connection.

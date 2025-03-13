@@ -135,15 +135,16 @@ public class CBMPeripheralSpec {
     public internal(set) var name: String?
     /// How far the device is.
     public internal(set) var proximity: CBMProximity
-    /// A flag indicating that the peripheral can be obtained using
-    /// ``CBMCentralManagerMock/retrievePeripherals(withIdentifiers:)``
-    /// without scanning. This is set to true whenever the peripheral
-    /// gets scanned, but can also be forced using
+    /// A flag indicating that the peripheral can be retrieved obtained using without scanning.
+    ///
+    /// It means, that the system has scanned for this device previously and stored its UUID.
+    ///
+    /// If set to true, the device can be obtained using
+    /// ``CBMCentralManagerMock/retrievePeripherals(withIdentifiers:)``.
+    ///
+    /// This gets set to true whenever the peripheral gets scanned, but can also be forced using
     /// ``CBMPeripheralSpec/Builder/allowForRetrieval()``
     /// or ``CBMPeripheralSpec/simulateCaching()``.
-    ///
-    /// When set, the system has scanned for this device
-    /// previously and stored its UUID.
     public internal(set) var isKnown: Bool
     
     /// Advertisement configurations of the peripheral.
@@ -459,8 +460,7 @@ public class CBMPeripheralSpec {
         ///   - name: The device name, returned by Device Name characteristic.
         ///   - services: List of services that will be returned from service
         ///               discovery.
-        ///   - connectionDelegate: The connection delegate that will handle
-        ///                         GATT requests.
+        ///   - delegate: The connection delegate that will handle GATT requests.
         ///   - connectionInterval: Connection interval, in seconds.
         ///   - supervisionTimeout: A time after which a device realizes
         ///                         that a connected peer has disconnected, had 
@@ -493,8 +493,7 @@ public class CBMPeripheralSpec {
         ///   - name: The device name, returned by Device Name characteristic.
         ///   - services: List of services that will be returned from service
         ///               discovery.
-        ///   - connectionDelegate: The connection delegate that will handle
-        ///                         GATT requests.
+        ///   - delegate: The connection delegate that will handle GATT requests.
         ///   - connectionInterval: Connection interval, in seconds.
         ///   - supervisionTimeout: A time after which a device realizes
         ///                         that a connected peer has disconnected, had

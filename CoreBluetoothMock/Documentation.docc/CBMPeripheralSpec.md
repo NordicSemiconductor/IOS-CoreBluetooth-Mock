@@ -2,11 +2,11 @@
 
 ## Mocking a Real Peripheral
 
-By defining a ``CBMPeripheralSpec`` instance you may create a mock implemntation
+By defining a ``CBMPeripheralSpec`` instance you may create a mock implementation
 of a real Bluetooth LE devices. 
 
 Such device can advertise (broadcast) Bluetooth LE packets, support connection,
-handle GATT events, like reading a characterstic value, sending notifications, etc.
+handle GATT events, like reading a characteristic value, sending notifications, etc.
 
 A ``CBMCentralManagerMock`` can send scan and send GATT requests to such device just
 like the ``CBMCentralManagerNative`` can interact with real devices.
@@ -43,6 +43,7 @@ like the ``CBMCentralManagerNative`` can interact with real devices.
 - ``isConnected``
 - ``connectionDelegate``
 - ``connectionInterval``
+- ``supervisionTimeout``
 - ``isKnown``
 - ``services``
 

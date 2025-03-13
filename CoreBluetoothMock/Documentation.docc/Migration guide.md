@@ -23,13 +23,13 @@ With this step complete, the migration can be done in one of 2 ways:
 1. Copy [`CoreBluetoothTypeAliases.swift`](https://github.com/NordicSemiconductor/IOS-CoreBluetooth-Mock/blob/main/Example/nRFBlinky/CoreBluetoothTypeAliases.swift)
    file from the *Example app* to your project. 
    This file contains number of type aliases for all `CBM...` types and renames them to `CB...`,
-   therfore removing the not need to perform any changes in your code.
+   therefore removing the not need to perform any changes in your code.
 2. Optionally, remove: 
    ```swift
    import CoreBluetooth
    ``` 
    in all your files, as the types are now defined locally in the project. This step is not required,
-   as locally defined types take precedense over frameworks.
+   as locally defined types take precedence over frameworks.
 
 #### Direct
 

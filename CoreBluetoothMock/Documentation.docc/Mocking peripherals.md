@@ -70,11 +70,11 @@ The advertisement data can be changed during the simulation using
 ### Connection
 
 The
-``CBMPeripheralSpec/Builder/connectable(name:services:delegate:connectionInterval:mtu:)`` or 
-``CBMPeripheralSpec/Builder/connected(name:services:delegate:connectionInterval:mtu:)``
+``CBMPeripheralSpec/Builder/connectable(name:services:delegate:connectionInterval:supervisionTimeout:mtu:)`` or 
+``CBMPeripheralSpec/Builder/connected(name:services:delegate:connectionInterval:supervisionTimeout:mtu:)``
 methods allows to specify a ``CBMPeripheralSpecDelegate``. This object defines the behavior of the
 mock peripheral, how will it respond to Bluetooth LE requests, a hard reset, etc. The implementation
-should mimic the behavoir of the real device as much as possible to make the tests reliable.
+should mimic the behavior of the real device as much as possible to make the tests reliable.
 
 To test how the app handles connection interruptions, the mock connection can be terminated using
 ``CBMPeripheralSpec/simulateReset()``, ``CBMPeripheralSpec/simulateDisconnection(withError:)`` or
