@@ -181,7 +181,7 @@ public let CBMAdvertisementDataIsConnectable            = CBAdvertisementDataIsC
 public let CBMAdvertisementDataTxPowerLevelKey          = CBAdvertisementDataTxPowerLevelKey
 /// A dictionary that contains service-specific advertisement data.
 ///
-/// he keys (``CBMUUID`` objects) represent ``CBMService`` UUIDs, and the values
+/// The keys (``CBMUUID`` objects) represent ``CBMService`` UUIDs, and the values
 /// (`NSData` objects) represent service-specific data.
 public let CBMAdvertisementDataServiceDataKey           = CBAdvertisementDataServiceDataKey
 /// The manufacturer data of a peripheral.
