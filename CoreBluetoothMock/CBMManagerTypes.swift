@@ -119,6 +119,14 @@ public typealias CBMManagerAuthorization = CBManagerAuthorization
 /// - Important: Disabling this filtering can have an adverse effect on battery life;
 ///              use it only if necessary.
 public let CBMCentralManagerScanOptionAllowDuplicatesKey = CBCentralManagerScanOptionAllowDuplicatesKey
+/// An array of service UUIDs that you want to scan for.
+///
+/// The array is an instance of `NSArray`, and uses ``CBMUUID`` objects to represent the UUIDs
+/// to scan for.
+///
+/// Specifying this scan option causes the central manager to also scan for peripherals soliciting
+/// any of the services contained in the array.
+public let CBMCentralManagerScanOptionSolicitedServiceUUIDsKey = CBCentralManagerScanOptionSolicitedServiceUUIDsKey
 /// A Boolean value that specifies whether the system warns the user if the app instantiates
 /// the central manager when Bluetooth service isn’t available.
 ///
@@ -130,23 +138,6 @@ public let CBMCentralManagerOptionShowPowerAlertKey = CBCentralManagerOptionShow
 /// central manager. As a result, the UID must remain the same for subsequent executions
 /// of the app to restore the central manager.
 public let CBMCentralManagerOptionRestoreIdentifierKey = CBCentralManagerOptionRestoreIdentifierKey
-/// An array of service UUIDs that you want to scan for.
-///
-/// The array is an instance of `NSArray`, and uses ``CBMUUID`` objects to represent the UUIDs
-/// to scan for.
-///
-/// Specifying this scan option causes the central manager to also scan for peripherals soliciting
-/// any of the services contained in the array.
-public let CBMCentralManagerScanOptionSolicitedServiceUUIDsKey = CBCentralManagerScanOptionSolicitedServiceUUIDsKey
-/// An option that indicates a delay before the system makes a connection.
-///
-/// The corresponding value is an `NSNumber` that indicates the duration of the delay in seconds.
-public let CBMConnectPeripheralOptionStartDelayKey = CBConnectPeripheralOptionStartDelayKey
-#if !os(macOS)
-/// An option to require Apple Notification Center Service (ANCS) when connecting a device.
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public let CBMConnectPeripheralOptionRequiresANCS = CBConnectPeripheralOptionRequiresANCS
-#endif
 /// An array of peripherals for use when restoring the state of a central manager.
 ///
 /// The value associated with this key is an `NSArray` of ``CBMPeripheral`` objects.
@@ -213,6 +204,15 @@ public let CBMAdvertisementDataOverflowServiceUUIDsKey  = CBAdvertisementDataOve
 /// representing ``CBMService`` UUIDs.
 public let CBMAdvertisementDataSolicitedServiceUUIDsKey = CBAdvertisementDataSolicitedServiceUUIDsKey
 
+/// An option that indicates a delay before the system makes a connection.
+///
+/// The corresponding value is an `NSNumber` that indicates the duration of the delay in seconds.
+public let CBMConnectPeripheralOptionStartDelayKey = CBConnectPeripheralOptionStartDelayKey
+#if !os(macOS)
+/// An option to require Apple Notification Center Service (ANCS) when connecting a device.
+@available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public let CBMConnectPeripheralOptionRequiresANCS = CBConnectPeripheralOptionRequiresANCS
+#endif
 /// A Boolean value that specifies whether the system should display an alert when
 /// connecting a peripheral in the background.
 ///
