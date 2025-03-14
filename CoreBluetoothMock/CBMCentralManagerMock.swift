@@ -399,7 +399,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     /// Simulates the degree of variability in the reported RSSI.
     ///
-    /// - NOTE: For unit testing, it is recommended to set this value to `.none`.
+    /// - Note: For unit testing, it is recommended to set this value to ``CBMProximity/Deviation/none``.
     public static func simulateRSSIDeviation(_ deviation: CBMProximity.Deviation) {
         rssiDeviation = deviation
     }
@@ -600,8 +600,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     /// Method called when a peripheral becomes available (in range).
+    ///
     /// If there is a pending connection request, it will connect.
-    /// - Parameter peripheral: The peripheral that came in range. 
+    /// - Parameter peripheral: The peripheral that came in range.
     internal static func peripheralBecameAvailable(_ peripheral: CBMPeripheralSpec) {
         let existingManagers = CBMCentralManagerMock.mutex.sync {
             managers.compactMap { $0.ref }
