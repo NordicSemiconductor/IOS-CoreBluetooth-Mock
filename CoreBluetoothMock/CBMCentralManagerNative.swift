@@ -617,4 +617,9 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
     public override var hash: Int {
         return identifier.hashValue
     }
+    
+    public override var debugDescription: String {
+        return peripheral.debugDescription
+            .replacingOccurrences(of: "CBPeripheral", with: "CBMPeripheral")
+    }
 }

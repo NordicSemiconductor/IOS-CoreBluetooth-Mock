@@ -91,7 +91,7 @@ let CBCentralManagerOptionShowPowerAlertKey            = CBMCentralManagerOption
 let CBCentralManagerOptionRestoreIdentifierKey         = CBMCentralManagerOptionRestoreIdentifierKey
 /// An array of peripherals for use when restoring the state of a central manager.
 ///
-/// The value associated with this key is an `NSArray` of ``CBPeripheral`` objects.
+/// The value associated with this key is an `NSArray` of `CBMPeripheralSpec` objects.
 /// The array contains all of the peripherals connected to the central manager
 /// (or had a pending connection) at the time the system terminated the app.
 ///

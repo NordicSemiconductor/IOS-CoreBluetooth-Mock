@@ -514,7 +514,9 @@ public class CBMPeripheralSpec {
             self.connectionInterval = connectionInterval
             self.supervisionTimeout = supervisionTimeout
             self.mtu = max(23, min(517, mtu))
-            self.isInitiallyConnected = proximity != .outOfRange
+            // The initial state will be .connected if proximity != .outOfRange.
+            // or .connecting otherwise.
+            self.isInitiallyConnected = true
             self.isKnown = true
             return self
         }
