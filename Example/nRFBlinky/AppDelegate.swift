@@ -64,11 +64,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             CBMCentralManagerMock.simulateInitialState(.poweredOn)
             CBMCentralManagerMock.simulatePeripherals([blinky, hrm, thingy])
 
-            // Set up initial conditions.
-            blinky.simulateProximityChange(.immediate)
+            // Simulate state restoration.
+            CBMCentralManagerMock.simulateStateRestoration = { identifierKey in
+                if identifierKey == "no.nordicsemi.blinky" {
+                    return [
+                        // When the app was killed it was scanning with the LBS Service UUID filter.
+                        CBMCentralManagerRestoredStateScanServicesKey: [CBMUUID.nordicBlinkyService],
+                        // Also, the app was scanning with the "Allow Duplicates" option enabled.
+                        CBMCentralManagerRestoredStateScanOptionsKey: [CBMCentralManagerScanOptionAllowDuplicatesKey: true as NSNumber],
+                        // nRF Blinky was already connected. Check out, that the
+                        // blinky spec was created using .connected(...) and it is
+                        // in range.
+                        CBMCentralManagerRestoredStatePeripheralsKey: [blinky]
+                    ]
+                }
+                return nil
+            }
+
+            // Simulate range changes using:
             hrm.simulateProximityChange(.near)
             thingy.simulateProximityChange(.far)
-            blinky.simulateReset()
+            
+            // Simulate a reset after 500 ms to make the device discoverable again:
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                blinky.simulateReset()
+            }
         }
         #endif
         

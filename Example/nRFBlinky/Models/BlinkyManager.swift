@@ -50,7 +50,10 @@ class BlinkyManager {
         centralManager = CBCentralManagerFactory.instance(
                 delegate: self,
                 queue: nil,
-                options: [CBCentralManagerOptionShowPowerAlertKey : true],
+                options: [
+                    CBCentralManagerOptionShowPowerAlertKey : true,
+                    CBCentralManagerOptionRestoreIdentifierKey : "no.nordicsemi.blinky"
+                ],
                 forceMock: mock
         )
     }
@@ -62,7 +65,9 @@ class BlinkyManager {
         if !centralManager.isScanning {
             centralManager.scanForPeripherals(
                     withServices: [BlinkyPeripheral.nordicBlinkyServiceUUID],
-                    options: [CBCentralManagerScanOptionAllowDuplicatesKey : true]
+                    options: [
+                        CBCentralManagerScanOptionAllowDuplicatesKey : true,
+                    ]
             )
         }
         return true

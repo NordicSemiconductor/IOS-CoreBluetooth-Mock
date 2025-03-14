@@ -103,7 +103,7 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
 }
 
 let blinky = CBMPeripheralSpec
-    .simulatePeripheral(proximity: .outOfRange)
+    .simulatePeripheral(proximity: .immediate)
     .advertising(
         advertisementData: [
             CBMAdvertisementDataLocalNameKey    : "nRF Blinky",
@@ -112,7 +112,7 @@ let blinky = CBMPeripheralSpec
         ],
         withInterval: 0.250,
         alsoWhenConnected: false)
-    .connectable(
+    .connected(
         name: "nRF Blinky",
         services: [.blinkyService],
         delegate: BlinkyCBMPeripheralSpecDelegate(),
