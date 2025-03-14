@@ -170,4 +170,8 @@ extension BlinkyManager: CBCentralManagerDelegate {
             blinky.post(.blinkyDidDisconnect(blinky, error: error))
         }
     }
+    
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
+        print("Restoring Central Manager state with \(dict)")
+    }
 }
