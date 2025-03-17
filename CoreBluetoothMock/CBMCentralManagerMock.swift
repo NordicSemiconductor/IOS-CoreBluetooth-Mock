@@ -861,9 +861,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
             .filter { peripherals[$0.identifier] == nil }
             // And only those that match any of given service UUIDs.
             .filter {
-                $0.services!.contains { service in
+                $0.services?.contains { service in
                     serviceUUIDs.contains(service.uuid)
-                }
+                } ?? false
             }
             // Create a local copy.
             .map { CBMPeripheralMock(basedOn: $0, by: self) }
