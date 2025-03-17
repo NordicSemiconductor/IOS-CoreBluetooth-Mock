@@ -321,14 +321,21 @@ open class CBMCentralManagerMock: CBMCentralManager {
            let identifierKey = options[CBMCentralManagerOptionRestoreIdentifierKey] as? String,
            let dict = CBMCentralManagerMock.simulateStateRestoration?(identifierKey) {
             var state: [String : Any] = [:]
-            if let peripheralKeys = dict[CBMCentralManagerRestoredStatePeripheralsKey] {
-                state[CBMCentralManagerRestoredStatePeripheralsKey] = peripheralKeys
+            if let peripheralKeys = dict[CBMCentralManagerRestoredStatePeripheralsKey] as? [CBMPeripheralSpec] {
+                let peripherals = peripheralKeys.map { mock in
+                    CBMPeripheralMock(basedOn: mock, by: self, andRestoreState: true)
+                }
+                state[CBMCentralManagerRestoredStatePeripheralsKey] = peripherals
             }
-            if let scanServiceKey = dict[CBMCentralManagerRestoredStateScanServicesKey] {
+            if let scanServiceKey = dict[CBMCentralManagerRestoredStateScanServicesKey] as? [CBMUUID] {
                 state[CBMCentralManagerRestoredStateScanServicesKey] = scanServiceKey
+                self.isScanning = true
+                self.scanFilter = scanServiceKey
             }
-            if let scanOptions = dict[CBMCentralManagerRestoredStateScanOptionsKey] {
+            if let scanOptions = dict[CBMCentralManagerRestoredStateScanOptionsKey] as? [String : Any] {
                 state[CBMCentralManagerRestoredStateScanOptionsKey] = scanOptions
+                self.isScanning = true
+                self.scanOptions = scanOptions
             }
             delegate?.centralManager(self, willRestoreState: state)
         }
@@ -392,7 +399,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     /// Simulates the degree of variability in the reported RSSI.
     ///
-    /// - NOTE: For unit testing, it is recommended to set this value to `.none`.
+    /// - Note: For unit testing, it is recommended to set this value to ``CBMProximity/Deviation/none``.
     public static func simulateRSSIDeviation(_ deviation: CBMProximity.Deviation) {
         rssiDeviation = deviation
     }
@@ -593,8 +600,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     /// Method called when a peripheral becomes available (in range).
+    ///
     /// If there is a pending connection request, it will connect.
-    /// - Parameter peripheral: The peripheral that came in range. 
+    /// - Parameter peripheral: The peripheral that came in range.
     internal static func peripheralBecameAvailable(_ peripheral: CBMPeripheralSpec) {
         let existingManagers = CBMCentralManagerMock.mutex.sync {
             managers.compactMap { $0.ref }
@@ -932,13 +940,53 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     // MARK: Initializers
     
+    /// Creates a new peripheral mock based on the given peripheral specification.
+    ///
+    /// If the `restore` parameter is set to `false`, the peripheral will be in the
+    /// disconnected state even if the emulated device was connected. Central manager
+    /// needs to connect to the device to change the state.
+    ///
+    /// The `restore` parameter allows to restore the state of the peripheral, if the
+    /// application was terminated and the central manager was created with
+    /// `CBMCentralManagerOptionRestoreIdentifierKey` option.
+    /// If the same central manager (with the same identifier) had that device connected
+    /// or connecting when the app was terminated, the peripheral will be restored to the
+    /// same state.
+    ///
+    /// - Parameters:
+    ///   - mock: The peripheral specification.
+    ///   - manager: The mock central manager.
+    ///   - restore: `true` to restore the state of the peripheral, default is `false`.
     fileprivate init(basedOn mock: CBMPeripheralSpec,
-                     by manager: CBMCentralManagerMock) {
+                     by manager: CBMCentralManagerMock,
+                     andRestoreState restore: Bool = false) {
         self.mock = mock
         self.manager = manager
         self.availableWriteWithoutResponseBuffer = bufferSize
+        
+        // If the Central Manager restores its state, the previously
+        // connected peripherals may still be connected or connecting.
+        //
+        // If CBMPeripheralSpec was created using .connected(...), the
+        // virtual connections count has been set to 1.
+        // Then, it is up to the proximity to decide if the device is
+        // connected or connecting.
+        if restore {
+            // A non-connectable device could not have been connected.
+            // Ignore it when restoring the state.
+            guard mock.services != nil else {
+                NSLog("Warning: The peripheral with identifier \(mock.identifier) is not connectable and can not be restored to connected state.")
+                return
+            }
+            self.state = mock.isConnected && mock.proximity != .outOfRange ? .connected : .connecting
+            self._canSendWriteWithoutResponse = state == .connected
+        }
     }
     
+    /// Creates a copy of the given peripheral mock.
+    ///
+    /// This new peripheral will be in disconnected state, even if the original
+    /// was connected.
     fileprivate init(copy: CBMPeripheralMock,
                      by manager: CBMCentralManagerMock) {
         self.mock = copy.mock
@@ -1579,6 +1627,18 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     open override var hash: Int {
         return mock.identifier.hashValue
+    }
+    
+    open override var debugDescription: String {
+        var stateString: String
+        switch state {
+        case .disconnected:  stateString = "disconnected"
+        case .connecting:    stateString = "connecting"
+        case .connected:     stateString = "connected"
+        case .disconnecting: stateString = "disconnecting"
+        @unknown default:    stateString = "unknown"
+        }
+        return "<CBMPeripheral: identifier: \(mock.identifier), mtu: \(mock.mtu ?? 23), state: \(stateString)>"
     }
 }
 

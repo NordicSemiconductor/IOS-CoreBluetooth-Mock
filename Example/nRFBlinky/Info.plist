@@ -28,6 +28,10 @@
 	<string>nRF Blinky uses Bluetooth to communicate with the nRF Blinky sample application on nRF DK.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>nRF Blinky uses Bluetooth to communicate with the nRF Blinky sample application on the nRF DK.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

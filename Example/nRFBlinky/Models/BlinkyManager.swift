@@ -50,7 +50,10 @@ class BlinkyManager {
         centralManager = CBCentralManagerFactory.instance(
                 delegate: self,
                 queue: nil,
-                options: [CBCentralManagerOptionShowPowerAlertKey : true],
+                options: [
+                    CBCentralManagerOptionShowPowerAlertKey : true,
+                    CBCentralManagerOptionRestoreIdentifierKey : "no.nordicsemi.blinky"
+                ],
                 forceMock: mock
         )
     }
@@ -62,7 +65,9 @@ class BlinkyManager {
         if !centralManager.isScanning {
             centralManager.scanForPeripherals(
                     withServices: [BlinkyPeripheral.nordicBlinkyServiceUUID],
-                    options: [CBCentralManagerScanOptionAllowDuplicatesKey : true]
+                    options: [
+                        CBCentralManagerScanOptionAllowDuplicatesKey : true,
+                    ]
             )
         }
         return true
@@ -164,5 +169,9 @@ extension BlinkyManager: CBCentralManagerDelegate {
             connectedBlinky = nil
             blinky.post(.blinkyDidDisconnect(blinky, error: error))
         }
+    }
+    
+    func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
+        print("Restoring Central Manager state with \(dict)")
     }
 }
