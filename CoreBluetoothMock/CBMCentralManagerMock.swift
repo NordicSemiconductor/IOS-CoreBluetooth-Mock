@@ -971,8 +971,14 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // virtual connections count has been set to 1.
         // Then, it is up to the proximity to decide if the device is
         // connected or connecting.
-        if restore && mock.isConnected {
-            self.state = mock.proximity != .outOfRange ? .connected : .connecting
+        if restore {
+            // A non-connectable device could not have been connected.
+            // Ignore it when restoring the state.
+            guard mock.services != nil else {
+                NSLog("Warning: The peripheral with identifier \(mock.identifier) is not connectable and can not be restored to connected state.")
+                return
+            }
+            self.state = mock.isConnected && mock.proximity != .outOfRange ? .connected : .connecting
             self._canSendWriteWithoutResponse = state == .connected
         }
     }
