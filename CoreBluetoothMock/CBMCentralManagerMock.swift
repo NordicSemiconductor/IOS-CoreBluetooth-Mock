@@ -627,8 +627,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///
     /// All connected mock central managers will receive
     /// ``CBMCentralManagerDelegate/centralManager(_:didDisconnectPeripheral:error:)-1lv48`` callback.
-    /// - Parameter peripheral: The peripheral to disconnect.
-    /// - Parameter error: The disconnection reason. Use ``CBMError`` or ``CBMATTError`` errors.
+    /// - Parameters:
+    ///   - peripheral: The peripheral to disconnect.
+    ///   - error: The disconnection reason. Use ``CBMError`` or ``CBMATTError`` errors.
     internal static func peripheral(_ peripheral: CBMPeripheralSpec,
                                     didDisconnectWithError error: Error =  CBError(.peripheralDisconnected)) {
         // Is the device connected at all?
