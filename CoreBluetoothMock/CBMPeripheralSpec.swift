@@ -33,9 +33,9 @@ import CoreBluetooth
 /// The approximate mock device proximity.
 public enum CBMProximity {
     /// The device will have RSSI values around -40 dBm.
-    case near
-    /// The device will have RSSI values around -70 dBm.
     case immediate
+    /// The device will have RSSI values around -70 dBm.
+    case near
     /// The device is far, will have RSSI values around -100 dBm.
     case far
     /// The device is out of range.
@@ -43,8 +43,8 @@ public enum CBMProximity {
     
     internal var RSSI: Int {
         switch self {
-        case .near:       return -40
-        case .immediate:  return -70
+        case .immediate:  return -40
+        case .near:       return -70
         case .far:        return -100
         case .outOfRange: return 127
         }
