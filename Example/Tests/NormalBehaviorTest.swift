@@ -70,8 +70,8 @@ class NormalBehaviorTest: XCTestCase {
             XCTAssertEqual(blinky.advertisedName, "nRF Blinky")
             XCTAssert(blinky.isConnectable == true)
             XCTAssert(blinky.isConnected == false)
-            XCTAssertGreaterThanOrEqual(blinky.RSSI.intValue, -70 - 15)
-            XCTAssertLessThanOrEqual(blinky.RSSI.intValue, -70 + 15)
+            XCTAssertGreaterThanOrEqual(blinky.RSSI.intValue, -40 - 15)
+            XCTAssertLessThanOrEqual(blinky.RSSI.intValue, -40 + 15)
             target = blinky
             found.fulfill()
         }

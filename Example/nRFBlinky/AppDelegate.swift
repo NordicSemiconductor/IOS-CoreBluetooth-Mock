@@ -82,6 +82,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
 
             // Simulate range changes using:
+            blinky.simulateProximityChange(.immediate)
             hrm.simulateProximityChange(.near)
             thingy.simulateProximityChange(.far)
             

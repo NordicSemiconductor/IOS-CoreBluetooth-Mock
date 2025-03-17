@@ -97,7 +97,7 @@ class BlinkyManager {
 
     /// Cancels existing or pending connection.
     func disconnect(_ blinky: BlinkyPeripheral) {
-        guard state == .poweredOn else {
+        guard state == .poweredOn, connectedBlinky === blinky else {
             return
         }
         guard blinky.state != .disconnected else {

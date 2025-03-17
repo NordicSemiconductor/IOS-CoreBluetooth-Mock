@@ -627,10 +627,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///
     /// All connected mock central managers will receive
     /// ``CBMCentralManagerDelegate/centralManager(_:didDisconnectPeripheral:error:)-1lv48`` callback.
-    /// - Parameter peripheral: The peripheral to disconnect.
-    /// - Parameter error: The disconnection reason. Use ``CBMError`` or ``CBMATTError`` errors.
+    /// - Parameters:
+    ///   - peripheral: The peripheral to disconnect.
+    ///   - error: The disconnection reason. Use ``CBMError`` or ``CBMATTError`` errors.
     internal static func peripheral(_ peripheral: CBMPeripheralSpec,
-                                    didDisconnectWithError error: Error =  CBError(.peripheralDisconnected)) {
+                                    didDisconnectWithError error: Error = CBError(.peripheralDisconnected)) {
         // Is the device connected at all?
         guard peripheral.isConnected else {
             return
@@ -860,9 +861,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
             .filter { peripherals[$0.identifier] == nil }
             // And only those that match any of given service UUIDs.
             .filter {
-                $0.services!.contains { service in
+                $0.services?.contains { service in
                     serviceUUIDs.contains(service.uuid)
-                }
+                } ?? false
             }
             // Create a local copy.
             .map { CBMPeripheralMock(basedOn: $0, by: self) }
@@ -1127,11 +1128,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // Keep only services that hadn't changed.
         services = oldServices
             .filter { service in
-                mock.services!.contains(where: {
+                mock.services!.contains {
                     $0.identifier == service.identifier
-                })
+                }
             }
-        let invalidatedServices = oldServices.filter({ !services!.contains($0) })
+        let invalidatedServices = oldServices.filter { !services!.contains($0) }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, self.state == .connected {
                 self.delegate?.peripheral(self, didModifyServices: invalidatedServices)

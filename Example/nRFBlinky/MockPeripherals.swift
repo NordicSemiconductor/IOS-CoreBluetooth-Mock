@@ -80,6 +80,14 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     func reset() {
         ledEnabled = false
         buttonPressed = false
+        print("""
+        ----------------------------------------
+        *** Booting Mock LBS sample v1.0 ***
+        Starting Bluetooth Peripheral LBS sample
+        Bluetooth initialized
+        Advertising successfully started
+        ----------------------------------------
+        """)
     }
 
     func peripheral(_ peripheral: CBMPeripheralSpec,
@@ -103,7 +111,7 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
 }
 
 let blinky = CBMPeripheralSpec
-    .simulatePeripheral(proximity: .immediate)
+    .simulatePeripheral(proximity: .outOfRange)
     .advertising(
         advertisementData: [
             CBMAdvertisementDataLocalNameKey    : "nRF Blinky",

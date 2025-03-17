@@ -75,6 +75,8 @@ class ScannerTableViewController: UITableViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // This must be here to restart scanning when we
+        // go back from the BlinkyViewController.
         startScan()
     }
 
