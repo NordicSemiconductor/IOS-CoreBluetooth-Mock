@@ -80,6 +80,14 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
     func reset() {
         ledEnabled = false
         buttonPressed = false
+        print("""
+        ----------------------------------------
+        *** Booting Mock LBS sample v1.0 ***
+        Starting Bluetooth Peripheral LBS sample
+        Bluetooth initialized
+        Advertising successfully started
+        ----------------------------------------
+        """)
     }
 
     func peripheral(_ peripheral: CBMPeripheralSpec,
