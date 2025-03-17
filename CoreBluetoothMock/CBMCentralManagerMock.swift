@@ -631,7 +631,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///   - peripheral: The peripheral to disconnect.
     ///   - error: The disconnection reason. Use ``CBMError`` or ``CBMATTError`` errors.
     internal static func peripheral(_ peripheral: CBMPeripheralSpec,
-                                    didDisconnectWithError error: Error =  CBError(.peripheralDisconnected)) {
+                                    didDisconnectWithError error: Error = CBError(.peripheralDisconnected)) {
         // Is the device connected at all?
         guard peripheral.isConnected else {
             return
