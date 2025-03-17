@@ -1128,11 +1128,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // Keep only services that hadn't changed.
         services = oldServices
             .filter { service in
-                mock.services!.contains(where: {
+                mock.services!.contains {
                     $0.identifier == service.identifier
-                })
+                }
             }
-        let invalidatedServices = oldServices.filter({ !services!.contains($0) })
+        let invalidatedServices = oldServices.filter { !services!.contains($0) }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, self.state == .connected {
                 self.delegate?.peripheral(self, didModifyServices: invalidatedServices)
