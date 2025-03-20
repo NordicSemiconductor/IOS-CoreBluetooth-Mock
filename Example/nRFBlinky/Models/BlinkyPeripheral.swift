@@ -89,8 +89,22 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
                 self.post(.blinkyDidDisconnect(self, error: nil))
             }
         }
-        _ = onConnected {
-            self.discoverBlinkyServices()
+        _ = onConnected { [weak self] in
+            // The peripheral has connected for the first time,
+            // or it has been reconnected automatically using
+            // Auto Connect feature.
+            //
+            // NOTE
+            // In any way we have to discover services and characteristics,
+            // despite the fact that the basePeripheral.services may not be nil
+            // if the device got reconnected.
+            // For non-bonded devices the previous state of isNotifying state
+            // is cached and is no longer valid.
+            // Even though some attributes would work, it's better to discover
+            // them again.
+            //
+            // Tested on iOS 18.3.2.
+            self?.discoverBlinkyServices()
         }
     }
 
@@ -199,7 +213,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
             } else if ledCharacteristic.properties.contains(.writeWithoutResponse) {
                 print("Writing LED value... (without response)")
                 basePeripheral.writeValue(value, for: ledCharacteristic, type: .withoutResponse)
-                // peripheral(_:didWriteValueFor,error) will not be called after write without response
+                // peripheral(_:didWriteValueFor:error) will not be called after write without response
                 // we are calling the delegate here
                 didWriteValueToLED(value)
             } else {
@@ -328,7 +342,7 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
                 }
             }
         }
-        // Blinky service has not been found
+        // Blinky service has not been found.
         print("Device not supported: Required service not found.")
         post(.blinky(self,
                 didBecameReadyWithLedSupported: false,

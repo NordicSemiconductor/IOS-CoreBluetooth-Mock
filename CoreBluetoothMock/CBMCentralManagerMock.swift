@@ -1085,7 +1085,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // If a device disconnected with a timeout, the central waits
         // for the duration of supervision timeout before accepting
         // disconnection.
-        if let error = error as? CBMError, error.code == .connectionTimeout, let timeout = mock.supervisionTimeout {
+        if let error = error as? CBMError, error.code == .connectionTimeout,
+           let timeout = mock.supervisionTimeout {
             interval = timeout
         }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
@@ -1126,6 +1127,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         
         // Keep only services that hadn't changed.
+        // TODO: What if the order of services (thus their handle numbers) has changed?
         services = oldServices
             .filter { service in
                 mock.services!.contains {

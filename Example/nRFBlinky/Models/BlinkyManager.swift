@@ -142,6 +142,12 @@ extension BlinkyManager: CBCentralManagerDelegate {
            blinky.basePeripheral.identifier == peripheral.identifier {
             print("Blinky connected")
             blinky.post(.blinkyDidConnect(blinky))
+            
+            // NOTE
+            // For peripherals reconnected using Auto Reconnect feature,
+            // the services are not nil. But the isNotifying property
+            // is cached and may be wrong. Don't use them, rather discover
+            // the services again.
         }
     }
 
