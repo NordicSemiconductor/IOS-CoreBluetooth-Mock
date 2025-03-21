@@ -39,7 +39,7 @@ open class CBMCentralManagerDelegateProxy: NSObject, CBMCentralManagerDelegate {
     public var didDiscoverPeripheral: ((CBMCentralManager, CBMPeripheral, [String : Any], NSNumber) -> ())?
     public var didConnect: ((CBMCentralManager, CBMPeripheral) -> ())?
     public var didFailToConnect: ((CBMCentralManager, CBMPeripheral, Error?) -> ())?
-    public var didDisconnect: ((CBMCentralManager, CBMPeripheral, Error?) -> ())?
+    public var didDisconnect: ((CBMCentralManager, CBMPeripheral, CFAbsoluteTime, Bool, Error?) -> ())?
     public var connectionEventDidOccur: ((CBMCentralManager, CBMConnectionEvent, CBMPeripheral) -> ())?
     public var didUpdateANCSAuthorization: ((CBMCentralManager, CBMPeripheral) -> ())?
     
@@ -73,7 +73,15 @@ open class CBMCentralManagerDelegateProxy: NSObject, CBMCentralManagerDelegate {
     open func centralManager(_ central: CBMCentralManager,
                                didDisconnectPeripheral peripheral: CBMPeripheral,
                                error: Error?) {
-        didDisconnect?(central, peripheral, error)
+        didDisconnect?(central, peripheral, CFAbsoluteTimeGetCurrent(), false, error)
+    }
+    
+    open func centralManager(_ central: CBMCentralManager,
+                               didDisconnectPeripheral peripheral: CBMPeripheral,
+                               timestamp: CFAbsoluteTime,
+                               isReconnecting: Bool,
+                               error: (any Error)?) {
+        didDisconnect?(central, peripheral, timestamp, isReconnecting, error)
     }
     
     @available(iOS 13.0, *)

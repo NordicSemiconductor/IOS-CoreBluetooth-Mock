@@ -280,7 +280,11 @@ public class CBMPeripheralSpec {
     /// - Parameter error: The disconnection reason. Use ``CBMError`` or
     ///                    ``CBMATTError`` errors.
     public func simulateDisconnection(withError error: Error = CBMError(.peripheralDisconnected)) {
-        CBMCentralManagerMock.peripheral(self, didDisconnectWithError: error)
+        if virtualConnections > 0 {
+            virtualConnections = 0
+            connectionDelegate?.peripheral(self, didDisconnect: error)
+            CBMCentralManagerMock.peripheral(self, didDisconnectWithError: error)
+        }
     }
     
     /// Simulates a reset of the peripheral.
@@ -289,7 +293,10 @@ public class CBMPeripheralSpec {
     /// Connected central managers will be notified after the supervision timeout is over.
     public func simulateReset() {
         connectionDelegate?.reset()
-        simulateDisconnection(withError: CBMError(.connectionTimeout))
+        if virtualConnections > 0 {
+            virtualConnections = 0
+            CBMCentralManagerMock.peripheral(self, didDisconnectWithError: CBMError(.connectionTimeout))
+        }
     }
     
     /// Simulates a situation when the device changes its services.
@@ -321,7 +328,13 @@ public class CBMPeripheralSpec {
     /// be disconnected and will not appear on scan results.
     /// - Parameter proximity: The new peripheral proximity.
     public func simulateProximityChange(_ proximity: CBMProximity) {
-        CBMCentralManagerMock.proximity(of: self, didChangeTo: proximity)
+        self.proximity = proximity
+        if proximity == .outOfRange {
+            simulateDisconnection(withError: CBMError(.connectionTimeout))
+        } // else {
+            // If a device got in range an advertising packet will be received
+            // at some point. Any pending connections will succeed at that time.
+        //}
     }
     
     /// Simulates a notification/indication sent from the peripheral.

@@ -89,15 +89,20 @@ public class CBMCentralManagerNative: CBMCentralManager {
                                              error: error)
         }
         
-        func centralManager(_ central: CBCentralManager,
-                            didDisconnectPeripheral peripheral: CBPeripheral,
-                            error: Error?) {
-            let p = getPeripheral(peripheral)
-            p.mockServices = nil
-            manager.delegate?.centralManager(manager,
-                                             didDisconnectPeripheral: p,
-                                             error: error)
-        }
+        // When this method is implemented, the other variant with
+        // timestamp and isReconnecting flag isn't. However, the latter one
+        // was added in iOS 17, so we need to selecrt the implementation
+        // based on the OS version. Check out below.
+        
+        // func centralManager(_ central: CBCentralManager,
+        //                     didDisconnectPeripheral peripheral: CBPeripheral,
+        //                     error: Error?) {
+        //     let p = getPeripheral(peripheral)
+        //     p.mockServices = nil
+        //     manager.delegate?.centralManager(manager,
+        //                                      didDisconnectPeripheral: p,
+        //                                      error: error)
+        // }
         
         #if !os(macOS)
         @available(iOS 13.0, *)
@@ -119,7 +124,7 @@ public class CBMCentralManagerNative: CBMCentralManager {
         }
         #endif
         
-        private func getPeripheral(_ peripheral: CBPeripheral) -> CBMPeripheralNative {
+        fileprivate func getPeripheral(_ peripheral: CBPeripheral) -> CBMPeripheralNative {
             return manager.peripherals[peripheral.identifier] ?? newPeripheral(peripheral)
         }
         
@@ -130,7 +135,74 @@ public class CBMCentralManagerNative: CBMCentralManager {
         }
     }
     
-    private class CBMCentralManagerDelegateWrapperWithRestoration: CBMCentralManagerDelegateWrapper {
+    private class CBMCentralManagerDelegateWrapperIOS12: CBMCentralManagerDelegateWrapper {
+        
+        override init(_ manager: CBMCentralManagerNative) {
+            super.init(manager)
+        }
+        
+        func centralManager(_ central: CBCentralManager,
+                            didDisconnectPeripheral peripheral: CBPeripheral,
+                            error: Error?) {
+            let p = getPeripheral(peripheral)
+            p.mockServices = nil
+            // Call only the "new" method with timestamp and isReconnecting.
+            // If that is not implemented in the delegate, the default
+            // implementation will call the old one.
+            manager.delegate?.centralManager(manager,
+                                             didDisconnectPeripheral: p,
+                                             timestamp: CFAbsoluteTimeGetCurrent(),
+                                             isReconnecting: false,
+                                             error: error)
+        }
+    }
+    
+    private class CBMCentralManagerDelegateWrapperIOS17: CBMCentralManagerDelegateWrapper {
+        
+        override init(_ manager: CBMCentralManagerNative) {
+            super.init(manager)
+        }
+        
+        func centralManager(_ central: CBCentralManager,
+                            didDisconnectPeripheral peripheral: CBPeripheral,
+                            timestamp: CFAbsoluteTime,
+                            isReconnecting: Bool,
+                            error: (any Error)?) {
+            let p = getPeripheral(peripheral)
+            if !isReconnecting {
+                p.mockServices = nil
+            }
+            manager.delegate?.centralManager(manager,
+                                             didDisconnectPeripheral: p,
+                                             timestamp: timestamp,
+                                             isReconnecting: isReconnecting,
+                                             error: error)
+        }
+    }
+    
+    private class CBMCentralManagerDelegateWrapperIOS12WithRestoration:
+        CBMCentralManagerDelegateWrapperIOS12 {
+        
+        override init(_ manager: CBMCentralManagerNative) {
+            super.init(manager)
+        }
+        
+        func centralManager(_ central: CBCentralManager,
+                            willRestoreState dict: [String : Any]) {
+            var state = dict
+            
+            if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
+                state[CBMCentralManagerRestoredStatePeripheralsKey] = peripherals.map {
+                    CBMPeripheralNative($0)
+                }
+            }
+                        
+            manager.delegate?.centralManager(manager, willRestoreState: state)
+        }
+    }
+    
+    private class CBMCentralManagerDelegateWrapperIOS17WithRestoration:
+        CBMCentralManagerDelegateWrapperIOS17 {
         
         override init(_ manager: CBMCentralManagerNative) {
             super.init(manager)
@@ -208,10 +280,25 @@ public class CBMCentralManagerNative: CBMCentralManager {
                 queue: DispatchQueue?,
                 options: [String : Any]?) {
         super.init(true)
+        
+        // CBConnectPeripheralOptionEnableAutoReconnect is available from iOS 17.0.
+        var iOS17 = false
+        if #available(iOS 17.0, *) {
+            iOS17 = true
+        }
+        
+        // State restoration is enabled using CBMCentralManagerOptionRestoreIdentifierKey option.
         let restoration = options?[CBMCentralManagerOptionRestoreIdentifierKey] != nil
-        self.wrapper = restoration ?
-            CBMCentralManagerDelegateWrapperWithRestoration(self) :
-            CBMCentralManagerDelegateWrapper(self)
+       
+        if iOS17 {
+            self.wrapper = restoration ?
+                CBMCentralManagerDelegateWrapperIOS17WithRestoration(self) :
+                CBMCentralManagerDelegateWrapperIOS17(self)
+        } else {
+            self.wrapper = restoration ?
+                CBMCentralManagerDelegateWrapperIOS12WithRestoration(self) :
+                CBMCentralManagerDelegateWrapperIOS12(self)
+        }
         self.manager = CBCentralManager(delegate: wrapper, queue: queue, options: options)
         self.delegate = delegate
         
