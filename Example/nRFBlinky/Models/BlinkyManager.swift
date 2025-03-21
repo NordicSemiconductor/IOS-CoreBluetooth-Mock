@@ -198,12 +198,13 @@ extension BlinkyManager: CBCentralManagerDelegate {
     public func centralManager(_ central: CBCentralManager,
                                didDisconnectPeripheral peripheral: CBPeripheral,
                                error: Error?) {
-        if let blinky = connectedBlinky,
-           blinky.basePeripheral.identifier == peripheral.identifier {
-            print("Blinky disconnected")
-            connectedBlinky = nil
-            blinky.post(.blinkyDidDisconnect(blinky, error: error))
-        }
+        assertionFailure("This method should not be called when the next one is implemented.")
+        // if let blinky = connectedBlinky,
+        //    blinky.basePeripheral.identifier == peripheral.identifier {
+        //     print("Blinky disconnected")
+        //     connectedBlinky = nil
+        //     blinky.post(.blinkyDidDisconnect(blinky, error: error))
+        // }
     }
     
     func centralManager(_ central: CBCentralManager,
