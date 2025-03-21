@@ -47,9 +47,3 @@ like the ``CBMCentralManagerNative`` can interact with real devices.
 - ``isKnown``
 - ``services``
 
-### Deprecated
-
-- ``advertisementData``
-- ``advertisingInterval``
-- ``isAdvertisingWhenConnected``
-
