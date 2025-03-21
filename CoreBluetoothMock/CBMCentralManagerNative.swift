@@ -53,7 +53,12 @@ public class CBMCentralManagerNative: CBMCentralManager {
         
         // This methods is moved to a separate class below. Otherwise a warning
         // is generated when setting delegate to the CBCentralManager when
-        // restoration was not enabled.
+        // restoration was not enabled:
+        // ----
+        // API MISUSE: <CBCentralManager: ...> has no restore identifier but the
+        // delegate implements the centralManager:willRestoreState: method.
+        // Restoring will not be supported
+        // ----
         //
         // func centralManager(_ central: CBCentralManager,
         //                     willRestoreState dict: [String : Any]) {

@@ -40,19 +40,20 @@ import CoreBluetooth
 /// the central manager calls this when its state updates, thereby indicating the availability of the central manager.
 public protocol CBMCentralManagerDelegate: AnyObject {
 
-    /// Invoked whenever the central manager's state has been updated. Commands
-    /// should only be issued when the state is ``CBMManagerState/poweredOn``.
-    /// A state below``CBMManagerState/poweredOn`` implies that scanning has stopped and any
-    /// connected peripherals have been disconnected. If the state moves below
-    /// ``CBMManagerState/poweredOff``, all ``CBMPeripheral`` objects obtained from this central
-    /// manager become invalid and must be retrieved or discovered again.
+    /// Invoked whenever the central manager's state has been updated.
+    ///
+    /// Commands should only be issued when the state is ``CBMManagerState/poweredOn``.
+    ///
+    /// Any other state implies that scanning has stopped and any
+    /// connected peripherals have been disconnected.
     /// - Parameter central: The central manager whose state has changed.
     func centralManagerDidUpdateState(_ central: CBMCentralManager)
     
     /// For apps that opt-in to state preservation and restoration, this is the
     /// first method invoked when your app is relaunched into the background to
-    /// complete some Bluetooth-related task. Use this method to synchronize your
-    /// app's state with the state of the Bluetooth system.
+    /// complete some Bluetooth-related task.
+    ///
+    /// Use this method to synchronize your app's state with the state of the Bluetooth system.
     ///
     /// When mocking is enabled, the returned state is obtained using
     /// ``CBMCentralManagerMock/simulateStateRestoration``.
@@ -64,9 +65,13 @@ public protocol CBMCentralManagerDelegate: AnyObject {
                         willRestoreState dict: [String : Any])
     
     /// This method is invoked while scanning, upon the discovery of peripheral by
-    /// central. A discovered peripheral must be retained in order to use it;
+    /// central.
+    ///
+    /// A discovered peripheral must be retained in order to use it;
     /// otherwise, it is assumed to not be of interest and will be cleaned up by
-    /// the central manager. For a list of advertisementData keys, see
+    /// the central manager.
+    ///
+    /// For a list of advertisementData keys, see
     /// ``CBMAdvertisementDataLocalNameKey`` and other similar constants.
     /// - Parameters:
     ///   - central: The central manager providing this update.
@@ -89,8 +94,10 @@ public protocol CBMCentralManagerDelegate: AnyObject {
                         didConnect peripheral: CBMPeripheral)
     
     /// This method is invoked when a connection initiated by ``CBMCentralManager/connect(_:options:)``
-    /// has failed to complete. As connection attempts do not timeout, the failure
-    /// of a connection is atypical and usually indicative of a transient issue.
+    /// has failed to complete.
+    ///
+    /// As connection attempts do not timeout, the failure of a connection is atypical
+    /// and usually indicative of a transient issue.
     /// - Parameters:
     ///   - central: The central manager providing this information.
     ///   - peripheral: The ``CBMPeripheral`` that has failed to connect.
@@ -101,9 +108,11 @@ public protocol CBMCentralManagerDelegate: AnyObject {
     
     /// This method is invoked upon the disconnection of a peripheral that was
     /// connected by ``CBMCentralManager/connect(_:options:)``.
+    ///
     /// If the disconnection was not initiated by
     /// ``CBMCentralManager/cancelPeripheralConnection(_:)``,
     /// the cause will be detailed in the error parameter.
+    ///
     /// Once this method has been called, no more methods will be
     /// invoked on peripheral's ``CBMPeripheralDelegate``.
     /// - Parameters:

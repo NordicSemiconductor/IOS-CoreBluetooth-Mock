@@ -138,7 +138,9 @@ class ScannerTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView,
                             didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        post(.selectPeripheral(at: indexPath.row))
+        
+        let blinky = manager.discoveredPeripherals[indexPath.row]
+        post(.selectPeripheral(blinky))
     }
 
     // MARK: - Segue and navigation
@@ -214,8 +216,8 @@ extension Notification.Name {
 
 extension Notification {
 
-    static func selectPeripheral(at index: Int) -> Notification {
-        return Notification(name: .selection, userInfo: ["row": index])
+    static func selectPeripheral(_ blinky: BlinkyPeripheral) -> Notification {
+        return Notification(name: .selection, object: blinky)
     }
 
 }
@@ -236,9 +238,7 @@ private extension ScannerTableViewController {
 
     func onPeripheralSelected(do action: @escaping (BlinkyPeripheral) -> ()) -> NSObjectProtocol {
         return on(.selection) { notification in
-            if let userInfo = notification.userInfo,
-               let index = userInfo["row"] as? Int {
-                let blinky = self.manager.discoveredPeripherals[index]
+            if let blinky = notification.object as? BlinkyPeripheral {
                 action(blinky)
             }
         }

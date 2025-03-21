@@ -136,6 +136,8 @@ extension BlinkyPeripheral {
             if let userInfo = notification.userInfo {
                 let isOn = userInfo["isOn"] as? Bool
                 action(isOn)
+            } else {
+                action(nil)
             }
         }
     }
@@ -145,6 +147,8 @@ extension BlinkyPeripheral {
             if let userInfo = notification.userInfo {
                 let isPressed = userInfo["isPressed"] as? Bool
                 action(isPressed)
+            } else {
+                action(nil)
             }
         }
     }

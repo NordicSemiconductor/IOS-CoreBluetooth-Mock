@@ -87,7 +87,10 @@ class BlinkyManager {
 
     /// Connects to the Blinky device.
     func connect(_ blinky: BlinkyPeripheral) {
-        guard state == .poweredOn, connectedBlinky == nil else {
+        guard state == .poweredOn else {
+            return
+        }
+        guard connectedBlinky == nil || connectedBlinky === blinky else {
             return
         }
         connectedBlinky = blinky
@@ -142,6 +145,12 @@ extension BlinkyManager: CBCentralManagerDelegate {
            blinky.basePeripheral.identifier == peripheral.identifier {
             print("Blinky connected")
             blinky.post(.blinkyDidConnect(blinky))
+            
+            // NOTE
+            // For peripherals reconnected using Auto Reconnect feature,
+            // the services are not nil. But the isNotifying property
+            // is cached and may be wrong. Don't use them, rather discover
+            // the services again.
         }
     }
 

@@ -42,11 +42,14 @@ extension Notification {
 
     static func manager(_ manager: BlinkyManager, didDiscover blinky: BlinkyPeripheral) -> Notification {
         return Notification(name: .newPeripheral,
+                            object: manager,
                             userInfo: ["blinky": blinky])
     }
 
     static func manager(_ manager: BlinkyManager, didChangeStateTo state: CBMManagerState) -> Notification {
-        return Notification(name: .state, userInfo: ["state": state])
+        return Notification(name: .state,
+                            object: manager,
+                            userInfo: ["state": state])
     }
 
 }
