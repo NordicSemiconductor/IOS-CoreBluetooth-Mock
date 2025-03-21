@@ -95,7 +95,14 @@ class BlinkyManager {
         }
         connectedBlinky = blinky
         print("Connecting to Blinky device...")
-        centralManager.connect(blinky.basePeripheral)
+        // Enable the Auto Reconnect feature when it's supported.
+        if #available(iOS 17.0, *) {
+            centralManager.connect(blinky.basePeripheral, options: [
+                CBConnectPeripheralOptionEnableAutoReconnect : true,
+            ])
+        } else {
+            centralManager.connect(blinky.basePeripheral)
+        }
     }
 
     /// Cancels existing or pending connection.
@@ -121,6 +128,17 @@ extension BlinkyManager: CBCentralManagerDelegate {
             connectedBlinky = nil
         }
         post(.manager(self, didChangeStateTo: central.state))
+        
+        // If peripheral(_:willRestoreState:error) was called, the
+        // connected peripheral is already restored.
+        if let blinky = connectedBlinky {
+            print("Restored connection to \(blinky)")
+            
+            // This will open the BlinkyViewController...
+            post(.manager(self, didConnect: blinky))
+            // ...and this will initiate service discovery.
+            blinky.post(.blinkyDidConnect(blinky))
+        }
     }
 
     func centralManager(_ central: CBCentralManager,
@@ -141,6 +159,14 @@ extension BlinkyManager: CBCentralManagerDelegate {
 
     public func centralManager(_ central: CBCentralManager,
                                didConnect peripheral: CBPeripheral) {
+        // If a pending background connection succeeds, the
+        // connectedBlinky may be null.
+        if connectedBlinky == nil {
+            connectedBlinky = discoveredPeripherals.first {
+                $0.basePeripheral.identifier == peripheral.identifier
+            }
+            post(.manager(self, didConnect: connectedBlinky!))
+        }
         if let blinky = connectedBlinky,
            blinky.basePeripheral.identifier == peripheral.identifier {
             print("Blinky connected")
@@ -180,7 +206,29 @@ extension BlinkyManager: CBCentralManagerDelegate {
         }
     }
     
+    func centralManager(_ central: CBCentralManager,
+                        didDisconnectPeripheral peripheral: CBPeripheral,
+                        timestamp: CFAbsoluteTime,
+                        isReconnecting: Bool,
+                        error: (any Error)?) {
+        if let blinky = connectedBlinky,
+           blinky.basePeripheral.identifier == peripheral.identifier {
+            print("Blinky disconnected, reconnecting: \(isReconnecting)")
+            if !isReconnecting {
+                connectedBlinky = nil
+            }
+            blinky.post(.blinkyDidDisconnect(blinky, error: error))
+        }
+    }
+    
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
         print("Restoring Central Manager state with \(dict)")
+        
+        let connectedPeripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] ?? []
+        discoveredPeripherals = connectedPeripherals.map {
+            BlinkyPeripheral(withConnectedPeripheral: $0, using: self)
+        }
+        //
+        connectedBlinky = discoveredPeripherals.first { $0.state == .connected }
     }
 }

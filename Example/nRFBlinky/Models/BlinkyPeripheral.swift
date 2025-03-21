@@ -107,6 +107,17 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
             self?.discoverBlinkyServices()
         }
     }
+    
+    convenience init(withConnectedPeripheral peripheral: CBPeripheral,
+         using manager: BlinkyManager) {
+        self.init(withPeripheral: peripheral,
+                  advertisementData: [
+                    CBAdvertisementDataLocalNameKey : peripheral.name ?? "Unknown Device".localized,
+                    CBAdvertisementDataIsConnectable : true
+                  ],
+                  andRSSI: -128,
+                  using: manager)
+    }
 
     /// Connects to the Blinky device.
     func connect() {
@@ -333,14 +344,19 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
             for service in services {
                 if service.uuid == BlinkyPeripheral.nordicBlinkyServiceUUID {
                     print("LED Button service found")
-                    //Capture and discover all characteristics for the blinky service
+                    // Assert few assumptions. Note, that we're not checking
+                    // if service.characteristics is nil, as this may not be true
+                    // for reconnected devices (when Auto Reconnect feature is used).
                     assert(service.isPrimary)
-                    assert(service.characteristics == nil)
                     #if swift(>=5.5)
                     assert(service.peripheral?.identifier == peripheral.identifier)
                     #else
                     assert(service.peripheral.identifier == peripheral.identifier)
                     #endif
+                    // NOTE
+                    // When a device is reconnected, the characteristics might be not nil.
+                    // However, they have cached values of isNotifying, which may be wrong.
+                    // We recommend to rediscover them again to get actual values.
                     discoverCharacteristicsForBlinkyService(service)
                     return
                 }

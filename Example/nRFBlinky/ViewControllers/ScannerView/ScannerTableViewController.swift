@@ -61,6 +61,10 @@ class ScannerTableViewController: UITableViewController {
         _ = manager.onBlinkyDiscovery { [unowned self] blinky in
             self.addOrUpdateBlinky(blinky)
         }
+        _ = manager.onBlinkyConnected { [unowned self] blinky in
+            self.stopScan()
+            self.connectBlinky(blinky)
+        }
         _ = onPeripheralSelected { [unowned self] blinky in
             self.stopScan()
             self.connectBlinky(blinky)
