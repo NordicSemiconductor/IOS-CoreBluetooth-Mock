@@ -60,6 +60,11 @@ class ScannerTableViewController: UITableViewController {
         }
         _ = manager.onBlinkyDiscovery { [unowned self] blinky in
             self.addOrUpdateBlinky(blinky)
+            self.hideEmptyPeripheralsView()
+        }
+        _ = manager.onBlinkyConnected { [unowned self] blinky in
+            self.stopScan()
+            self.connectBlinky(blinky)
         }
         _ = onPeripheralSelected { [unowned self] blinky in
             self.stopScan()
@@ -70,6 +75,7 @@ class ScannerTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         manager.reset()
+        showEmptyPeripheralsView()
         tableView.reloadData()
     }
     
@@ -106,11 +112,6 @@ class ScannerTableViewController: UITableViewController {
     // MARK: - UITableViewDelegate
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        if manager.isEmpty {
-            showEmptyPeripheralsView()
-        } else {
-            hideEmptyPeripheralsView()
-        }
         return manager.discoveredPeripherals.count > 0 ? 1 : 0
     }
     

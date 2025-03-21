@@ -326,6 +326,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     CBMPeripheralMock(basedOn: mock, by: self, andRestoreState: true)
                 }
                 state[CBMCentralManagerRestoredStatePeripheralsKey] = peripherals
+                peripherals.forEach { peripheral in
+                    self.peripherals[peripheral.identifier] = peripheral
+                }
             }
             if let scanServiceKey = dict[CBMCentralManagerRestoredStateScanServicesKey] as? [CBMUUID] {
                 state[CBMCentralManagerRestoredStateScanServicesKey] = scanServiceKey
@@ -470,33 +473,6 @@ open class CBMCentralManagerMock: CBMCentralManager {
     
     // MARK: - Peripheral simulation methods
     
-    /// Simulates a situation when the given peripheral was moved closer
-    /// or away from the phone.
-    ///
-    /// If the proximity is changed to ``CBMProximity/outOfRange``, the peripheral will
-    /// be disconnected and will not appear on scan results.
-    /// - Parameter peripheral: The peripheral that was repositioned.
-    /// - Parameter proximity: The new peripheral proximity.
-    internal static func proximity(of peripheral: CBMPeripheralSpec,
-                                   didChangeTo proximity: CBMProximity) {
-        guard peripheral.proximity != proximity else {
-            return
-        }
-        // Is the peripheral simulated?
-        guard peripherals.contains(peripheral) else {
-            return
-        }
-        peripheral.proximity = proximity
-        
-        if proximity == .outOfRange {
-            self.peripheral(peripheral,
-                            didDisconnectWithError: CBMError(.connectionTimeout))
-        } // else {
-            // If a device got in range an advertising packet will be received
-            // at some point. Any pending connections will succeed at that time.
-        //}
-    }
-    
     /// Simulates a situation when the device changes its services.
     /// - Parameters:
     ///   - peripheral: The peripheral that changed services.
@@ -632,17 +608,10 @@ open class CBMCentralManagerMock: CBMCentralManager {
     ///   - error: The disconnection reason. Use ``CBMError`` or ``CBMATTError`` errors.
     internal static func peripheral(_ peripheral: CBMPeripheralSpec,
                                     didDisconnectWithError error: Error = CBError(.peripheralDisconnected)) {
-        // Is the device connected at all?
-        guard peripheral.isConnected else {
-            return
-        }
         // Is the peripheral simulated?
         guard peripherals.contains(peripheral) else {
             return
         }
-        // The device has disconnected, so it can start advertising
-        // immediately.
-        peripheral.virtualConnections = 0
         // Notify all central managers.
         let existingManagers = CBMCentralManagerMock.mutex.sync {
             managers.compactMap { $0.ref }
@@ -653,6 +622,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 target.disconnected(withError: error) { error in
                     manager.delegate?.centralManager(manager,
                                                      didDisconnectPeripheral: target,
+                                                     timestamp: CFAbsoluteTimeGetCurrent(),
+                                                     isReconnecting: target.isReconnecting,
                                                      error: error)
                 }
             }
@@ -725,8 +696,16 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         // Central manager must be in powered on state.
         guard ensurePoweredOn() else { return }
-        if let o = options, !o.isEmpty {
-            NSLog("Warning: Connection options are not supported in mock central manager")
+        // Read connection options. Currently only auto-reconnect is supported.
+        var enableAutoReconnect = false
+        if var o = options {
+            if #available(iOS 17.0, *) {
+                let option = o.removeValue(forKey: CBMConnectPeripheralOptionEnableAutoReconnect) as? NSNumber
+                enableAutoReconnect = option?.boolValue ?? false
+            }
+            if !o.isEmpty {
+                NSLog("Warning: Connection options are not supported in mock central manager")
+            }
         }
         // Ignore peripherals that are not mocks.
         guard let mock = peripheral as? CBMPeripheralMock else {
@@ -741,6 +720,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         // Connection is pending.
         mock.state = .connecting
+        mock.isReconnecting = enableAutoReconnect
         // If the device is already connected, there is no need to waiting for
         // advertising packet.
         if mock.isAlreadyConnected {
@@ -754,7 +734,11 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // Handle the Preview peripheral.
         if let peripheral = peripheral as? CBMPeripheralPreview {
             peripheral.state = .disconnected
-            delegate?.centralManager(self, didDisconnectPeripheral: peripheral, error: nil)
+            delegate?.centralManager(self,
+                                     didDisconnectPeripheral: peripheral,
+                                     timestamp: CFAbsoluteTimeGetCurrent(),
+                                     isReconnecting: false,
+                                     error: nil)
             return
         }
         // Central manager must be in powered on state.
@@ -769,7 +753,10 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         mock.disconnect() {
-            self.delegate?.centralManager(self, didDisconnectPeripheral: mock,
+            self.delegate?.centralManager(self,
+                                          didDisconnectPeripheral: mock,
+                                          timestamp: CFAbsoluteTimeGetCurrent(),
+                                          isReconnecting: false,
                                           error: nil)
         }
     }
@@ -913,6 +900,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
     /// The current buffer size.
     private var availableWriteWithoutResponseBuffer: Int
     private var _canSendWriteWithoutResponse: Bool = false
+    /// A flag indicating whether the last connection attempt was
+    /// using ``CBMConnectPeripheralOptionEnableAutoReconnect`` option.
+    ///
+    /// This flag is only cleared when the device is disconnected using
+    /// ``CBMCentralManager/cancelPeripheralConnection(_:)``.
+    fileprivate var isReconnecting: Bool = false
     
     /// A flag set to `true` when the device was scanned for the first time during
     /// a single scan. This is to ensure that the result is not delivered twice unless
@@ -964,6 +957,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         self.mock = mock
         self.manager = manager
         self.availableWriteWithoutResponseBuffer = bufferSize
+        self.isReconnecting = restore
         
         // If the Central Manager restores its state, the previously
         // connected peripherals may still be connected or connecting.
@@ -1043,6 +1037,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
     }
     
     fileprivate func disconnect(completion: @escaping () -> ()) {
+        // Cancel auto-reconnection.
+        isReconnecting = false
         // Cancel pending connection.
         guard state != .connecting else {
             state = .disconnected
@@ -1068,8 +1064,12 @@ open class CBMCentralManagerMock: CBMCentralManager {
                 self.services = nil
                 self._canSendWriteWithoutResponse = false
                 self.mock.virtualConnections -= 1
-                self.mock.connectionDelegate?.peripheral(self.mock,
-                                                         didDisconnect: nil)
+                // Notify the mock delegate when the last connection
+                // was terminated.
+                if mock.virtualConnections == 0 {
+                    self.mock.connectionDelegate?.peripheral(self.mock,
+                                                             didDisconnect: nil)
+                }
                 completion()
             }
         }
@@ -1091,15 +1091,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
         }
         queue.asyncAfter(deadline: .now() + interval) { [weak self] in
             if let self = self, CBMCentralManagerMock.managerState == .poweredOn {
-                self.state = .disconnected
-                self.services = nil
+                if isReconnecting {
+                    self.state = .connecting
+                } else {
+                    self.state = .disconnected
+                    self.services = nil
+                }
                 self._canSendWriteWithoutResponse = false
-                // If the disconnection happen without an error, the device
-                // must have been disconnected disconnected from central
-                // manager.
-                self.mock.virtualConnections = 0
-                self.mock.connectionDelegate?.peripheral(self.mock,
-                                                         didDisconnect: error)
                 completion(error)
             }
         }
@@ -1297,9 +1295,13 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     // Filter all service characteristics that match given list (if set).
                     .filter { characteristicUUIDs == nil || characteristicUUIDs!.isEmpty || characteristicUUIDs!.contains($0.uuid) }
                     // Filter those of them, that are not already in discovered characteristics.
-                    .filter { c in !service._characteristics!
-                        .contains { dc in c.identifier == dc.identifier }
-                    }
+                    // NOTE FOR THE CODE COMMENTED OUT
+                    // Seems like second discovery resets the state of a characteristic,
+                    // including isNotifying and inner descriptors.
+                    // TODO: The last part should be tested.
+//                    .filter { c in !service._characteristics!
+//                        .contains { dc in c.identifier == dc.identifier }
+//                    }
                     // Copy the characteristic info, without included descriptors or value.
                     .map { CBMCharacteristic(shallowCopy: $0, in: service) }
             let newCharacteristicsCount = service._characteristics!.count - initialSize

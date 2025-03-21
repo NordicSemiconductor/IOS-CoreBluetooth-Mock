@@ -34,6 +34,7 @@ import CoreBluetoothMock
 extension Notification.Name {
 
     static let newPeripheral = Notification.Name("New Peripheral")
+    static let newConnection = Notification.Name("New Connection")
     static let state         = Notification.Name("Central Manager State")
 
 }
@@ -42,6 +43,12 @@ extension Notification {
 
     static func manager(_ manager: BlinkyManager, didDiscover blinky: BlinkyPeripheral) -> Notification {
         return Notification(name: .newPeripheral,
+                            object: manager,
+                            userInfo: ["blinky": blinky])
+    }
+    
+    static func manager(_ manager: BlinkyManager, didConnect blinky: BlinkyPeripheral) -> Notification {
+        return Notification(name: .newConnection,
                             object: manager,
                             userInfo: ["blinky": blinky])
     }
@@ -70,6 +77,15 @@ extension BlinkyManager {
 
     func onBlinkyDiscovery(do action: @escaping (BlinkyPeripheral) -> ()) -> NSObjectProtocol {
         return on(.newPeripheral) { notification in
+            if let userInfo = notification.userInfo,
+               let blinky = userInfo["blinky"] as? BlinkyPeripheral {
+                action(blinky)
+            }
+        }
+    }
+    
+    func onBlinkyConnected(do action: @escaping (BlinkyPeripheral) -> ()) -> NSObjectProtocol {
+        return on(.newConnection) { notification in
             if let userInfo = notification.userInfo,
                let blinky = userInfo["blinky"] as? BlinkyPeripheral {
                 action(blinky)

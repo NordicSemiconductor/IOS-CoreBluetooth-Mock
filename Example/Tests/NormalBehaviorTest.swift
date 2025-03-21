@@ -83,20 +83,22 @@ class NormalBehaviorTest: XCTestCase {
         }
         
         // Select found device.
-        Sim.post(.selectPeripheral(at: 0))
+        Sim.post(.selectPeripheral(target!))
 
         // Wait until blinky is connected and ready.
         let connected = XCTestExpectation(description: "Connected")
         let ready = XCTestExpectation(description: "Ready")
-        target!.onConnected {
+        let connectionObserver = target!.onConnected {
             connected.fulfill()
         }
-        target!.onReady { ledSupported, buttonSupported in
+        let readyObserver = target!.onReady { ledSupported, buttonSupported in
             if ledSupported && buttonSupported {
                 ready.fulfill()
             }
         }
         wait(for: [connected, ready], timeout: 3)
+        Sim.dispose(connectionObserver)
+        Sim.dispose(readyObserver)
 
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let navigationController = appDelegate.window!.rootViewController as! UINavigationController
@@ -138,12 +140,13 @@ class NormalBehaviorTest: XCTestCase {
 
         // Simulate graceful disconnect.
         let disconnection = XCTestExpectation(description: "Disconnection")
-        target!.onDisconnected { error in
+        let disconnectionObserver = target!.onDisconnected { error in
             XCTAssertEqual((error as? CBMError)?.code, CBError.peripheralDisconnected)
             disconnection.fulfill()
         }
         blinky.simulateDisconnection()
         wait(for: [disconnection], timeout: 1)
+        Sim.dispose(disconnectionObserver)
 
         navigationController.popViewController(animated: true)
     }

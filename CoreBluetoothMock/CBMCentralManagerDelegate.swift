@@ -118,10 +118,36 @@ public protocol CBMCentralManagerDelegate: AnyObject {
     /// - Parameters:
     ///   - central: The central manager providing this information.
     ///   - peripheral: The ``CBMPeripheral`` that has disconnected.
-    ///   - error: If an error occurred, the cause of the failure.
+    ///   - error: If an error occurred, the cause of the failure.∂
     func centralManager(_ central: CBMCentralManager,
                         didDisconnectPeripheral peripheral: CBMPeripheral,
                         error: Error?)
+    
+    /// This method is invoked upon the disconnection of a peripheral that was
+    /// connected by ``CBMCentralManager/connect(_:options:)``.
+    ///
+    /// If peripheral is connected with option
+    /// ``CBMConnectPeripheralOptionEnableAutoReconnect``,
+    /// the system will automatically invoke connect to the peripheral and if connection
+    /// is established with the peripheral afterwards,
+    /// ``CBMCentralManagerDelegate/centralManager(_:didConnect:)-p052``
+    /// can be invoked.
+    ///
+    /// If peripheral is connected without option
+    /// ``CBMConnectPeripheralOptionEnableAutoReconnect``, once this
+    /// method has been called, no more methods will be invoked peripheral's
+    /// ``CBMPeripheralDelegate``.
+    /// - Parameters:
+    ///   - central: The central manager providing this information.
+    ///   - peripheral: The ``CBMPeripheral`` that has disconnected.
+    ///   - timestamp: Timestamp of the disconnection, it can be now or a few seconds ago.
+    ///   - isReconnecting: If reconnect was triggered upon disconnection.
+    ///   - error: If an error occurred, the cause of the failure.
+    func centralManager(_ central: CBMCentralManager,
+                        didDisconnectPeripheral peripheral: CBMPeripheral,
+                        timestamp: CFAbsoluteTime,
+                        isReconnecting: Bool,
+                        error: (any Error)?)
     
     /// This method is invoked upon the connection or disconnection of a
     /// peripheral that matches any of the options provided in
@@ -177,6 +203,18 @@ public extension CBMCentralManagerDelegate {
                         didDisconnectPeripheral peripheral: CBMPeripheral,
                         error: Error?) {
         // optional method
+    }
+    
+    func centralManager(_ central: CBMCentralManager,
+                        didDisconnectPeripheral peripheral: CBMPeripheral,
+                        timestamp: CFAbsoluteTime,
+                        isReconnecting: Bool,
+                        error: (any Error)?) {
+        // If not implemented, call the standard
+        // centralManager(_, didDisconnectPeripheral:, error:) method.
+        centralManager(central,
+                       didDisconnectPeripheral: peripheral,
+                       error: error)
     }
     
     @available(iOS 13.0, *)

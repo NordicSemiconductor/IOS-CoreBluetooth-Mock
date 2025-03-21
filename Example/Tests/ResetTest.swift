@@ -83,20 +83,22 @@ class ResetTest: XCTestCase {
         }
 
         // Select found device.
-        Sim.post(.selectPeripheral(at: 0))
+        Sim.post(.selectPeripheral(target!))
 
         // Wait until blinky is connected and ready.
         let connected = XCTestExpectation(description: "Connected")
         let ready = XCTestExpectation(description: "Ready")
-        target!.onConnected {
+        let o1 = target!.onConnected {
             connected.fulfill()
         }
-        target!.onReady { ledSupported, buttonSupported in
+        let o2 = target!.onReady { ledSupported, buttonSupported in
             if ledSupported && buttonSupported {
                 ready.fulfill()
             }
         }
         wait(for: [connected, ready], timeout: 3)
+        target!.dispose(o1)
+        target!.dispose(o2)
 
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let navigationController = appDelegate.window!.rootViewController as! UINavigationController
@@ -123,13 +125,14 @@ class ResetTest: XCTestCase {
 
         // Simulate reset and button press afterwards.
         let reset = XCTestExpectation(description: "Reset")
-        target!.onDisconnected { error in
+        let disconnectionObserver = target!.onDisconnected { error in
             XCTAssertEqual((error as? CBMError)?.code, CBError.connectionTimeout)
             reset.fulfill()
         }
         blinky.simulateReset()
         blinky.simulateValueUpdate(Data([0x01]), for: .buttonCharacteristic)
         wait(for: [reset, buttonPressed], timeout: 5)
+        Sim.dispose(disconnectionObserver)
 
         Sim.dispose(ledObserver)
         Sim.dispose(buttonObserver)
