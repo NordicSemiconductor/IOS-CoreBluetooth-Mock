@@ -118,6 +118,10 @@ class BlinkyPeripheral: NSObject, CBPeripheralDelegate {
         blinkyManager.disconnect(self)
     }
     
+    override var description: String {
+        return "\(advertisedName) (\(basePeripheral.state)"
+    }
+    
     // MARK: - Blinky API
     
     /// Reads value of LED Characteristic. If such characteristic was not
