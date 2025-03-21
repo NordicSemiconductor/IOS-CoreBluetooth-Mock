@@ -115,6 +115,10 @@ public protocol CBMCentralManagerDelegate: AnyObject {
     ///
     /// Once this method has been called, no more methods will be
     /// invoked on peripheral's ``CBMPeripheralDelegate``.
+    ///
+    /// - Important: This callback will NOT be called when
+    ///  ``centralManager(_:didDisconnectPeripheral:timestamp:isReconnecting:error:)``
+    ///  has been implemented.
     /// - Parameters:
     ///   - central: The central manager providing this information.
     ///   - peripheral: The ``CBMPeripheral`` that has disconnected.
@@ -137,6 +141,11 @@ public protocol CBMCentralManagerDelegate: AnyObject {
     /// ``CBMConnectPeripheralOptionEnableAutoReconnect``, once this
     /// method has been called, no more methods will be invoked peripheral's
     /// ``CBMPeripheralDelegate``.
+    ///
+    /// - Important: If this method is implemented,
+    ///  ``centralManager(_:didDisconnectPeripheral:error:)``
+    ///   will not be invoked. The CoreBluetooth Mock framework will call this method
+    ///   on all iOS versions, despite the fact that the native API exists only since iOS 17+.
     /// - Parameters:
     ///   - central: The central manager providing this information.
     ///   - peripheral: The ``CBMPeripheral`` that has disconnected.

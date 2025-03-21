@@ -85,6 +85,7 @@ Keys used to pass state restoration options to the central manager initializer.
 
 Keys used to pass options when connecting to a peripheral.
 
+- ``CBMConnectPeripheralOptionEnableAutoReconnect``
 - ``CBMConnectPeripheralOptionNotifyOnConnectionKey``
 - ``CBMConnectPeripheralOptionNotifyOnDisconnectionKey``
 - ``CBMConnectPeripheralOptionNotifyOnNotificationKey``

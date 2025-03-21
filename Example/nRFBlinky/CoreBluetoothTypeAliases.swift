@@ -203,7 +203,7 @@ let CBConnectPeripheralOptionNotifyOnNotificationKey   = CBMConnectPeripheralOpt
 /// device automatically when link is dropped.
 ///
 /// Caller will get notified about the disconnection with potential delay via
-/// ``CBCentralManagerDelegate/centralManager(_:didConnect:)`` method
 /// `centralManager(:didDisconnectPeripheral:timestamp:isReconnecting:error:)`
+/// method.
 @available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
 let CBConnectPeripheralOptionEnableAutoReconnect       = CBMConnectPeripheralOptionEnableAutoReconnect
