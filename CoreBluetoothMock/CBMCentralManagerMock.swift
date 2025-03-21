@@ -326,6 +326,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     CBMPeripheralMock(basedOn: mock, by: self, andRestoreState: true)
                 }
                 state[CBMCentralManagerRestoredStatePeripheralsKey] = peripherals
+                peripherals.forEach { peripheral in
+                    self.peripherals[peripheral.identifier] = peripheral
+                }
             }
             if let scanServiceKey = dict[CBMCentralManagerRestoredStateScanServicesKey] as? [CBMUUID] {
                 state[CBMCentralManagerRestoredStateScanServicesKey] = scanServiceKey
