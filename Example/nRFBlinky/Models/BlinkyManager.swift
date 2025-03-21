@@ -87,7 +87,10 @@ class BlinkyManager {
 
     /// Connects to the Blinky device.
     func connect(_ blinky: BlinkyPeripheral) {
-        guard state == .poweredOn, connectedBlinky == nil else {
+        guard state == .poweredOn else {
+            return
+        }
+        guard connectedBlinky == nil || connectedBlinky === blinky else {
             return
         }
         connectedBlinky = blinky
