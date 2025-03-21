@@ -83,7 +83,7 @@ class NormalBehaviorTest: XCTestCase {
         }
         
         // Select found device.
-        Sim.post(.selectPeripheral(at: 0))
+        Sim.post(.selectPeripheral(target!))
 
         // Wait until blinky is connected and ready.
         let connected = XCTestExpectation(description: "Connected")

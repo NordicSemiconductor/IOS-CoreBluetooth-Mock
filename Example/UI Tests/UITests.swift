@@ -43,20 +43,47 @@ class UITests: XCTestCase {
         app.launchArguments = ["mocking-enabled"]
         app.launch()
         
-        // Start scanning
-        let scanner = app.tables["scanResults"]
-        XCTAssert(scanner.cells["nRF Blinky"].waitForExistence(timeout: 2.0))
-        
-        // Wait for device to appear and tap it.
-        XCTAssertEqual(scanner.cells.count, 1)
-        scanner.cells["nRF Blinky"].tap()
+        // In the UI Test the Blinky is restored in .connecting state.
+        // When a first packet is received, the app will connect
+        // automatically and navigate to the control view.
         
         let control = app.tables["control"]
         let ledState = control.staticTexts["ledState"]
         let buttonState = control.staticTexts["buttonState"]
         let ledSwitch = control.switches["ledSwitch"]
-        XCTAssertEqual(ledState.label, "UNKNOWN")
-        XCTAssertEqual(buttonState.label, "UNKNOWN")
+
+        // Wait for the device to connect automatically.
+        sleep(1)
+        XCTAssertEqual(ledState.label, "OFF")
+        XCTAssertEqual(buttonState.label, "RELEASED")
+        XCTAssert(ledSwitch.isOn == false)
+        
+        // Tap LED switch to turn the LED on.
+        ledSwitch.tap()
+        XCTAssert(ledSwitch.isOn == true)
+        XCTAssertEqual(ledState.label, "ON")
+
+        // Tap the LED switch again to disable it.
+        ledSwitch.tap()
+        XCTAssert(ledSwitch.isOn == false)
+        XCTAssertEqual(ledState.label, "OFF")
+        
+        // The device is scheduled to reset after 3 seconds after test started.
+        // An error message will show up. Use OK button to close it.
+        XCTAssert(app.buttons["OK"].waitForExistence(timeout: 2.0))
+        app.buttons["OK"].tap()
+        
+        // Navigating back and disconnect.
+        app.buttons["Scanner"].tap()
+
+        // nRF Blinky should start advertising quickly.
+        let scanner = app.tables["scanResults"]
+        XCTAssertEqual(scanner.cells.count, 0)
+        
+        // Wait for device to appear and tap it.
+        XCTAssert(scanner.cells["nRF Blinky"].waitForExistence(timeout: 2.0))
+        XCTAssertEqual(scanner.cells.count, 1)
+        scanner.cells["nRF Blinky"].tap()
         
         // Wait for the device to connect.
         sleep(1)

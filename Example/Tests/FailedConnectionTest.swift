@@ -87,7 +87,7 @@ class FailedConnectionTest: XCTestCase {
         blinky.simulateProximityChange(.outOfRange)
         
         // Select found device.
-        Sim.post(.selectPeripheral(at: 0))
+        Sim.post(.selectPeripheral(target!))
 
         // As the device is now out of range, connection should fail.
         let connected = XCTestExpectation(description: "Connected")

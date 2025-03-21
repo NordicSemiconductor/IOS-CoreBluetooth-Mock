@@ -69,12 +69,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if identifierKey == "no.nordicsemi.blinky" {
                     return [
                         // When the app was killed it was scanning with the LBS Service UUID filter.
-                        CBMCentralManagerRestoredStateScanServicesKey: [CBMUUID.nordicBlinkyService],
+                        CBMCentralManagerRestoredStateScanServicesKey: [
+                            CBMUUID.nordicBlinkyService
+                        ],
                         // Also, the app was scanning with the "Allow Duplicates" option enabled.
-                        CBMCentralManagerRestoredStateScanOptionsKey: [CBMCentralManagerScanOptionAllowDuplicatesKey: true as NSNumber],
-                        // nRF Blinky was already connected. Check out, that the
-                        // blinky spec was created using .connected(...) and it is
-                        // in range.
+                        CBMCentralManagerRestoredStateScanOptionsKey: [
+                            CBMCentralManagerScanOptionAllowDuplicatesKey: true as NSNumber
+                        ],
+                        // Here we may simulate peripheral state restoration.
+                        // Depending on whether the peripheral spec was created using
+                        // .connectable(...) or .connected(...), and the proximity value
+                        // the peripheral will be restored with state .connecting or .connected.
+                        //
                         CBMCentralManagerRestoredStatePeripheralsKey: [blinky]
                     ]
                 }
@@ -86,8 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             hrm.simulateProximityChange(.near)
             thingy.simulateProximityChange(.far)
             
-            // Simulate a reset after 500 ms to make the device discoverable again:
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+            // Simulate a reset after a while to make the device reconnect again:
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(3000)) {
                 blinky.simulateReset()
             }
         }
