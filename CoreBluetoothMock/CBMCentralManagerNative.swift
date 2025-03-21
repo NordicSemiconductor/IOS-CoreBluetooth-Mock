@@ -213,8 +213,10 @@ public class CBMCentralManagerNative: CBMCentralManager {
             var state = dict
             
             if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
-                state[CBMCentralManagerRestoredStatePeripheralsKey] = peripherals.map {
-                    CBMPeripheralNative($0)
+                let nativePeripherals = peripherals.map { CBMPeripheralNative($0) }
+                state[CBMCentralManagerRestoredStatePeripheralsKey] = nativePeripherals
+                nativePeripherals.forEach { peripheral in
+                    manager.peripherals[peripheral.identifier] = peripheral
                 }
             }
                         
