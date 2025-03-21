@@ -108,6 +108,10 @@ private class BlinkyCBMPeripheralSpecDelegate: CBMPeripheralSpecDelegate {
         }
         return .success(())
     }
+    
+    func peripheral(_ peripheral: CBMPeripheralSpec, didDisconnect error: (any Error)?) {
+        print("Central disconnected with error: \(error?.localizedDescription ?? "none")")
+    }
 }
 
 let blinky = CBMPeripheralSpec
