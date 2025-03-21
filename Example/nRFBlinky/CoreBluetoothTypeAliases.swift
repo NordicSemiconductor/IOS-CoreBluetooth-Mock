@@ -197,3 +197,13 @@ let CBConnectPeripheralOptionNotifyOnDisconnectionKey  = CBMConnectPeripheralOpt
 /// most recently in the foreground receives the alert. If the key isn’t specified, the default
 /// value is `false`.
 let CBConnectPeripheralOptionNotifyOnNotificationKey   = CBMConnectPeripheralOptionNotifyOnNotificationKey
+/// An Boolean indicating that the AutoReconnect is enabled for the peripheral is connected.
+///
+/// After peripheral device is connected, this will allow the system to initiate connect to the peer
+/// device automatically when link is dropped.
+///
+/// Caller will get notified about the disconnection with potential delay via
+/// ``CBCentralManagerDelegate/centralManager(_:didConnect:)`` method
+/// `centralManager(:didDisconnectPeripheral:timestamp:isReconnecting:error:)`
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+let CBConnectPeripheralOptionEnableAutoReconnect       = CBMConnectPeripheralOptionEnableAutoReconnect

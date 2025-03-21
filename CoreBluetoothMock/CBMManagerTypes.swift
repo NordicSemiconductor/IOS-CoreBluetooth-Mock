@@ -255,3 +255,11 @@ public let CBMConnectPeripheralOptionNotifyOnNotificationKey = CBConnectPeripher
 @available(iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public let CBMConnectPeripheralOptionEnableTransportBridgingKey = CBConnectPeripheralOptionEnableTransportBridgingKey
 #endif
+/// An Boolean indicating that the AutoReconnect is enabled for the peripheral is connected.
+///
+/// After peripheral device is connected, this will allow the system to initiate connect to the peer
+/// device automatically when link is dropped.
+///
+/// Caller will get notified about the disconnection with potential delay via {@link centralManager:didDisconnectPeripheral:timestamp:isReconnecting:error:}
+@available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *)
+public let CBMConnectPeripheralOptionEnableAutoReconnect = CBConnectPeripheralOptionEnableAutoReconnect
