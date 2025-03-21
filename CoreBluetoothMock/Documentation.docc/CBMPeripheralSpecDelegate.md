@@ -30,15 +30,3 @@ The default implementation will successfully return all requested attributes. Th
 - ``peripheral(_:didReceiveSetNotifyRequest:for:)-9r03q``
 - ``peripheral(_:didUpdateNotificationStateFor:error:)-4aash``
 
-### Deprecated
-
-- ``peripheral(_:didReceiveIncludedServiceDiscoveryRequest:for:)-4g4y5``
-- ``peripheral(_:didReceiveCharacteristicsDiscoveryRequest:for:)-88ij9``
-- ``peripheral(_:didReceiveDescriptorsDiscoveryRequestFor:)-3y8of``
-- ``peripheral(_:didReceiveReadRequestFor:)-47a2c``
-- ``peripheral(_:didReceiveReadRequestFor:)-6p4xw``
-- ``peripheral(_:didReceiveWriteCommandFor:data:)-14ln0``
-- ``peripheral(_:didReceiveWriteRequestFor:data:)-3nc1b``
-- ``peripheral(_:didReceiveWriteRequestFor:data:)-6plt7``
-- ``peripheral(_:didReceiveSetNotifyRequest:for:)-8yagc``
-

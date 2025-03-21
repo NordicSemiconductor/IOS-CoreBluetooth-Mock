@@ -154,31 +154,6 @@ public class CBMPeripheralSpec {
     /// - Since: 0.15.0
     public internal(set) var advertisement: [CBMAdvertisementConfig]?
     
-    /// The device's advertising data.
-    ///
-    /// This property was deprecated in version 0.15.0 with added support for multiple
-    /// advertisements per peripheral. Use ``CBMPeripheralSpec/advertisement`` instead.
-    @available(*, deprecated, message: "Use advertisement configurations instead")
-    public var advertisementData: [String : Any]? {
-        return advertisement?.first?.data
-    }
-    /// The advertising interval.
-    ///
-    /// This property was deprecated in version 0.15.0 with added support for multiple
-    /// advertisements per peripheral. Use ``CBMPeripheralSpec/advertisement`` instead.
-    @available(*, deprecated, message: "Use advertisement configurations instead")
-    public var advertisingInterval: TimeInterval? {
-        return advertisement?.first?.interval
-    }
-    /// Should the mock peripheral appear in scan results when it's connected.
-    ///
-    /// This property was deprecated in version 0.15.0 with added support for multiple
-    /// advertisements per peripheral. Use ``CBMPeripheralSpec/advertisement`` instead.
-    @available(*, deprecated, message: "Use advertisement configurations instead")
-    public var isAdvertisingWhenConnected: Bool {
-        return advertisement?.first?.isAdvertisingWhenConnected ?? false
-    }
-    
     /// List of services available for service discovery.
     public internal(set) var services: [CBMServiceMock]?
     /// The connection interval.
