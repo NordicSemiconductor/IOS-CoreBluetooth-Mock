@@ -699,7 +699,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
         // Read connection options. Currently only auto-reconnect is supported.
         var enableAutoReconnect = false
         if var o = options {
-            if #available(iOS 17.0, macOS 14.0, *) {
+            if #available(iOS 17.0, macOS 14.0, tvOS 17.0, watchOS 10.0, *) {
                 let option = o.removeValue(forKey: CBMConnectPeripheralOptionEnableAutoReconnect) as? NSNumber
                 enableAutoReconnect = option?.boolValue ?? false
             }
