@@ -258,23 +258,13 @@ public class CBMCentralManagerNative: CBMCentralManager {
     }
     #endif
     
-    public init() {
-        super.init(true)
-        self.wrapper = CBMCentralManagerDelegateWrapper(self)
-        self.manager = CBCentralManager()
-        self.manager.delegate = wrapper
-        
-        self.addManagerObserver()
+    public convenience init() {
+        self.init(delegate: nil, queue: nil, options: nil)
     }
     
-    public init(delegate: CBMCentralManagerDelegate?,
-                queue: DispatchQueue?) {
-        super.init(true)
-        self.wrapper = CBMCentralManagerDelegateWrapper(self)
-        self.manager = CBCentralManager(delegate: wrapper, queue: queue)
-        self.delegate = delegate
-        
-        self.addManagerObserver()
+    public convenience init(delegate: CBMCentralManagerDelegate?,
+                            queue: DispatchQueue?) {
+        self.init(delegate: delegate, queue: queue, options: nil)
     }
     
     @available(iOS 7.0, *)
