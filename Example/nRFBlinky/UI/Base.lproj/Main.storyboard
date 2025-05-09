@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PGS-Qc-QX1">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PGS-Qc-QX1">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -14,7 +14,7 @@
             <objects>
                 <navigationController id="PGS-Qc-QX1" customClass="RootViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="kFD-cB-vKu">
-                        <rect key="frame" x="0.0" y="50" width="375" height="96"/>
+                        <rect key="frame" x="0.0" y="100" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" red="0.0" green="0.66274509803921566" blue="0.80784313730000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -38,7 +38,7 @@
             <objects>
                 <tableViewController id="CiD-oR-yqB" customClass="ScannerTableViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="50" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="KMv-Sr-wl8">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="718"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="668"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -119,29 +119,29 @@
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="scanning" translatesAutoresizingMaskIntoConstraints="NO" id="0Z5-h0-3hn">
-                            <rect key="frame" x="153" y="66" width="64" height="64"/>
+                            <rect key="frame" x="153" y="116" width="64" height="64"/>
                             <color key="tintColor" systemColor="secondaryLabelColor"/>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CAN'T SEE YOUR BLINKY?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="eor-wV-hOm">
-                            <rect key="frame" x="90.333333333333329" y="146" width="189.33333333333337" height="18"/>
+                            <rect key="frame" x="90.333333333333329" y="196" width="189.33333333333337" height="18"/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                             <color key="textColor" red="0.0" green="0.46666666670000001" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1. Make sure it's switched on." lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bcI-yv-RmI">
-                            <rect key="frame" x="25.666666666666671" y="184" width="194" height="17"/>
+                            <rect key="frame" x="25.666666666666671" y="234" width="194" height="17"/>
                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                             <color key="textColor" systemColor="secondaryLabelColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2. Make sure the coin cell battery has power." lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rmw-BF-cDo">
-                            <rect key="frame" x="25.666666666666657" y="233.33333333333334" width="294.33333333333337" height="17"/>
+                            <rect key="frame" x="25.666666666666657" y="283.33333333333331" width="294.33333333333337" height="17"/>
                             <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
                             <color key="textColor" systemColor="secondaryLabelColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Toggle the switch next to the micro USB port to switch it on." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IAE-tV-Psp">
-                            <rect key="frame" x="25.666666666666657" y="203" width="318.66666666666674" height="13.333333333333343"/>
+                            <rect key="frame" x="25.666666666666657" y="253.00000000000003" width="318.66666666666674" height="13.333333333333343"/>
                             <constraints>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="400" id="kfw-Pc-j4F"/>
                             </constraints>
@@ -150,7 +150,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="If not, connect it to a PC or a charger using a micro USB cable. Coin cell battery is on the bottom side of the dev kit." lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MCd-9i-lIO">
-                            <rect key="frame" x="25.666666666666657" y="252.33333333333334" width="328.33333333333337" height="26.333333333333343"/>
+                            <rect key="frame" x="25.666666666666657" y="302.33333333333331" width="328.33333333333337" height="26.333333333333314"/>
                             <constraints>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="400" id="MaG-uG-uPQ"/>
                             </constraints>
@@ -192,7 +192,7 @@
             <objects>
                 <tableViewController title="nRF Blinky" id="pK8-7d-htc" customClass="BlinkyViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="OWj-h6-vmu">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="666"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="616"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -297,7 +297,7 @@
                                     <action selector="reconnectTapped:" destination="pK8-7d-htc" id="XQD-50-S6t"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem style="plain" id="SHX-9o-v0e">
+                            <barButtonItem id="SHX-9o-v0e">
                                 <view key="customView" contentMode="scaleToFill" id="bRm-6P-r7n">
                                     <rect key="frame" x="234" y="0.0" width="83" height="44"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
