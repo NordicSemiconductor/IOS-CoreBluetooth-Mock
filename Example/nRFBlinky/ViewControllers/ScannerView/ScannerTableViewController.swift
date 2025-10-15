@@ -35,11 +35,11 @@ class ScannerTableViewController: UITableViewController {
     // MARK: - Outlets and Actions
     
     @IBOutlet weak var emptyPeripheralsView: UIView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     // MARK: - Properties
 
     private var manager: BlinkyManager!
+    private var activityIndicator: UIActivityIndicatorView!
     
     // MARK: - UIViewController
 
@@ -48,6 +48,17 @@ class ScannerTableViewController: UITableViewController {
         tableView.isAccessibilityElement = true
         tableView.accessibilityLabel = "Scan Results"
         tableView.accessibilityIdentifier = "scanResults"
+        
+        if #available(iOS 26.0, *) {
+            activityIndicator = UIActivityIndicatorView(style: .medium)
+        } else {
+            activityIndicator = UIActivityIndicatorView(style: .white)
+        }
+        let indicator = UIBarButtonItem(customView: activityIndicator)
+        if #available(iOS 26.0, *) {
+            indicator.hidesSharedBackground = true
+        }
+        navigationItem.rightBarButtonItem = indicator
 
         let mock = (UIApplication.shared.delegate as! AppDelegate).mockingEnabled
         manager = BlinkyManager(mock)
@@ -96,7 +107,7 @@ class ScannerTableViewController: UITableViewController {
                 let height = self.emptyPeripheralsView.frame.height
                 if context.containerView.frame.height > context.containerView.frame.width {
                     self.emptyPeripheralsView.frame = CGRect(
-                        x: 0,         y: (context.containerView.frame.height / 2) - 180,
+                        x: 0,         y: 120,
                         width: width, height: height
                     )
                 } else {
@@ -169,7 +180,7 @@ private extension ScannerTableViewController {
             view.addSubview(emptyPeripheralsView)
             emptyPeripheralsView.alpha = 0
             emptyPeripheralsView.frame = CGRect(
-                    x: 0,                    y: (view.frame.height / 2) - 180,
+                    x: 0,                    y: 120,
                     width: view.frame.width, height: emptyPeripheralsView.frame.height)
             view.bringSubviewToFront(emptyPeripheralsView)
             UIView.animate(withDuration: 0.5) {
