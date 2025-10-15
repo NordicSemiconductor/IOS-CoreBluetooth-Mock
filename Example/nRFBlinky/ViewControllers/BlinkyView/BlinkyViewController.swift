@@ -37,10 +37,10 @@ class BlinkyViewController: UITableViewController {
     @IBOutlet weak var reconnectButton: UIBarButtonItem!
     @IBAction func reconnectTapped(_ sender: UIBarButtonItem) {
         connectionIndicator.isHidden = false
+        connectionIndicator.startAnimating()
         reconnectButton.isEnabled = false
         blinky.connect()
     }
-    @IBOutlet weak var connectionIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var ledStateLabel: UILabel!
     @IBOutlet weak var ledToggleSwitch: UISwitch!
@@ -53,6 +53,7 @@ class BlinkyViewController: UITableViewController {
     // MARK: - Properties
 
     private var hapticGenerator: NSObject? // UIImpactFeedbackGenerator is available on iOS 10 and above
+    private var connectionIndicator: UIActivityIndicatorView!
 
     private var ledObserver: NSObjectProtocol!
     private var buttonObserver: NSObjectProtocol!
@@ -73,9 +74,21 @@ class BlinkyViewController: UITableViewController {
         tableView.isAccessibilityElement = true
         tableView.accessibilityLabel = "Blinky Control"
         tableView.accessibilityIdentifier = "control"
+        
+        if #available(iOS 13.0, *) {
+            connectionIndicator = UIActivityIndicatorView(style: .medium)
+        } else {
+            connectionIndicator = UIActivityIndicatorView(style: .white)
+        }
+        let indicator = UIBarButtonItem(customView: connectionIndicator)
+        if #available(iOS 26.0, *) {
+            indicator.hidesSharedBackground = true
+        }
+        navigationItem.rightBarButtonItems?.append(indicator)
 
         readyObserver = blinky.onReady { [unowned self] ledSupported, buttonSupported in
             self.connectionIndicator.isHidden = true
+            self.connectionIndicator.stopAnimating()
             self.reconnectButton.isEnabled = false
             self.blinkyDidConnect(ledSupported: ledSupported, buttonSupported: buttonSupported)
         }
@@ -115,7 +128,7 @@ class BlinkyViewController: UITableViewController {
     override func viewWillDisappear(_ animated: Bool) {
         // Restore original navigation bar color. It might have changed
         // when the device got disconnected.
-        setNavigationBarColor(.dynamicColor(light: .nordicBlue, dark: .black))
+        notify(connected: true)
         super.viewWillDisappear(animated)
     }
 
@@ -167,7 +180,7 @@ private extension BlinkyViewController {
         if ledSupported || buttonSupported {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
-                self.setNavigationBarColor(.dynamicColor(light: .nordicBlue, dark: .black))
+                self.notify(connected: true)
                 self.ledToggleSwitch.onTintColor = .nordicBlue
                 self.ledToggleSwitch.isEnabled = ledSupported
 
@@ -186,7 +199,7 @@ private extension BlinkyViewController {
     
     func blinkyDidDisconnect() {
         DispatchQueue.main.async {
-            self.setNavigationBarColor(.dynamicColor(light: .nordicRed, dark: .nordicRedDark))
+            self.notify(connected: false)
             self.ledToggleSwitch.onTintColor = .nordicRed
             self.ledToggleSwitch.isEnabled = false
         }
@@ -236,14 +249,31 @@ private extension BlinkyViewController {
 private extension BlinkyViewController {
     
     /// Sets the color of the Navigation Bar to given one.
-    /// - Parameter color: The new Navigation Bar color.
-    func setNavigationBarColor(_ color: UIColor) {
+    /// - Parameter connected: Is the connection alive, or not.
+    func notify(connected: Bool) {
         let navigationBar = navigationController?.navigationBar
-        if #available(iOS 13.0, *) {
-            navigationBar?.standardAppearance.backgroundColor = color
-            navigationBar?.scrollEdgeAppearance?.backgroundColor = color
+        if #available(iOS 26.0, *) {
+            let color: UIColor
+            if connected {
+                color = UIColor.dynamicColor(light: .nordicBlue, dark: .white)
+            } else {
+                color = UIColor.dynamicColor(light: .nordicRed, dark: .nordicRedDark)
+            }
+            navigationBar?.standardAppearance.titleTextAttributes = [.foregroundColor: color]
+            navigationBar?.standardAppearance.largeTitleTextAttributes = [.foregroundColor: color]
         } else {
-            navigationBar?.barTintColor = color
+            let color: UIColor
+            if connected {
+                color = UIColor.dynamicColor(light: .nordicBlue, dark: .black)
+            } else {
+                color = UIColor.dynamicColor(light: .nordicRed, dark: .nordicRedDark)
+            }
+            if #available(iOS 13.0, *) {
+                navigationBar?.standardAppearance.backgroundColor = color
+                navigationBar?.scrollEdgeAppearance?.backgroundColor = color
+            } else {
+                navigationBar?.barTintColor = color
+            }
         }
     }
     

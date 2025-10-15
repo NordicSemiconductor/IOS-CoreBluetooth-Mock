@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PGS-Qc-QX1">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PGS-Qc-QX1">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -13,11 +13,9 @@
         <scene sceneID="fsd-T6-weY">
             <objects>
                 <navigationController id="PGS-Qc-QX1" customClass="RootViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="kFD-cB-vKu">
-                        <rect key="frame" x="0.0" y="100" width="375" height="96"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="kFD-cB-vKu">
+                        <rect key="frame" x="0.0" y="100" width="375" height="106"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <color key="barTintColor" red="0.0" green="0.66274509803921566" blue="0.80784313730000001" alpha="1" colorSpace="calibratedRGB"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </textAttributes>
@@ -38,7 +36,7 @@
             <objects>
                 <tableViewController id="CiD-oR-yqB" customClass="ScannerTableViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="50" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="KMv-Sr-wl8">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="668"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="658"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
@@ -90,25 +88,8 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="nRF Blinky" id="mCo-A8-H1i">
                         <barButtonItem key="backBarButtonItem" title="Scanner" id="K05-ZQ-Swb"/>
-                        <barButtonItem key="rightBarButtonItem" id="ccs-ly-nJ2">
-                            <view key="customView" contentMode="scaleToFill" id="g9z-vO-YFr">
-                                <rect key="frame" x="276" y="6" width="83" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="L63-Wi-8Oy">
-                                        <rect key="frame" x="63" y="6" width="20" height="20"/>
-                                    </activityIndicatorView>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstItem="L63-Wi-8Oy" firstAttribute="centerY" secondItem="g9z-vO-YFr" secondAttribute="centerY" id="uGk-hX-4Db"/>
-                                    <constraint firstAttribute="trailing" secondItem="L63-Wi-8Oy" secondAttribute="trailing" id="yx6-Jg-vb9"/>
-                                </constraints>
-                            </view>
-                        </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="activityIndicator" destination="L63-Wi-8Oy" id="IKt-AB-Xgw"/>
                         <outlet property="emptyPeripheralsView" destination="UsK-q4-ZJ2" id="Gd6-ad-7Ky"/>
                         <segue destination="pK8-7d-htc" kind="show" identifier="PushBlinkyView" id="hYw-dI-G21"/>
                     </connections>
@@ -192,7 +173,7 @@
             <objects>
                 <tableViewController title="nRF Blinky" id="pK8-7d-htc" customClass="BlinkyViewController" customModule="nRF_Blinky" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="OWj-h6-vmu">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="616"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="606"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                         <sections>
@@ -220,7 +201,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ug3-O5-D3G">
-                                                    <rect key="frame" x="310" y="12.666666666666664" width="51" height="31"/>
+                                                    <rect key="frame" x="298" y="14" width="63" height="28"/>
                                                     <accessibility key="accessibilityConfiguration" hint="Tap to toggle the LED" identifier="ledSwitch" label="LED Switch">
                                                         <bool key="isElement" value="YES"/>
                                                     </accessibility>
@@ -290,34 +271,15 @@
                             <outlet property="delegate" destination="pK8-7d-htc" id="jLM-F0-f2F"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Title" id="gbV-P2-bZr">
-                        <rightBarButtonItems>
-                            <barButtonItem enabled="NO" systemItem="refresh" id="avl-Ur-V0d">
-                                <connections>
-                                    <action selector="reconnectTapped:" destination="pK8-7d-htc" id="XQD-50-S6t"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem id="SHX-9o-v0e">
-                                <view key="customView" contentMode="scaleToFill" id="bRm-6P-r7n">
-                                    <rect key="frame" x="234" y="0.0" width="83" height="44"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <subviews>
-                                        <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="Uvx-z4-nKb">
-                                            <rect key="frame" x="63" y="12" width="20" height="20"/>
-                                        </activityIndicatorView>
-                                    </subviews>
-                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="Uvx-z4-nKb" secondAttribute="trailing" id="62e-zc-6pT"/>
-                                        <constraint firstItem="Uvx-z4-nKb" firstAttribute="centerY" secondItem="bRm-6P-r7n" secondAttribute="centerY" id="ePZ-Ia-iTw"/>
-                                    </constraints>
-                                </view>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                    <navigationItem key="navigationItem" id="gbV-P2-bZr">
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" style="plain" systemItem="refresh" id="avl-Ur-V0d">
+                            <connections>
+                                <action selector="reconnectTapped:" destination="pK8-7d-htc" id="XQD-50-S6t"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="buttonStateLabel" destination="oaQ-Ex-coH" id="bsL-Tw-a41"/>
-                        <outlet property="connectionIndicator" destination="Uvx-z4-nKb" id="rbb-2a-lia"/>
                         <outlet property="ledStateLabel" destination="sXe-8K-21Q" id="L0w-wK-DsY"/>
                         <outlet property="ledToggleSwitch" destination="ug3-O5-D3G" id="uz2-8I-ALm"/>
                         <outlet property="reconnectButton" destination="avl-Ur-V0d" id="2Je-ir-COd"/>
