@@ -64,6 +64,13 @@ class BlinkyManager {
         }
         if !centralManager.isScanning {
             centralManager.scanForPeripherals(
+                    // Note, that setting services to nil will only work
+                    // after a mock device connects and disconnects, and
+                    // new scan will be initiated. This is because scan state
+                    // is retained, including previous UUID filter.
+                    // See: AppDelegate > simulateStateRestoration
+                    //
+                    // withServices: nil,
                     withServices: [BlinkyPeripheral.nordicBlinkyServiceUUID],
                     options: [
                         CBCentralManagerScanOptionAllowDuplicatesKey : true,
