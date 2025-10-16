@@ -259,8 +259,11 @@ private extension BlinkyViewController {
             } else {
                 color = UIColor.dynamicColor(light: .nordicRed, dark: .nordicRedDark)
             }
-            navigationBar?.standardAppearance.titleTextAttributes = [.foregroundColor: color]
-            navigationBar?.standardAppearance.largeTitleTextAttributes = [.foregroundColor: color]
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.titleTextAttributes = [.foregroundColor: color]
+            navBarAppearance.largeTitleTextAttributes = [.foregroundColor: color]
+            navigationBar?.standardAppearance = navBarAppearance
+            navigationBar?.scrollEdgeAppearance = navBarAppearance
         } else {
             let color: UIColor
             if connected {
