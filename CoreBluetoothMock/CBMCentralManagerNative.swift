@@ -518,13 +518,13 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
             }
         }
         
-        /// Returns the wrapper for the native CBService.
+        /// Returns the wrapper for the native `CBService`.
         /// - Parameter service: The native service.
         private func mock(of service: CBService?) -> CBMServiceNative? {
             return impl.mockServices?.first { $0.service == service }
         }
         
-        /// Returns the wrapper for the native CBCharacteristic.
+        /// Returns the wrapper for the native `CBCharacteristic`.
         /// - Parameter characteristic: The native characteristic.
         private func mock(of characteristic: CBCharacteristic?) -> CBMCharacteristicNative? {
             let service = mock(of: characteristic?.service)
@@ -532,7 +532,7 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
                 .first { $0.characteristic == characteristic }
         }
         
-        /// Returns the wrapper for the native CBDescriptor.
+        /// Returns the wrapper for the native `CBDescriptor`.
         /// - Parameter descriptor: The native descriptor.
         private func mock(of descriptor: CBDescriptor?) -> CBMDescriptorNative? {
             let characteristic = mock(of: descriptor?.characteristic)
