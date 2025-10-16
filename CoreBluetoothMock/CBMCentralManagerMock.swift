@@ -1295,13 +1295,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     // Filter all service characteristics that match given list (if set).
                     .filter { characteristicUUIDs == nil || characteristicUUIDs!.isEmpty || characteristicUUIDs!.contains($0.uuid) }
                     // Filter those of them, that are not already in discovered characteristics.
-                    // NOTE FOR THE CODE COMMENTED OUT
-                    // Seems like second discovery resets the state of a characteristic,
-                    // including isNotifying and inner descriptors.
-                    // TODO: The last part should be tested.
-//                    .filter { c in !service._characteristics!
-//                        .contains { dc in c.identifier == dc.identifier }
-//                    }
+                    .filter { c in !service._characteristics!
+                        .contains { dc in c.identifier == dc.identifier }
+                    }
                     // Copy the characteristic info, without included descriptors or value.
                     .map { CBMCharacteristic(shallowCopy: $0, in: service) }
             let newCharacteristicsCount = service._characteristics!.count - initialSize
@@ -1576,6 +1572,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         guard enabled != characteristic.isNotifying else {
+            // If the state is up-to-date, just notify the delegate immediately.
+            // Tested on iOS 17 and 26.
+            self.delegate?.peripheral(self, didUpdateNotificationStateFor: characteristic, error: nil)
             return
         }
         
