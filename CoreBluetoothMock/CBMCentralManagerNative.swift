@@ -502,25 +502,29 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
         /// Updates the local list of services with received ones.
         /// - Parameter services: New list of services.
         private func smartCopy(_ services: [CBService]?) {
-            guard let services = services else {
+            guard let services = services, !services.isEmpty else {
                 return
             }
-            // So far the "smart" copy isn't that smart and just replaces
-            // all old references with new ones. The old should still work,
-            // as they have the correct native references and isEqual also
-            // compares them. But ideally, the copy should only add new
-            // attributes, without replacing any existing.
-            // TODO: Implement smart copy of services.
-            impl.mockServices = services.map { CBMServiceNative($0, in: impl) }            
+            impl.mockServices = impl.mockServices ?? []
+            for service in services {
+                // Check if the service was already discovered.
+                if let s = mock(of: service) {
+                    s.update(service)
+                } else {
+                    // If not, create a new wrapper.
+                    let mockService = CBMServiceNative(service, in: impl)
+                    impl.mockServices?.append(mockService)
+                }
+            }
         }
         
-        /// Returns the wrapper for the native CBService.
+        /// Returns the wrapper for the native `CBService`.
         /// - Parameter service: The native service.
         private func mock(of service: CBService?) -> CBMServiceNative? {
             return impl.mockServices?.first { $0.service == service }
         }
         
-        /// Returns the wrapper for the native CBCharacteristic.
+        /// Returns the wrapper for the native `CBCharacteristic`.
         /// - Parameter characteristic: The native characteristic.
         private func mock(of characteristic: CBCharacteristic?) -> CBMCharacteristicNative? {
             let service = mock(of: characteristic?.service)
@@ -528,7 +532,7 @@ public class CBMPeripheralNative: CBMPeer, CBMPeripheral {
                 .first { $0.characteristic == characteristic }
         }
         
-        /// Returns the wrapper for the native CBDescriptor.
+        /// Returns the wrapper for the native `CBDescriptor`.
         /// - Parameter descriptor: The native descriptor.
         private func mock(of descriptor: CBDescriptor?) -> CBMDescriptorNative? {
             let characteristic = mock(of: descriptor?.characteristic)
