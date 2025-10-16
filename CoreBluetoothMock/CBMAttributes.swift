@@ -291,7 +291,7 @@ internal class CBMCharacteristicNative: CBMCharacteristic {
         super.init(type: characteristic.uuid, properties: characteristic.properties)
         self.service = service
         self.value = characteristic.value
-        self.isNotifying = isNotifying
+        self.isNotifying = characteristic.isNotifying
         
         if let nativeDescriptors = characteristic.descriptors {
             _descriptors = nativeDescriptors.map { CBMDescriptorNative($0, in: self) }
