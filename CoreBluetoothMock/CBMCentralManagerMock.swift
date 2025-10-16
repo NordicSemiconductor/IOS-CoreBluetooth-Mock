@@ -1576,6 +1576,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         guard enabled != characteristic.isNotifying else {
+            // If the state is up-to-date, just notify the delegate immediately.
+            // Tested on iOS 17 and 26.
+            self.delegate?.peripheral(self, didUpdateNotificationStateFor: characteristic, error: nil)
             return
         }
         
