@@ -131,6 +131,32 @@ internal class CBMServiceNative: CBMService {
         }
     }
     
+    /// This method is updates the wrapper with the current version of `CBService`.
+    ///
+    /// The method is called when user discovers new service, characteristic or a descriptor.
+    /// The internal wrappers need to reflect the change and add missing attributes.
+    func update(_ service: CBService) {
+        for includedService in service.includedServices ?? [] {
+            if _includedServices == nil { _includedServices = [] }
+            if let existing = (_includedServices as? [CBMServiceNative])?.first(where: { $0.service == service }) {
+                existing.update(service)
+            } else {
+                let newService = CBMServiceNative(includedService, in: peripheral!)
+                _includedServices!.append(newService)
+            }
+        }
+        
+        for characteristic in service.characteristics ?? [] {
+            if _characteristics == nil { _characteristics = [] }
+            if let existing = (_characteristics as? [CBMCharacteristicNative])?.first(where: { $0.characteristic == characteristic }) {
+                existing.update(characteristic)
+            } else {
+                let newCharacteristic = CBMCharacteristicNative(characteristic, in: self)
+                _characteristics!.append(newCharacteristic)
+            }
+        }
+    }
+    
     override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? CBMServiceNative {
             return service == other.service
@@ -272,6 +298,18 @@ internal class CBMCharacteristicNative: CBMCharacteristic {
         }
     }
     
+    func update(_ characteristic: CBCharacteristic) {
+        for descriptor in characteristic.descriptors ?? [] {
+            if _descriptors == nil { _descriptors = [] }
+            if let existing = (_descriptors as? [CBMDescriptorNative])?.first(where: { $0.descriptor == descriptor }) {
+                existing.update(descriptor)
+            } else {
+                let newDescriptor = CBMDescriptorNative(descriptor, in: self)
+                _descriptors!.append(newDescriptor)
+            }
+        }
+    }
+    
     override func isEqual(_ object: Any?) -> Bool {
         if let other = object as? CBMCharacteristicNative {
             return characteristic == other.characteristic
@@ -374,6 +412,10 @@ internal class CBMDescriptorNative: CBMDescriptor {
         self.descriptor = descriptor
         super.init(type: descriptor.uuid)
         self.characteristic = characteristic
+        self.value = descriptor.value
+    }
+    
+    func update(_ descriptor: CBDescriptor) {
         self.value = descriptor.value
     }
     
