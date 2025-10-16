@@ -133,6 +133,10 @@ let blinky = CBMPeripheralSpec
         mtu: 23)
     .build()
 
+// This is how you may simulate Button click using a mock Blinky:
+//
+// blinky.simulateValueUpdate(Data([0x01]), for: .buttonCharacteristic)
+
 // MARK: - Mock Nordic HRM
 
 extension CBMServiceMock {
