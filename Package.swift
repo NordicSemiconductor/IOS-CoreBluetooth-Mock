@@ -8,16 +8,16 @@ import PackageDescription
 let package = Package(
   name: "CoreBluetoothMock",
   platforms: [
-    .macOS(.v10_13),
-    .iOS(.v11),
+    .macOS(.v10_14),
+    .iOS(.v12),
     .watchOS(.v4),
-    .tvOS(.v11)
+    .tvOS(.v12)
   ],
   products: [
     .library(name: "CoreBluetoothMock", targets: ["CoreBluetoothMock"])
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.4.3")
+    .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.4.5")
   ],
   targets: [
     .target(
