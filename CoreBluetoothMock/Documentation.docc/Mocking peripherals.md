@@ -4,7 +4,7 @@ How to create mock peripherals to be used in tests.
 
 ## Overview
 
-The ``CBMCentralManagerFactory`` provides two implementatons of ``CBMCentralManager``:
+The ``CBMCentralManagerFactory`` provides two implementations of ``CBMCentralManager``:
 * ``CBMCentralManagerNative``
 * ``CBMCentralManagerMock``
 
