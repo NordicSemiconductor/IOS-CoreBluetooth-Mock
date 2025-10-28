@@ -1231,6 +1231,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         
+        mockService.peripheral = self
         switch delegate.peripheral(mock,
                                    didReceiveIncludedServiceDiscoveryRequest: includedServiceUUIDs,
                                    for: mockService) {
@@ -1284,6 +1285,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         
+        mockService.peripheral = self
         switch delegate.peripheral(mock,
                                    didReceiveCharacteristicsDiscoveryRequest: characteristicUUIDs,
                                    for: mockService) {
@@ -1336,6 +1338,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         
+        mockCharacteristic.optionalService?.peripheral = self
         switch delegate.peripheral(mock,
                                    didReceiveDescriptorsDiscoveryRequestFor: mockCharacteristic) {
         case .success:
@@ -1385,6 +1388,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
               let mockCharacteristic = mockServices.find(mockOf: characteristic) else {
             return
         }
+        
+        mockCharacteristic.optionalService?.peripheral = self
         switch delegate.peripheral(mock,
                                    didReceiveReadRequestFor: mockCharacteristic) {
         case .success(let data):
@@ -1419,6 +1424,8 @@ open class CBMCentralManagerMock: CBMCentralManager {
               let mockDescriptor = mockServices.find(mockOf: descriptor) else {
             return
         }
+        
+        mockDescriptor.characteristic?.optionalService?.peripheral = self
         switch delegate.peripheral(mock,
                                    didReceiveReadRequestFor: mockDescriptor) {
         case .success(let data):
@@ -1459,6 +1466,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         
+        mockCharacteristic.optionalService?.peripheral = self
         if type == .withResponse {
             switch delegate.peripheral(mock,
                                        didReceiveWriteRequestFor: mockCharacteristic,
@@ -1524,6 +1532,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         
+        mockDescriptor.characteristic?.optionalService?.peripheral = self
         switch delegate.peripheral(mock,
                                    didReceiveWriteRequestFor: mockDescriptor,
                                    data: data) {
@@ -1578,6 +1587,7 @@ open class CBMCentralManagerMock: CBMCentralManager {
             return
         }
         
+        mockCharacteristic.optionalService?.peripheral = self
         switch delegate.peripheral(mock,
                                    didReceiveSetNotifyRequest: enabled,
                                    for: mockCharacteristic) {
@@ -1589,9 +1599,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
                                               didUpdateNotificationStateFor: characteristic,
                                               error: nil)
                     mockCharacteristic.isNotifying = enabled
-                    self.mock.connectionDelegate?.peripheral(self.mock,
-                                    didUpdateNotificationStateFor: mockCharacteristic,
-                                    error: nil)
+                    delegate.peripheral(self.mock,
+                                        didUpdateNotificationStateFor: mockCharacteristic,
+                                        error: nil)
                 }
             }
         case .failure(let error):
@@ -1600,9 +1610,9 @@ open class CBMCentralManagerMock: CBMCentralManager {
                     self.delegate?.peripheral(self,
                                               didUpdateNotificationStateFor: characteristic,
                                               error: error)
-                    self.mock.connectionDelegate?.peripheral(self.mock,
-                                    didUpdateNotificationStateFor: mockCharacteristic,
-                                    error: error)
+                    delegate.peripheral(self.mock,
+                                        didUpdateNotificationStateFor: mockCharacteristic,
+                                        error: error)
                 }
             }
         }        

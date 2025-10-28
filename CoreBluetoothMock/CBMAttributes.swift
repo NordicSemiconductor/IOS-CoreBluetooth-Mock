@@ -196,9 +196,12 @@ open class CBMServiceMock: CBMService {
         super.init(type: uuid, primary: isPrimary)
         if let includedServices = includedServices {
             self._includedServices = includedServices
+            // Note: includedServices[..].peripheral is still nil at this point.
         }
         if let characteristics = characteristics {
             self._characteristics = characteristics
+            // Assign parent service instance.
+            self._characteristics?.forEach { $0.service = self }
         }
     }
 
